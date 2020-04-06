@@ -1,6 +1,6 @@
-import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import database from '../../../utils/database';
+import { authAPI } from '../../../utils/auth';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -19,33 +19,15 @@ export default async (req, res) => {
   }
 };
 
-function getToken(req, res) {
-  let token = req.headers['x-access-token'] || req.headers.authorization;
-  if (!token) return res.status(401);
-  if (token.startsWith('Bearer ')) {
-    token = token.split(' ')[1];
-  }
-
-  const { query: { id } } = req;
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // TODO: change order! first get user (check for 404), then compare token._id with id from req
-
-    if (decoded._id !== id) return res.status(403).send('invalid jwt for this user account');
-    return decoded;
-  } catch (err) {
-    return res.status(401).send('invalid jwt');
-  }
-}
-
+// TODO: handle mongodb errors
 async function handleGET(req, res) {
-  const token = getToken(req, res);
-
+  const token = authAPI(req, res);
+  const { query: { id } } = req;
   try {
-    const user = await database().collection('users').findOne({ _id: new ObjectId(token._id) });
+    const db = await database();
+    const user = await db.collection('users').findOne({ _id: new ObjectId(token._id) });
     if (!user) return res.status(404).send(`no user with the id ${token._id} found!`);
+    if (token._id !== id) return res.status(403).send(`invalid token for the user with the id ${id}`);
     return res.status(200).json(user);
   } catch (err) {
     console.error(err);

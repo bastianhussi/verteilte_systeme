@@ -15,15 +15,20 @@ async function handlePOST(req, res) {
   try {
     // 10 saltRounds will be ok
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = await database().collection('users').insertOne({
+    const db = await database();
+    const result = await db.collection('users').insertOne({
       email: req.body.email,
       password: hashedPassword,
     });
-    const token = jwt.sign({ id: user.insertedId }, process.env.JWT_SECRET, { expiresIn: '1d' });
+
+    // TODO: more verbose error handling
+    if (!result.insertedId) return res.status(400).send('could not create user');
+
+    const token = jwt.sign({ id: result.insertedId }, process.env.JWT_SECRET, { expiresIn: '1d' });
     res.status(201).json({
       token,
       user: {
-        _id: user.insertedId,
+        _id: result.insertedId,
         email: req.body.email,
         password: req.body.password,
       },

@@ -1,5 +1,6 @@
 import Router from 'next/router';
 import jwt from 'jsonwebtoken';
+import { UnauthorizedError } from './errors';
 
 // all cookies are saved in one string and seperated by "; "
 function getCookieByName(cookieName, { req }) {
@@ -34,6 +35,10 @@ export function logout() {
   Router.push('/login');
 }
 
+/*
+ * Checks if the user has a token.
+ * Use only for checking the access to webpages.
+ */
 export function auth(ctx) {
   const token = getCookieByName('token', ctx);
 
@@ -60,6 +65,10 @@ export function auth(ctx) {
   return token;
 }
 
+/*
+ * Checks if the user is logged in.
+ * Use only for validating access to a webpage.
+ */
 export function noAuth(ctx) {
   const token = getCookieByName('token', ctx);
 

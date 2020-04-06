@@ -13,13 +13,14 @@ export default async (req, res) => {
 
 async function handlePOST(req, res) {
   try {
-    const user = await database().collection('users').findOne({ email: req.body.email });
+    const db = await database();
+    const user = await db.collection('users').findOne({ email: req.body.email });
     if (!user) return res.status(404).send(`found no user with the email address: ${req.body.email}`);
     if (!await bcrypt.compare(req.body.password, user.password)) return res.status(401).send('you entered a wrong password');
 
     // token witch expires in 12 hours
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-    res.status(200).json({
+    res.status(201).json({
       token,
       user: {
         _id: user._id,
