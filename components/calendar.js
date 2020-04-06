@@ -1,22 +1,23 @@
 import React from 'react';
 
 class Calendar extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+  constructor(props) {
+    super(props);
+    this.state = {
 
-        };
+    };
+  }
+
+  render() {
+    const days = [];
+    for (let d = 0; d < 7; d++) {
+      days.push(<Day dayNumber={d + 1} key={d} />);
     }
-
-    render() {
-        let days = [];
-        for (let d = 0; d < 7; d++) {
-            days.push(<Day dayNumber={d + 1} key={d} />);
-        }
-        return (
-            <>
-                <div className="week">{days}</div>
-                <style jsx>{`
+    return (
+      <>
+        <div className="week">{days}</div>
+        <style jsx>
+          {`
                     .week {
                         display: flex;
                         flex-direction: row;
@@ -24,38 +25,42 @@ class Calendar extends React.Component {
                         justify-content: center;
                         align-items: flex-start;
                     }
-                `}</style>
-            </>
-        );
-    }
+                `}
+        </style>
+      </>
+    );
+  }
 }
 
 class Day extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
+  constructor(props) {
+    super(props);
+    this.state = {
 
-        };
+    };
+  }
+
+  render() {
+    function onClick(start, end) {
+      console.log(`${start}-${end}`);
     }
 
-    render() {
+    const hours = [];
+    for (let h = 0; h < 24; h++) {
+      hours.push(<Hour start={h} end={h + 1} key={h} onClick={onClick} />);
+    }
+    return (
+      <>
 
-        function onClick(start, end) {
-            console.log(`${start}-${end}`);
-        }
-
-        let hours = [];
-        for (let h = 0; h < 24; h++) {
-            hours.push(<Hour start={h} end={h + 1} key={h} onClick={onClick} />)
-        }
-        return (
-            <>
-
-                <div className="day">
-                    <div className="day-header">Day {this.props.dayNumber}</div>
-                    {hours}
-                </div>
-                <style jsx>{`
+        <div className="day">
+          <div className="day-header">
+            Day
+            {this.props.dayNumber}
+          </div>
+          {hours}
+        </div>
+        <style jsx>
+          {`
                     .day {
                         display: flex;
                         flex-direction: column;
@@ -76,22 +81,28 @@ class Day extends React.Component {
                         position: sticky;
                         top: 0;
                     }
-                `}</style>
-            </>
-        );
-    }
+                `}
+        </style>
+      </>
+    );
+  }
 }
 
 class Hour extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render() {
-        return (
-            <>
-                <div className="hour" onClick={() => this.props.onClick(this.props.start, this.props.end)}>{this.props.start}-{this.props.end}</div>
-                <style jsx>{`
+  render() {
+    return (
+      <>
+        <div className="hour" onClick={() => this.props.onClick(this.props.start, this.props.end)}>
+          {this.props.start}
+          -
+          {this.props.end}
+        </div>
+        <style jsx>
+          {`
                     .hour {
                         height: 50px;
                         width: 150px;
@@ -101,10 +112,11 @@ class Hour extends React.Component {
                     .hour:hover {
                         cursor: pointer;
                     }
-                `}</style>
-            </>
-        );
-    }
+                `}
+        </style>
+      </>
+    );
+  }
 }
 
 export default Calendar;
