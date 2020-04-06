@@ -42,14 +42,10 @@ class Login extends React.Component {
       }, {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
       });
-      if (res.status === 200) {
-        const { token } = res.data;
-        login(token);
-      } else {
-        this.setState({ password: '', error: res.text });
-      }
+      const { token } = res.data;
+      login(token);
     } catch (err) {
-      this.setState({ error: err });
+      this.setState({ error: err.response.data });
     }
   }
 

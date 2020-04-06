@@ -31,9 +31,6 @@ export function login(token) {
 export function logout() {
   // expires now
   document.cookie = `token=; expires=${new Date().toUTCString()}; path=/`;
-  // cookie.remove('token')
-  // to support logging out from all windows
-  window.localStorage.setItem('logout', Date.now());
   Router.push('/login');
 }
 

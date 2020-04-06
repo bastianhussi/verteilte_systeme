@@ -42,14 +42,10 @@ class Register extends React.Component {
       }, {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
       });
-      if (res.status === 201) {
-        const { token } = res.data;
-        login(token);
-      } else {
-        this.setState({ password: '', error: res.text });
-      }
+      const { token } = res.data;
+      login(token);
     } catch (err) {
-      this.setState({ error: err });
+      this.setState({ password: '', error: err.response.data });
     }
   }
 
