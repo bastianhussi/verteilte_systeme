@@ -8,6 +8,11 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^0.19.2",
+    "bcrypt": "^4.0.1",
+    "dotenv": "^8.2.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.5",
     "next": "9.3.3",
     "react": "16.13.1",
     "react-dom": "16.13.1"
