@@ -12,12 +12,10 @@ export default async (req, res) => {
 };
 
 async function handlePOST(req, res) {
-  const client = database();
   try {
-    await client.connect();
     // 10 saltRounds will be ok
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = await client.db('nextjs').collection('users').insertOne({
+    const user = await database().collection('users').insertOne({
       email: req.body.email,
       password: hashedPassword,
     });
@@ -33,7 +31,5 @@ async function handlePOST(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).send(`an error occured: ${err}`);
-  } finally {
-    await client.close();
   }
 }

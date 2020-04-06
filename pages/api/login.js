@@ -12,10 +12,8 @@ export default async (req, res) => {
 };
 
 async function handlePOST(req, res) {
-  const client = database();
   try {
-    await client.connect();
-    const user = await client.db('nextjs').collection('users').findOne({ email: req.body.email });
+    const user = await database().collection('users').findOne({ email: req.body.email });
     if (!user) return res.status(404).send(`found no user with the email address: ${req.body.email}`);
     if (!await bcrypt.compare(req.body.password, user.password)) return res.status(401).send('you entered a wrong password');
 
@@ -32,7 +30,5 @@ async function handlePOST(req, res) {
   } catch (err) {
     console.error(err);
     res.status(500).send(`an error occured: ${err}`);
-  } finally {
-    await client.close();
   }
 }

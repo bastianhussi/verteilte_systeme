@@ -42,18 +42,14 @@ function getToken(req, res) {
 
 async function handleGET(req, res) {
   const token = getToken(req, res);
-  const client = database();
 
   try {
-    await client.connect();
-    const user = await client.db('nextjs').collection('users').findOne({ _id: new ObjectId(token._id) });
+    const user = await database().collection('users').findOne({ _id: new ObjectId(token._id) });
     if (!user) return res.status(404).send(`no user with the id ${token._id} found!`);
     return res.status(200).json(user);
   } catch (err) {
     console.error(err);
     return res.status(500).send(`an error occured: ${err}`);
-  } finally {
-    await client.close();
   }
 }
 

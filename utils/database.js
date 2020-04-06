@@ -1,10 +1,17 @@
 import { MongoClient } from 'mongodb';
 
-export default function connect() {
-  const uri = 'mongodb://localhost:27017';
-  const client = new MongoClient(uri, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  });
-  return client;
+const client = new MongoClient(process.env.MONGO_HOST | 'mongodb://localhost:27017', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+const connection;
+
+export default async function connect() {
+  if(connection) {
+    return connection.db('nextjs');
+  } else {
+    connection = await client.connect().db('nextjs');
+    return connection;
+  }
 }
