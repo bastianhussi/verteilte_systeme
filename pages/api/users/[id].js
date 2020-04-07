@@ -1,8 +1,9 @@
 import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import { findOne, updateOne, deleteOne } from '../../../utils/database';
-import { auth, handleError, validateBody } from '../../../utils/apiValidation';
+import { auth, handleError, validateData } from '../../../utils/middleware';
 import { ForbiddenError } from '../../../utils/errors';
+import Joi from '@hapi/joi';
 
 export default async (req, res) => {
   try {
@@ -36,26 +37,14 @@ async function handleGet(req, res) {
 
 async function handlePatch(req, res) {
   const token = auth(req);
-  const modifiedUser = validateBody(req.body, {
-    email: {
-      required: false,
-      type: 'string',
-      min: 5,
-      max: 40
-    },
-    name: {
-      required: false,
-      type: 'string',
-      min: 3,
-      max: 50
-    },
-    password: {
-      required: false,
-      type: 'string',
-      max: 3,
-      max: 30
-    }
-  });
+
+  const schema = Joi.object({
+    email: Joi.string().email().trim().optional(),
+    name: Joi.string().trim().min(3).max(50).optional(),
+    password: Joi.string().min(3).max(50).optional()
+  })
+  const modifiedUser = await validateData(req.body, schema);
+
   const { id } = req.query;
   validateIdAgainstToken(token, id);
 
@@ -63,7 +52,7 @@ async function handlePatch(req, res) {
     modifiedUser.password = await bcrypt.hash(modifiedUser.password, 10);
   }
 
-  await updateOne('users', { _id: new ObjectId(id) }, { $set, modifiedUser });
+  await updateOne('users', { _id: new ObjectId(id) }, { $set: modifiedUser });
   const updatedUser = await findOne('users', { _id: new ObjectId(id) });
   res.status(200).json(updatedUser);
 }

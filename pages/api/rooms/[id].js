@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { findOne, updateOne, deleteOne } from '../../../utils/database';
-import { auth, handleError, validateBody } from '../../../utils/apiValidation';
+import { auth, handleError, validateData } from '../../../utils/middleware';
+import Joi from '@hapi/joi';
 
 export default async function (req, res) {
   try {
@@ -36,14 +37,12 @@ async function handleGet(req, res) {
 
 async function handlePatch(req, res) {
   auth(req);
-  const room = validateBody(req.body, {
-    name: {
-      required: true,
-      type: 'string',
-      min: 3,
-      max: 20,
-    },
-  });
+
+  const schema = Joi.object({
+    name: Joi.string().trim().min(3).max(30).optional().default('')
+  })
+  const room = await validateData(req.body, schema);
+
   const { id } = req.query;
   await updateOne('rooms', { _id: new ObjectId(id) }, { $set: room });
   const updatedRoom = await findOne('rooms', { _id: new ObjectId(id) });

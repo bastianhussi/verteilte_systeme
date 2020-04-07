@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { find, insertOne } from '../../utils/database';
-import { validateBody, handleError, auth } from '../../utils/apiValidation';
+import { validateData, handleError, auth } from '../../utils/middleware';
+import Joi from '@hapi/joi';
 
 export default async function (req, res) {
   try {
@@ -20,50 +21,31 @@ export default async function (req, res) {
 
 async function handleGet(req, res) {
   auth(req);
-  const { email = '', name = '', limit = 50 } = validateBody(req.query, {
-    email: {
-      required: false,
-      type: 'string',
-      min: 5,
-      max: 40,
-    },
-    name: {
-      required: false,
-      type: 'string',
-      min: 3,
-      max: 50,
-    },
-  });
-  const cursor = await find('users', { email, name }, limit);
+
+  const schema = Joi.object({
+    email: Joi.string().email().trim().optional(),
+    name: Joi.string().trim().min(3).max(50).optional(),
+    limit: Joi.number().integer().min(1).max(100).optional().default(50)
+  })
+  const { limit, ...query } = await validateData(req.query, schema);
+
+  const cursor = await find('users', query, limit);
   const users = await cursor.toArray();
   res.status(200).json(users);
 }
 
 async function handlePost(req, res) {
-  const newUser = validateBody(req.body, {
-    email: {
-      required: true,
-      type: 'string',
-      min: 5,
-      max: 40,
-    },
-    name: {
-      required: true,
-      type: 'string',
-      min: 3,
-      max: 50,
-    },
-    password: {
-      required: true,
-      type: 'string',
-      min: 3,
-      max: 30,
-    },
-  });
+  const schema = Joi.object({
+    email: Joi.string().email().trim().required(),
+    name: Joi.string().trim().min(3).max(50).required(),
+    password: Joi.string().min(3).max(50).required()
+  })
+  const newUser = await validateData(req.body, schema);
+
 
   // 10 rounds will be ok
   const hashedPassword = await bcrypt.hash(password, 10);
-  const userId = await insertOne('users', { ...newUser, password: hashedPassword });
+  const userId = await insertOne('users', { password: hashedPassword, ...newUser });
 
   const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET, { expiresIn: '12h' });
   res.status(201).json({ token });

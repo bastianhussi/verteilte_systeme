@@ -1,14 +1,15 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { findOne } from '../../utils/database';
-import { handleError, validateBody } from '../../utils/apiValidation';
+import { handleError, validateData } from '../../utils/middleware';
 import { UnauthorizedError } from '../../utils/errors';
+import Joi from '@hapi/joi';
 
 export default async function (req, res) {
   try {
     switch (req.method) {
       case 'POST':
-        await handlePOST(req, res);
+        await handlePost(req, res);
       default:
         res.status(405).end();
     }
@@ -17,19 +18,12 @@ export default async function (req, res) {
   }
 }
 
-async function handlePOST(req, res) {
-  const { email, password } = validateBody(req.body, {
-    email: {
-      type: 'string',
-      required: true,
-      min: 5,
-      max: 30,
-    },
-    password: {
-      type: 'string',
-      required: true,
-    },
+async function handlePost(req, res) {
+  const schema = Joi.object({
+    email: Joi.string().email().trim().required(),
+    password: Joi.string().min(3).max(50).required()
   });
+  const { email, password } = await validateData(req.body, schema);
 
   const user = await findOne('users', { email });
   if (!await bcrypt.compare(password, user.password)) {
