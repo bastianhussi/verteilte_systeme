@@ -1,66 +1,80 @@
-import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
-import database from '../../../utils/database';
+import { findOne, updateOne, deleteOne } from '../../../utils/database';
+import { auth, handleError, validateData } from '../../../utils/middleware';
+import { ForbiddenError } from '../../../utils/errors';
+import Joi from '@hapi/joi';
 
 export default async (req, res) => {
-  switch (req.method) {
-    case 'GET':
-      await handleGET(req, res);
-      break;
-    case 'PATCH':
-      await handlePATCH(req, res);
-      break;
-    case 'DELETE':
-      await handleDELETE(req, res);
-      break;
-    default:
-      res.status(405);
-      break;
+  try {
+    switch (req.method) {
+      case 'GET':
+        await handleGet(req, res);
+        break;
+      case 'PATCH':
+        await handlePatch(req, res);
+        break;
+      case 'DELETE':
+        await handleDelete(req, res);
+        break;
+      default:
+        res.status(405).end();
+        break;
+    }
+  } catch (err) {
+    handleError(req, res, err);
   }
 };
 
-function getToken(req, res) {
-  let token = req.headers['x-access-token'] || req.headers.authorization;
-  if (!token) return res.status(401);
-  if (token.startsWith('Bearer ')) {
-    token = token.split(' ')[1];
-  }
+async function handleGet(req, res) {
+  const token = auth(req);
+  const { id } = req.query;
 
-  const { query: { id } } = req;
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // TODO: change order! first get user (check for 404), then compare token._id with id from req
-
-    if (decoded._id !== id) return res.status(403).send('invalid jwt for this user account');
-    return decoded;
-  } catch (err) {
-    return res.status(401).send('invalid jwt');
-  }
+  const user = await findOne('users', ({ _id: new ObjectId(id) }));
+  validateIdAgainstToken(token, id);
+  res.status(200).json(user);
 }
 
-async function handleGET(req, res) {
-  const token = getToken(req, res);
-  const client = database();
+async function handlePatch(req, res) {
+  const token = auth(req);
 
-  try {
-    await client.connect();
-    const user = await client.db('nextjs').collection('users').findOne({ _id: new ObjectId(token._id) });
-    if (!user) return res.status(404).send(`no user with the id ${token._id} found!`);
-    return res.status(200).json(user);
-  } catch (err) {
-    console.error(err);
-    return res.status(500).send(`an error occured: ${err}`);
-  } finally {
-    await client.close();
+  const schema = Joi.object({
+    email: Joi.string().email().trim().optional(),
+    name: Joi.string().trim().min(3).max(50).optional(),
+    password: Joi.string().min(3).max(50).optional()
+  })
+  const modifiedUser = await validateData(req.body, schema);
+
+  const { id } = req.query;
+  validateIdAgainstToken(token, id);
+
+  if (modifiedUser.password) {
+    modifiedUser.password = await bcrypt.hash(modifiedUser.password, 10);
   }
+
+  await updateOne('users', { _id: new ObjectId(id) }, { $set: modifiedUser });
+  const updatedUser = await findOne('users', { _id: new ObjectId(id) });
+  res.status(200).json(updatedUser);
 }
 
-async function handlePATCH(req, res) {
+async function handleDelete(req, res) {
+  const token = auth(req);
+  const { id } = req.query;
+  validateIdAgainstToken(token, id);
 
+  const deletedUser = await findOne('users', { _id: new ObjectId(id) });
+  await deleteOne('users', { _id: new ObjectId(id) });
+  
+  deletedUser.remove(password);
+  res.status(200).json(deletedUser);
 }
 
-async function handleDELETE(req, res) {
-
+function validateIdAgainstToken(token, id) {
+  if (token._id !== id) {
+    throw new ForbiddenError(`invalid token for the user with the id ${id}`, {
+      reqBody: req.body,
+      token,
+      user,
+    });
+  }
 }

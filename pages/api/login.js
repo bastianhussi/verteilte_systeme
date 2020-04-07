@@ -1,38 +1,35 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import database from '../../utils/database';
+import { findOne } from '../../utils/database';
+import { handleError, validateData } from '../../utils/middleware';
+import { UnauthorizedError } from '../../utils/errors';
+import Joi from '@hapi/joi';
 
-export default async (req, res) => {
-  switch (req.method) {
-    case 'POST':
-      await handlePOST(req, res);
-    default:
-      res.status(405);
-  }
-};
-
-async function handlePOST(req, res) {
-  const client = database();
+export default async function (req, res) {
   try {
-    await client.connect();
-    const user = await client.db('nextjs').collection('users').findOne({ email: req.body.email });
-    if (!user) return res.status(404).send(`found no user with the email address: ${req.body.email}`);
-    if (!await bcrypt.compare(req.body.password, user.password)) return res.status(401).send('you entered a wrong password');
-
-    // token witch expires in 12 hours
-    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-    res.status(200).json({
-      token,
-      user: {
-        _id: user._id,
-        email: req.body.email,
-        password: req.body.password,
-      },
-    });
+    switch (req.method) {
+      case 'POST':
+        await handlePost(req, res);
+      default:
+        res.status(405).end();
+    }
   } catch (err) {
-    console.error(err);
-    res.status(500).send(`an error occured: ${err}`);
-  } finally {
-    await client.close();
+    handleError(req, res, err);
   }
+}
+
+async function handlePost(req, res) {
+  const schema = Joi.object({
+    email: Joi.string().email().trim().required(),
+    password: Joi.string().min(3).max(50).required()
+  });
+  const { email, password } = await validateData(req.body, schema);
+
+  const user = await findOne('users', { email });
+  if (!await bcrypt.compare(password, user.password)) {
+    throw new UnauthorizedError('you entered a wrong password', { reqBody: req.body, plain: password, encrypted: user.password });
+  }
+  // token witch expires in 12 hours
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
+  res.status(201).json({ token });
 }

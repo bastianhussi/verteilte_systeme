@@ -1,0 +1,20 @@
+# set Api GET-Request Limit
+# implement parsing in apiValidation -> validateBody
+# create index on users email in mongodb
+# handle malformed ObjectId Error
+# updateOne with upsert: true
+# clear rules for min/max length of req bodys and req queries
+# when should jwt expire? 12h?
+# min lenght for passwords?
+# implement "foreign keys" in mongodb
+# joi: check the start of lecture is before end of lecture
+# joi: parse date to string and set default value = ''
+# set an production logging and a seperate debugging loggin
+
+
+================================
+
+Bugs:
+
+# "Cannot set headers after they are sent to the client" when calling /api/users
+# "no 
