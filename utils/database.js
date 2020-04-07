@@ -9,9 +9,9 @@ const client = new MongoClient(process.env.MONGO_HOST || 'mongodb://localhost:27
 let connection;
 
 async function getConnection() {
-  if(!connection) {
+  if (!connection) {
     connection = await client.connect();
-  } 
+  }
   return connection;
 }
 
@@ -45,7 +45,7 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
 }
 
 export async function deleteOne(collection, filter) {
-  console.log(filter)
+  console.log(filter);
   const connection = await getConnection();
   const result = await connection.db(DB).collection(collection).deleteOne(filter);
   if (result.deletedCount === 0) {

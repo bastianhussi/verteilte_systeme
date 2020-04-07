@@ -20,18 +20,18 @@ async function handlePOST(req, res) {
         type: 'string',
         required: true,
         min: 5,
-        max: 30
+        max: 30,
       },
       password: {
         type: 'string',
         required: true,
-      }
+      },
     });
 
     // TODO: create index on email
     const user = await findOne('users', { email });
     if (!await bcrypt.compare(password, user.password)) {
-      throw new UnauthorizedError('you entered a wrong password', { reqBody: req.body, plain: password, encrypted: user.password, })
+      throw new UnauthorizedError('you entered a wrong password', { reqBody: req.body, plain: password, encrypted: user.password });
     }
     // token witch expires in 12 hours
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });

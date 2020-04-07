@@ -24,20 +24,20 @@ async function handleGET(req, res) {
         required: false,
         type: 'string',
         min: 3,
-        max: 20
+        max: 20,
       },
       limit: {
         required: false,
         type: 'string',
         min: 1,
-        max: 100
-      }
+        max: 100,
+      },
     });
     // TODO: implement parsing in validateBody-function
     let cursor;
-    console.log(name, limit)
+    console.log(name, limit);
     if (name) {
-      cursor = await find('rooms', { name: name }, parseInt(limit));
+      cursor = await find('rooms', { name }, parseInt(limit));
     } else {
       cursor = await find('rooms', {}, parseInt(limit));
     }

@@ -1,44 +1,45 @@
 import React from 'react';
 
 class CalendarForm extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+  constructor(props) {
+    super(props);
+  }
 
-    render() {
-        return (
-            <>
-                <div className="lightbox">
-                    <div className="createLectureForm">
-                        <button onClick={this.props.onClose}>Close</button>
-                        <form>
-                            <label>
-                                Title:
-                            <br />
-                                <input type="text" required />
-                            </label>
-                            <br />
-                            <label>
-                                Time:
-                                <br />
-                                <span>
-                                    <input type="time" />
-                                -
-                                <input type="time" />
-                                </span>
-                            </label>
-                            <br />
-                            <label>
-                                Room:
-                                <br />
-                                <input type="text" />
-                            </label>
-                            <button type="submit">Create</button>
-                        </form>
-                    </div>
+  render() {
+    return (
+      <>
+        <div className="lightbox">
+          <div className="createLectureForm">
+            <button onClick={this.props.onClose}>Close</button>
+            <form>
+              <label>
+                Title:
+                <br />
+                <input type="text" required />
+              </label>
+              <br />
+              <label>
+                Time:
+                <br />
+                <span>
+                  <input type="time" />
+                  -
+                  <input type="time" />
+                </span>
+              </label>
+              <br />
+              <label>
+                Room:
+                <br />
+                <input type="text" />
+              </label>
+              <button type="submit">Create</button>
+            </form>
+          </div>
 
-                </div>
-                <style jsx>{`
+        </div>
+        <style jsx>
+          {`
                     .lightbox {
                         position: fixed;
                         top: 0;
@@ -53,10 +54,11 @@ class CalendarForm extends React.Component {
                     .createLectureForm {
                         background-color: white;
                     }
-                `}</style>
-            </>
-        );
-    }
+                `}
+        </style>
+      </>
+    );
+  }
 }
 
 export default CalendarForm;

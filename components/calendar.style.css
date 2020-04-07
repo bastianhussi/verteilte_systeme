@@ -1,0 +1,32 @@
+.week {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.day {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.day-header {
+    background-color: #61dafb;
+    width: 100%;
+    height: 50px;
+    position: sticky;
+    top: 0;
+}
+
+.hour {
+    height: 50px;
+    width: 150px;
+    border: black solid 2px;
+}
+.hour:hover {
+    cursor: pointer;
+}

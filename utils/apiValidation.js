@@ -1,5 +1,5 @@
-import { UserFacingError, BadRequestError, UnauthorizedError } from './errors';
 import jwt from 'jsonwebtoken';
+import { UserFacingError, BadRequestError, UnauthorizedError } from './errors';
 
 // checks if the token in the authorization header is valid.
 export function auth(req) {
@@ -21,10 +21,9 @@ export function auth(req) {
 export function handleError(req, res, err) {
   if (err instanceof UserFacingError) {
     return res.status(err.statusCode).send(err.message);
-  } else {
-    res.status(500).end();
-    console.error(err, 'request body:', req.body, 'request query', req.query);
   }
+  res.status(500).end();
+  console.error(err, 'request body:', req.body, 'request query', req.query);
 }
 
 // TODO: implement parsing
@@ -79,24 +78,22 @@ export function validateBody(body, schema) {
           }
           break;
         case 'min':
-          if (typeof body[requiredAttributes] == 'number') {
+          if (typeof body[requiredAttributes] === 'number') {
             if (body[requiredAttributes] < ruleValue) {
               throw new BadRequestError(`min length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
             }
           } else
-            if (body[requiredAttributes].length < ruleValue) {
-              throw new BadRequestError(`min length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
-            }
+          if (body[requiredAttributes].length < ruleValue) {
+            throw new BadRequestError(`min length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+          }
           break;
         case 'max':
-          if (typeof body[requiredAttributes] == 'number') {
+          if (typeof body[requiredAttributes] === 'number') {
             if (body[requiredAttributes] > ruleValue) {
               throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
             }
-          } else {
-            if (body[requiredAttributes].length > ruleValue) {
-              throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
-            }
+          } else if (body[requiredAttributes].length > ruleValue) {
+            throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
           }
           break;
         default:

@@ -27,11 +27,13 @@ async function handleGET(req, res) {
 
     // TODO: handle malformed ObjectId Error
     const user = await findOne('users', ({ _id: new ObjectId(id) }));
-    if (token._id !== id) throw new ForbiddenError(`invalid token for the user with the id ${id}`, {
-      reqBody: req.body,
-      token,
-      user
-    });
+    if (token._id !== id) {
+      throw new ForbiddenError(`invalid token for the user with the id ${id}`, {
+        reqBody: req.body,
+        token,
+        user,
+      });
+    }
     res.status(200).json(user);
   } catch (err) {
     handleError(req, res, err);
