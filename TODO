@@ -1,0 +1,5 @@
+# set Api GET-Request Limit
+# implement parsing in apiValidation -> validateBody
+# create index on users email in mongodb
+# handle malformed ObjectId Error
+# updateOne with upsert: true

@@ -26,8 +26,6 @@ export function handleError(req, res, err) {
   console.error(err, 'request body:', req.body, 'request query', req.query);
 }
 
-// TODO: implement parsing
-
 /*
  * Validates the body of a req against a given schema.
  * If a attribute of the body doesn't meet the requirements an ApplicationError is thrown.
@@ -74,26 +72,26 @@ export function validateBody(body, schema) {
       switch (ruleAttribute) {
         case 'type':
           if (typeof body[requiredAttributes] !== ruleValue) {
-            throw new BadRequestError(`type of ${body[requiredAttributes]} needs to be ${ruleValue}. ${typeof body[requiredAttributes]} provided!`, { body, schema });
+            throw new BadRequestError(`type of ${requiredAttributes} needs to be ${ruleValue}. ${typeof body[requiredAttributes]} provided!`, { body, schema });
           }
           break;
         case 'min':
           if (typeof body[requiredAttributes] === 'number') {
             if (body[requiredAttributes] < ruleValue) {
-              throw new BadRequestError(`min length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+              throw new BadRequestError(`min length of ${requiredAttributes} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
             }
           } else
           if (body[requiredAttributes].length < ruleValue) {
-            throw new BadRequestError(`min length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+            throw new BadRequestError(`min length of ${requiredAttributes} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
           }
           break;
         case 'max':
           if (typeof body[requiredAttributes] === 'number') {
             if (body[requiredAttributes] > ruleValue) {
-              throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+              throw new BadRequestError(`max length of ${requiredAttributes} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
             }
           } else if (body[requiredAttributes].length > ruleValue) {
-            throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+            throw new BadRequestError(`max length of ${requiredAttributes} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
           }
           break;
         default:

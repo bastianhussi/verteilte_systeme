@@ -26,13 +26,13 @@ export default class Calendar extends React.Component {
 Date.prototype.monthDays = function () {
   const d = new Date(this.getFullYear(), this.getMonth() + 1, 0);
   return d.getDate();
-}
+};
 
 class Month extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      date: new Date()
+      date: new Date(),
     };
     this.previousMonth = this.previousMonth.bind(this);
     this.nextMonth = this.nextMonth.bind(this);
@@ -46,7 +46,6 @@ class Month extends React.Component {
       previousMonth = new Date(this.state.date.getFullYear(), this.state.date.getMonth() - 1, 1);
     }
     this.setState({ date: previousMonth });
-
   }
 
   nextMonth() {
@@ -62,20 +61,20 @@ class Month extends React.Component {
   render() {
     const days = [];
     for (let d = 1; d <= this.state.date.monthDays(); d++) {
-      days.push(<MonthDay key={d} number={d} />)
+      days.push(<MonthDay key={d} number={d} />);
     }
     return (
       <>
         <div className={styles.monthHeader}>
           <button onClick={this.previousMonth}>previous</button>
           {this.state.date.toDateString()}
-          <button onClick={this.nextMonth} >next</button>
+          <button onClick={this.nextMonth}>next</button>
         </div>
         <div className={styles.month}>
           {days}
         </div>
       </>
-    )
+    );
   }
 }
 
@@ -106,7 +105,7 @@ class Week extends React.Component {
         <WeekDay name="Friday" />
         <WeekDay name="Saturday" />
         <WeekDay name="Sunday" />
-      </div >
+      </div>
     );
   }
 }

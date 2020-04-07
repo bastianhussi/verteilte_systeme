@@ -2,16 +2,16 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import database from '../../utils/database';
 
-export default async (req, res) => {
+export default async function (req, res) {
   switch (req.method) {
     case 'POST':
-      await handlePOST(req, res);
+      await handlePost(req, res);
     default:
-      res.status(405);
+      res.status(405).end();
   }
-};
+}
 
-async function handlePOST(req, res) {
+async function handlePost(req, res) {
   try {
     // 10 saltRounds will be ok
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -21,7 +21,6 @@ async function handlePOST(req, res) {
       password: hashedPassword,
     });
 
-    // TODO: more verbose error handling
     if (!result.insertedId) return res.status(400).send('could not create user');
 
     const token = jwt.sign({ id: result.insertedId }, process.env.JWT_SECRET, { expiresIn: '1d' });
