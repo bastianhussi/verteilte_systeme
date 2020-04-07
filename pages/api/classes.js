@@ -21,7 +21,7 @@ export default async function (req, res) {
 
 async function handleGet(req, res) {
   auth(req);
-  const { name, limit = 50 } = validateBody(req.query, {
+  const { name = '', limit = 50 } = validateBody(req.query, {
     name: {
       required: false,
       type: 'string',
@@ -34,12 +34,7 @@ async function handleGet(req, res) {
     },
   });
 
-  let cursor;
-  if (name) {
-    cursor = await find('rooms', { name }, parseInt(limit));
-  } else {
-    cursor = await find('classes', {}, parseInt(limit));
-  }
+  const cursor = await find('rooms', { name }, parseInt(limit));
   const classes = await cursor.toArray();
   res.status(200).json(classes);
 }
@@ -54,7 +49,7 @@ async function handlePost(req, res) {
       max: 30,
     },
   });
-  const result = await insertOne('classes', doc);
-  const newClass = { ...doc, _id: result.insertedId };
+  const classId = await insertOne('classes', doc);
+  const newClass = { ...doc, _id: classId };
   res.status(201).json(newClass);
 }

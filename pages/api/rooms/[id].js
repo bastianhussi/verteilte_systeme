@@ -53,6 +53,9 @@ async function handlePatch(req, res) {
 async function handleDelete(req, res) {
   auth(req);
   const { query: { id } } = req;
+
+  const deletedRoom = await findOne('rooms', { _id: new ObjectId(id) });
   await deleteOne('rooms', { _id: new ObjectId(id) });
-  res.status(200).end();
+
+  res.status(200).json(deletedRoom);
 }

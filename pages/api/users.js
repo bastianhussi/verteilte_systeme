@@ -1,39 +1,70 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import database from '../../utils/database';
+import { find, insertOne } from '../../utils/database';
+import { validateBody, handleError, auth } from '../../utils/apiValidation';
 
 export default async function (req, res) {
-  switch (req.method) {
-    case 'POST':
-      await handlePost(req, res);
-    default:
-      res.status(405).end();
+  try {
+    switch (req.method) {
+      case 'GET':
+        await handleGet(req, res);
+      case 'POST':
+        await handlePost(req, res);
+      default:
+        res.status(405).end();
+    }
+  } catch (err) {
+    handleError(req, res, err);
   }
 }
 
+async function handleGet(req, res) {
+  auth(req);
+  const { email = '', name = '', limit = 50 } = validateBody(req.query, {
+    email: {
+      required: false,
+      type: 'string',
+      min: 5,
+      max: 40,
+    },
+    name: {
+      required: false,
+      type: 'string',
+      min: 3,
+      max: 50,
+    },
+  });
+  const cursor = await find('users', { email, name }, limit);
+  const users = await cursor.toArray();
+  res.status(200).json(users);
+}
+
 async function handlePost(req, res) {
-  try {
-    // 10 saltRounds will be ok
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const db = await database();
-    const result = await db.collection('users').insertOne({
-      email: req.body.email,
-      password: hashedPassword,
-    });
+  const newUser = validateBody(req.body, {
+    email: {
+      required: true,
+      type: 'string',
+      min: 5,
+      max: 40,
+    },
+    name: {
+      required: true,
+      type: 'string',
+      min: 3,
+      max: 50,
+    },
+    password: {
+      required: true,
+      type: 'string',
+      min: 3,
+      max: 30,
+    },
+  });
 
-    if (!result.insertedId) return res.status(400).send('could not create user');
+  // 10 rounds will be ok
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const userId = await insertOne('users', { ...newUser, password: hashedPassword });
 
-    const token = jwt.sign({ id: result.insertedId }, process.env.JWT_SECRET, { expiresIn: '1d' });
-    res.status(201).json({
-      token,
-      user: {
-        _id: result.insertedId,
-        email: req.body.email,
-        password: req.body.password,
-      },
-    });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(`an error occured: ${err}`);
-  }
+  const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET, { expiresIn: '12h' });
+  res.status(201).json({ token });
 }

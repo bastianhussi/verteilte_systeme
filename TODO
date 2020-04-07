@@ -3,3 +3,6 @@
 # create index on users email in mongodb
 # handle malformed ObjectId Error
 # updateOne with upsert: true
+# clear rules for min/max length of req bodys and req queries
+# when should jwt expire? 12h?
+# min lenght for passwords?
