@@ -1,12 +1,12 @@
 import React from 'react';
 import CalendarForm from './calendarForm';
-import './calendar.style.css';
+import styles from './calendar.module.css';
 
 export default class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      view: <Week date={new Date()} />,
+      view: <Month />,
     };
   }
 
@@ -23,9 +23,71 @@ export default class Calendar extends React.Component {
   }
 }
 
+Date.prototype.monthDays = function () {
+  const d = new Date(this.getFullYear(), this.getMonth() + 1, 0);
+  return d.getDate();
+}
+
 class Month extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      date: new Date()
+    };
+    this.previousMonth = this.previousMonth.bind(this);
+    this.nextMonth = this.nextMonth.bind(this);
+  }
+
+  previousMonth() {
+    let previousMonth;
+    if (this.state.date.getMonth() == 1) {
+      previousMonth = new Date(this.state.date.getFullYear() - 1, 0, 1);
+    } else {
+      previousMonth = new Date(this.state.date.getFullYear(), this.state.date.getMonth() - 1, 1);
+    }
+    this.setState({ date: previousMonth });
+
+  }
+
+  nextMonth() {
+    let nextMonth;
+    if (this.state.date.getMonth() == 11) {
+      nextMonth = new Date(this.state.date.getFullYear() + 1, 0, 1);
+    } else {
+      nextMonth = new Date(this.state.date.getFullYear(), this.state.date.getMonth() + 1, 1);
+    }
+    this.setState({ date: nextMonth });
+  }
+
+  render() {
+    const days = [];
+    for (let d = 1; d <= this.state.date.monthDays(); d++) {
+      days.push(<MonthDay key={d} number={d} />)
+    }
+    return (
+      <>
+        <div className={styles.monthHeader}>
+          <button onClick={this.previousMonth}>previous</button>
+          {this.state.date.toDateString()}
+          <button onClick={this.nextMonth} >next</button>
+        </div>
+        <div className={styles.month}>
+          {days}
+        </div>
+      </>
+    )
+  }
+}
+
+class MonthDay extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div className={styles.monthDay}>{this.props.number}</div>
+    );
   }
 }
 
@@ -35,55 +97,21 @@ class Week extends React.Component {
   }
 
   render() {
-    const currentDay = this.props.date.getDay();
-
-    const days = [];
-
-    // starting at monday and goining till saturday
-    for (let d = 1; d <= 6; d++) {
-      let name;
-      let date;
-      if (d < currentDay) {
-        date = new Date().setDate(this.props.date.getDate() - d);
-      } else {
-        date = new Date().setDate(this.props.date.getDate() + d);
-      }
-      switch (d) {
-        case 1:
-          name = 'Monday';
-          break;
-        case 2:
-          name = 'Tuesday';
-          break;
-        case 3:
-          name = 'Wednesday';
-          break;
-        case 4:
-          name = 'Thursday';
-          break;
-        case 5:
-          name = 'Friday';
-          break;
-        case 5:
-          name = 'Saturday';
-          break;
-        default:
-          // Sunday not covered
-          break;
-      }
-      days.push(<Day key={d} name={name} date={date} active={d === currentDay} />);
-    }
     return (
-      <>
-        <div className="week">
-          {days}
-        </div>
-      </>
+      <div className={styles.week}>
+        <WeekDay name="Monday" />
+        <WeekDay name="Tuesday" />
+        <WeekDay name="Wednesday" />
+        <WeekDay name="Thursday" />
+        <WeekDay name="Friday" />
+        <WeekDay name="Saturday" />
+        <WeekDay name="Sunday" />
+      </div >
     );
   }
 }
 
-class Day extends React.Component {
+class WeekDay extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -91,16 +119,15 @@ class Day extends React.Component {
   render() {
     const hours = [];
     for (let h = 8; h < 18; h++) {
-      hours.push(<Hour start={h} end={h + 1} key={h} onClick={this.props.onClick} />);
+      hours.push(<Hour start={h} end={h + 1} key={h} />);
     }
+
     return (
       <>
 
-        <div className="day" className={this.props.active ? 'active' : ''}>
-          <div className="day-header">
+        <div className={styles.weekDay}>
+          <div className={styles.weekDayHeader}>
             {this.props.name}
-            <br />
-            {new Date(this.props.date).getDate()}
           </div>
           {hours}
         </div>
@@ -117,11 +144,9 @@ class Hour extends React.Component {
   render() {
     return (
       <>
-        <div className="hour" onClick={this.props.onClick}>
+        <div className={styles.hour}>
           {this.props.start}
-          <br />
           -
-          <br />
           {this.props.end}
         </div>
       </>
