@@ -1,11 +1,18 @@
 import React from 'react';
+import CalendarForm from './calendarForm';
 
 class Calendar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-
+      formVisible: false
     };
+
+    this.toggleFormVisibility = this.toggleFormVisibility.bind(this);
+  }
+
+  toggleFormVisibility() {
+    this.setState({ formVisible: !this.state.formVisible });
   }
 
   render() {
@@ -15,7 +22,8 @@ class Calendar extends React.Component {
     }
     return (
       <>
-        <div className="week">{days}</div>
+        {this.state.formVisible ? <CalendarForm onClose={this.toggleFormVisibility} /> : <></>}
+        <div className="week" onClick={this.toggleFormVisibility}>{days}</div>
         <style jsx>
           {`
                     .week {
@@ -35,19 +43,12 @@ class Calendar extends React.Component {
 class Day extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    };
   }
 
   render() {
-    function onClick(start, end) {
-      console.log(`${start}-${end}`);
-    }
-
     const hours = [];
     for (let h = 0; h < 24; h++) {
-      hours.push(<Hour start={h} end={h + 1} key={h} onClick={onClick} />);
+      hours.push(<Hour start={h} end={h + 1} key={h} onClick={this.props.onClick} />);
     }
     return (
       <>
@@ -96,7 +97,7 @@ class Hour extends React.Component {
   render() {
     return (
       <>
-        <div className="hour" onClick={() => this.props.onClick(this.props.start, this.props.end)}>
+        <div className="hour" onClick={this.props.onClick}>
           {this.props.start}
           -
           {this.props.end}

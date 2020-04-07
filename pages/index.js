@@ -1,7 +1,8 @@
 import React from 'react';
 import Head from 'next/head';
-import { auth, logout } from '../utils/auth';
+import { auth } from '../utils/auth';
 import Calendar from '../components/calendar';
+import Navbar from '../components/navbar';
 
 class Index extends React.Component {
   constructor(props) {
@@ -9,17 +10,17 @@ class Index extends React.Component {
   }
 
   static async getInitialProps(ctx) {
-    const token = await auth(ctx);
-
-    return { token };
+    const user = await auth(ctx);
+    // fetch user data
+    return { user };
   }
 
   render() {
     return (
       <>
         <Head />
+        <Navbar user={this.props.user} />
         <Calendar />
-        <button onClick={logout}>Logout</button>
       </>
     );
   }

@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb';
-import database from '../../../utils/database';
-import { authAPI } from '../../../utils/auth';
+import { findOne } from '../../../utils/database';
+import { auth, handleError, validateBody } from '../../../utils/apiValidation';
+import { ForbiddenError } from '../../../utils/errors';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -19,19 +20,21 @@ export default async (req, res) => {
   }
 };
 
-// TODO: handle mongodb errors
 async function handleGET(req, res) {
-  const token = authAPI(req, res);
-  const { query: { id } } = req;
   try {
-    const db = await database();
-    const user = await db.collection('users').findOne({ _id: new ObjectId(token._id) });
-    if (!user) return res.status(404).send(`no user with the id ${token._id} found!`);
-    if (token._id !== id) return res.status(403).send(`invalid token for the user with the id ${id}`);
-    return res.status(200).json(user);
+    const token = auth(req);
+    const { query: { id } } = req;
+
+    // TODO: handle malformed ObjectId Error
+    const user = await findOne('users', ({ _id: new ObjectId(id) }));
+    if (token._id !== id) throw new ForbiddenError(`invalid token for the user with the id ${id}`, {
+      reqBody: req.body,
+      token,
+      user
+    });
+    res.status(200).json(user);
   } catch (err) {
-    console.error(err);
-    return res.status(500).send(`an error occured: ${err}`);
+    handleError(req, res, err);
   }
 }
 

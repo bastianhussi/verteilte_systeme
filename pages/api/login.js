@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import database from '../../utils/database';
+import { findOne } from '../../utils/database';
+import { handleError, validateBody } from '../../utils/apiValidation';
+import { UnauthorizedError } from '../../utils/errors';
 
 export default async (req, res) => {
   switch (req.method) {
@@ -13,23 +15,28 @@ export default async (req, res) => {
 
 async function handlePOST(req, res) {
   try {
-    const db = await database();
-    const user = await db.collection('users').findOne({ email: req.body.email });
-    if (!user) return res.status(404).send(`found no user with the email address: ${req.body.email}`);
-    if (!await bcrypt.compare(req.body.password, user.password)) return res.status(401).send('you entered a wrong password');
+    const { email, password } = validateBody(req.body, {
+      email: {
+        type: 'string',
+        required: true,
+        min: 5,
+        max: 30
+      },
+      password: {
+        type: 'string',
+        required: true,
+      }
+    });
 
+    // TODO: create index on email
+    const user = await findOne('users', { email });
+    if (!await bcrypt.compare(password, user.password)) {
+      throw new UnauthorizedError('you entered a wrong password', { reqBody: req.body, plain: password, encrypted: user.password, })
+    }
     // token witch expires in 12 hours
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
-    res.status(201).json({
-      token,
-      user: {
-        _id: user._id,
-        email: req.body.email,
-        password: req.body.password,
-      },
-    });
+    res.status(201).json({ token });
   } catch (err) {
-    console.error(err);
-    res.status(500).send(`an error occured: ${err}`);
+    handleError(req, res, err);
   }
 }

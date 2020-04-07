@@ -89,8 +89,14 @@ export function validateBody(body, schema) {
             }
           break;
         case 'max':
-          if (body[requiredAttributes].length > ruleValue) {
-            throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+          if (typeof body[requiredAttributes] == 'number') {
+            if (body[requiredAttributes] > ruleValue) {
+              throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+            }
+          } else {
+            if (body[requiredAttributes].length > ruleValue) {
+              throw new BadRequestError(`max length of ${body[requiredAttributes]} needs to be ${ruleValue}. ${body[requiredAttributes].length} provided`, { body, schema });
+            }
           }
           break;
         default:
