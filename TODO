@@ -1,5 +1,4 @@
 # set Api GET-Request Limit
-# create index on users email in mongodb
 # handle malformed ObjectId Error
 # updateOne with upsert: true
 # clear rules for min/max length of req bodys and req queries
@@ -9,7 +8,6 @@
 # joi: check the start of lecture is before end of lecture
 # joi: parse date to string and set default value = ''
 # set an production logging and a seperate debugging loggin
-# admin login
 
 ================================
 
