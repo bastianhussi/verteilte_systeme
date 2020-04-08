@@ -1,50 +1,43 @@
 import React from 'react';
 import Link from 'next/link';
 import { logout } from '../utils/auth';
+import styles from './navbar.module.css';
 
-class Navbar extends React.Component {
+export default class Navbar extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showMenu: false
+    }
   }
 
   render() {
     return (
       <>
-        <ul>
-          <li><Link href="/"><a>Overview</a></Link></li>
-          <li><Link href="/"><a>Classes</a></Link></li>
-          <li><Link href="/"><a>Up next...</a></Link></li>
-          <li style={{ float: 'right' }}><a onClick={logout}>{this.props.user.email}</a></li>
+        <ul className={styles.navbar}>
+          <li className={styles.navbarItem}><Link href="/"><a>Overview</a></Link></li>
+          <li className={styles.navbarItem}><Link href="/"><a>Classes</a></Link></li>
+          <li className={styles.navbarItem}><Link href="/"><a>Up next...</a></Link></li>
+
+          <li className={styles.navbarItem} style={{ float: 'right' }}>
+            <a onMouseOver={() => this.setState({ showMenu: !this.state.showMenu })}>
+              {this.props.user.name}
+            </a>
+          </li>
         </ul>
-        <style jsx>
-          {`
-                    ul {
-                        list-style-type: none;
-                        margin: 0;
-                        padding: 0;
-                        overflow: hidden;
-                        background-color: #61dafb;
-                    }
-
-                    li {
-                        float: left;
-                    }
-
-                    li:hover {
-                        cursor: pointer;
-                    }
-
-                    li a {
-                        display: block;
-                        text-align: center;
-                        padding: 14px 16px;
-                        text-decoration: none;
-                    }
-                `}
-        </style>
+        {this.state.showMenu ? (<Menu />) : (<></>)}
       </>
     );
   }
 }
 
-export default Navbar;
+function Menu(props) {
+  return (
+    <div>
+      <ul className={styles.menu}>
+        <li className={styles.menuItem}><Link href="/account"><a>Settings</a></Link></li>
+        <li className={styles.menuItem}><a href="#" onClick={logout}>Logout</a></li>
+      </ul>
+    </div>
+  );
+}
