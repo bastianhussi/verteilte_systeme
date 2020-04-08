@@ -2,25 +2,28 @@ import Head from 'next/head';
 import Link from 'next/link';
 import React from 'react';
 import axios from 'axios';
-import { login, noAuth } from '../utils/auth';
+import { noAuth } from '../utils/auth';
 
-class Register extends React.Component {
+export default class Register extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
+      name: '',
       password: '',
-      error: '',
+      viewPassword: false,
+      message: ''
     };
     this.submitForm = this.submitForm.bind(this);
     this.changeEmail = this.changeEmail.bind(this);
+    this.changeName = this.changeName.bind(this);
     this.changePassword = this.changePassword.bind(this);
   }
 
   static getInitialProps(ctx) {
     noAuth(ctx);
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const apiUrl = process.browser ? `${protocol}://${window.location.host}/api/users` : `${protocol}://${ctx.req.headers.host}/api/users`;
+    const apiUrl = process.browser ? `${protocol}://${window.location.host}/api/register` : `${protocol}://${ctx.req.headers.host}/api/register`;
     return { apiUrl };
   }
 
@@ -28,24 +31,28 @@ class Register extends React.Component {
     this.setState({ email: event.target.value });
   }
 
+  changeName(event) {
+    this.setState({ name: event.target.value });
+  }
+
   changePassword(event) {
     this.setState({ password: event.target.value });
   }
 
   async submitForm(event) {
-    this.setState({ error: '' });
+    this.setState({ message: '' });
     event.preventDefault();
     try {
-      const res = await axios.post(this.props.apiUrl, {
+      await axios.post(this.props.apiUrl, {
         email: this.state.email,
-        password: this.state.password,
+        name: this.state.name,
+        password: this.state.password
       }, {
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
       });
-      const { token } = res.data;
-      login(token);
+      this.setState({ email: '', name: '', password: '', message: 'please check your inbox' })
     } catch (err) {
-      this.setState({ password: '', error: err.response.data });
+      this.setState({ password: '', message: err.response.data });
     }
   }
 
@@ -62,20 +69,24 @@ class Register extends React.Component {
             </label>
             <br />
             <label>
-              Password:
+              Name:
               <br />
-              <input type="password" value={this.state.password} onChange={this.changePassword} required />
+              <input type="text" value={this.state.name} onChange={this.changeName} required autoComplete="on" />
             </label>
             <br />
-            <button type="submit">Register</button>
+            <label>
+              Password:
+              <br />
+              <input type={this.state.viewPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide': 'Show'}</a>
+            </label>
+            <br />
+              <button type="submit">Register</button>
           </form>
-          {this.state.error.length > 0 ? <p>{this.state.error}</p> : <></>}
-          <Link href="/login"><a>Login</a></Link>
+            {this.state.message ? <p>{this.state.message}</p> : <></>}
+            <Link href="/login"><a>Login</a></Link>
         </div>
       </>
-
     );
   }
 }
-
-export default Register;

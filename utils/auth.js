@@ -2,6 +2,34 @@ import Router from 'next/router';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
+// all cookies are saved in one string and seperated by "; "
+function getCookieByName(cookieName, { req }) {
+  // check if on server or client
+  let cookies;
+  if (req) {
+    if (!req.headers.cookie) return null;
+    cookies = req.headers.cookie.split('; ');
+  } else {
+    if (document.cookie === '') return null;
+    cookies = document.cookie.split('; ');
+  }
+
+  const cookie = cookies.filter((c) => c.startsWith(cookieName))[0];
+  if (cookie) {
+    return cookie.split('=')[1];
+  }
+  return null;
+}
+
+function reject(ctx, path) {
+  if (ctx.req) {
+    ctx.res.writeHead(302, { Location: path });
+    ctx.res.end();
+  } else {
+    Router.push(path);
+  }
+}
+
 export function login(token) {
   const now = new Date();
   // expires in 12 hours
@@ -49,33 +77,5 @@ export function noAuth(ctx) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
       if (!err) reject(ctx, '/');
     });
-  }
-}
-
-// all cookies are saved in one string and seperated by "; "
-function getCookieByName(cookieName, { req }) {
-  // check if on server or client
-  let cookies;
-  if (req) {
-    if (!req.headers.cookie) return null;
-    cookies = req.headers.cookie.split('; ');
-  } else {
-    if (document.cookie === '') return null;
-    cookies = document.cookie.split('; ');
-  }
-
-  const cookie = cookies.filter((c) => c.startsWith(cookieName))[0];
-  if (cookie) {
-    return cookie.split('=')[1];
-  }
-  return null;
-}
-
-function reject(ctx, path) {
-  if (ctx.req) {
-    ctx.res.writeHead(302, { Location: path });
-    ctx.res.end();
-  } else {
-    Router.push(path);
   }
 }

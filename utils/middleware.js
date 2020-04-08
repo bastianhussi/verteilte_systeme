@@ -8,7 +8,7 @@ export function auth(req) {
 
   // in case of Bearer token
   if (token.startsWith('Bearer ')) {
-    token = token.split(' ')[1];
+    [, token] = token.split(' ');
   }
 
   return jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
@@ -19,18 +19,17 @@ export function auth(req) {
 
 export function handleError(req, res, err) {
   if (err instanceof UserFacingError) {
-    console.log(err.message)
     res.status(err.statusCode).send(err.message);
   } else {
     res.status(500).end();
-    console.error(err, 'request body:', req.body, 'request query', req.query);
   }
+  console.log(err);
 }
 
 export async function validateData(data, schema) {
   try {
     return await schema.validateAsync(data);
   } catch (err) {
-    throw new BadRequestError(err.details.message, { data, schema, err });
+    throw new BadRequestError(err.details[0].message, { data, schema, err });
   }
 }
