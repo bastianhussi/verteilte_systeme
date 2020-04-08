@@ -3,7 +3,7 @@ import { find, insertOne } from '../../utils/database';
 import { auth, handleError, validateData } from '../../utils/middleware';
 
 // example for possible querystrings: /api/rooms?name=201A&limit=200;
-async function handleGET(req, res) {
+async function handleGet(req, res) {
   auth(req);
 
   const schema = Joi.object({
@@ -19,7 +19,7 @@ async function handleGET(req, res) {
   res.status(200).json(rooms);
 }
 
-async function handlePOST(req, res) {
+async function handlePost(req, res) {
   auth(req);
 
   const schema = Joi.object({
@@ -36,10 +36,10 @@ export default async function (req, res) {
   try {
     switch (req.method) {
       case 'GET':
-        await handleGET(req, res);
+        await handleGet(req, res);
         break;
       case 'POST':
-        await handlePOST(req, res);
+        await handlePost(req, res);
         break;
       default:
         res.status(405).end();

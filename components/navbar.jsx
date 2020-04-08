@@ -18,7 +18,7 @@ export default class Navbar extends React.Component {
           <li className={styles.navbarItem}><Link href="/"><a>Overview</a></Link></li>
           <li className={styles.navbarItem}><Link href="/"><a>Classes</a></Link></li>
           <li className={styles.navbarItem}><Link href="/"><a>Up next...</a></Link></li>
-
+          {this.props.user.admin ? (<li className={styles.navbarItem}><Link href="/"><a>Admin Stuff</a></Link></li>) : (<></>)}
           <li className={styles.navbarItem} style={{ float: 'right' }}>
             <a onMouseOver={() => this.setState({ showMenu: !this.state.showMenu })}>
               {this.props.user.name}

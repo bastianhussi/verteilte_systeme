@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { UserFacingError, BadRequestError, UnauthorizedError } from './errors';
+import { UserFacingError, BadRequestError, UnauthorizedError, ForbiddenError } from './errors';
+import { MongoError, MongoParseError, ObjectId } from 'mongodb';
 
 // checks if the token in the authorization header is valid.
 export function auth(req) {
@@ -22,8 +23,8 @@ export function handleError(req, res, err) {
     res.status(err.statusCode).send(err.message);
   } else {
     res.status(500).end();
+    console.log(err);
   }
-  console.log(err);
 }
 
 export async function validateData(data, schema) {
@@ -31,5 +32,22 @@ export async function validateData(data, schema) {
     return await schema.validateAsync(data);
   } catch (err) {
     throw new BadRequestError(err.details[0].message, { data, schema, err });
+  }
+}
+
+export function validateIdAgainstToken(id, token) {
+  if (token._id !== id) {
+    throw new ForbiddenError(`invalid token for the user with the id ${id}`, {
+      reqBody: req.body,
+      token,
+    });
+  }
+}
+
+export function createObjectId({ id }) {
+  try {
+    return new ObjectId(id);
+  } catch (err) {
+    throw new BadRequestError(err, { id });
   }
 }

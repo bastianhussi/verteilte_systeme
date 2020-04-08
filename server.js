@@ -8,22 +8,23 @@
     });
     await client.connect();
 
-    const DB = process.env.MONGO_DB || 'nextjs';
+    const dbName = process.env.MONGO_DB || 'nextjs';
     const email = process.env.ADMIN_EMAIL;
 
     // create admin account if not exits
-    const admin = await client.db(DB).collection('users').findOne({ email });
+    const admin = await client.db(dbName).collection('users').findOne({ email });
     if (!admin) {
         const password = process.env.ADMIN_PASSWORD;
         const hashedPassword = await bcrypt.hash(password, 10);
-        await client.db(DB).collection('users').insertOne({ email, name: 'root', password: hashedPassword, admin: true });
+        await client.db(dbName).collection('users').insertOne({ email, name: 'root', password: hashedPassword, admin: true });
         console.log(`Created admin with email: ${email} and password: ${password}`);
     }
 
     // create index on users email if not exits
-    const index = await client.db(DB).collection('users').indexExists('email');
-    if(!index) {
-        await client.db(DB).collection('users').createIndex('email');
+    const index = await client.db(dbName).collection('users').indexExists('users_email');
+    if (!index) {
+        // 1: ascending order (, -1 would be descending)
+        await client.db(dbName).collection('users').createIndex({ email: 1 }, { unique: true, name: 'users_email' });
         console.log('Created index on users email');
     }
 

@@ -1,19 +1,21 @@
 import Joi from '@hapi/joi';
-import { handleError, validateData, auth } from '../../utils/middleware';
-import { insertOne, find } from '../../utils/database';
+import { handleError, validateData, auth, createObjectId } from '../../utils/middleware';
+import { insertOne, find, findOne } from '../../utils/database';
+import { ObjectId } from 'mongodb';
 
 async function handleGet(req, res) {
   auth(req);
 
   const schema = Joi.object({
-    title: Joi.string().trim().optional().default(''),
-    classId: Joi.string().optional().default(''),
-    roomId: Joi.string().optional().default(''),
+    title: Joi.string().trim().min(3).max(30).optional(),
+    userId: Joi.string().optional(),
+    classId: Joi.string().optional(),
+    roomId: Joi.string().optional(),
     limit: Joi.number().integer().min(1).max(100)
       .optional()
       .default(50),
   });
-  const { limit, ...query } = await validateData(req.body, schema);
+  const { limit, ...query } = await validateData(req.query, schema);
 
   const cursor = await find('lectures', query, limit);
   const lectures = await cursor.toArray();
@@ -26,15 +28,22 @@ async function handlePost(req, res) {
   const schema = Joi.object({
     title: Joi.string().trim().min(3).max(30)
       .required(),
-    classId: Joi.string().required(),
+    user: Joi.string().required(),
+    class: Joi.string().required(),
+    room: Joi.string().required(),
     start: Joi.date().required(),
     end: Joi.date().required(),
-    roomId: Joi.string().required(),
   });
-  const newLecture = await validateData(req.body, schema);
+  const lecture = await validateData(req.body, schema);
+  await Promise.all([
+    findOne('users', { _id: createObjectId(lecture.user) }),
+    findOne('classes', { _id: createObjectId(lecture.class) }),
+    findOne('rooms', { _id: createObjectId(lecture.room) })
+  ]);
 
-  const lectureId = await insertOne('lectures', newLecture);
-  res.status(201).json({ _id: lectureId, ...newLecture });
+  const lectureId = await insertOne('lectures', lecture);
+
+  res.status(201).json({ _id: lectureId, ...lecture });
 }
 
 export default async function (req, res) {
