@@ -1,15 +1,16 @@
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongodb';
 import Joi from '@hapi/joi';
-import { findOne, updateOne, deleteOne } from '../../../utils/database';
-import { auth, handleError, validateData, validateIdAgainstToken } from '../../../utils/middleware';
+import { findOne, updateOne, deleteOne, find } from '../../../utils/database';
+import { auth, handleError, validateData, validateIdAgainstToken, createObjectId } from '../../../utils/middleware';
 
 async function handleGet(req, res) {
   const token = auth(req);
   const { id } = req.query;
 
-  const user = await findOne('users', ({ _id: new ObjectId(id) }));
   validateIdAgainstToken(id, token);
+
+  const _id = createObjectId(id);
+  const user = await findOne('users', ({ _id }));
   res.status(200).json(user);
 }
 
@@ -31,8 +32,9 @@ async function handlePatch(req, res) {
     modifiedUser.password = await bcrypt.hash(modifiedUser.password, 10);
   }
 
-  await updateOne('users', { _id: new ObjectId(id) }, { $set: modifiedUser });
-  const updatedUser = await findOne('users', { _id: new ObjectId(id) });
+  const _id = createObjectId(id);
+  await updateOne('users', { _id }, { $set: modifiedUser });
+  const updatedUser = await findOne('users', { _id });
   res.status(200).json(updatedUser);
 }
 
@@ -41,8 +43,9 @@ async function handleDelete(req, res) {
   const { id } = req.query;
   validateIdAgainstToken(id, token);
 
-  const deletedUser = await findOne('users', { _id: new ObjectId(id) });
-  await deleteOne('users', { _id: new ObjectId(id) });
+  const _id = createObjectId(id);
+  const deletedUser = await findOne('users', { _id });
+  await deleteOne('users', { _id });
 
   deletedUser.remove(password);
   res.status(200).json(deletedUser);

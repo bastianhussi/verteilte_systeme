@@ -1,4 +1,4 @@
-(async function setup() {
+async function setup() {
     const { MongoClient } = require('mongodb');
     const bcrypt = require('bcrypt');
 
@@ -29,7 +29,7 @@
     }
 
     await client.close();
-})();
+};
 
 const { createServer } = require('http');
 const { parse } = require('url');
@@ -42,6 +42,12 @@ const handle = app.getRequestHandler();
 
 // see: https://nextjs.org/docs/advanced-features/custom-server
 app.prepare().then(() => {
+
+    setup().catch(err => {
+        console.log(err);
+        process.exit(1);
+    });
+
     createServer((req, res) => {
         const parsedUrl = parse(req.url, true)
         const { pathname, query } = parsedUrl

@@ -1,23 +1,23 @@
 import Joi from '@hapi/joi';
 import { handleError, validateData, auth, createObjectId } from '../../utils/middleware';
 import { insertOne, find, findOne } from '../../utils/database';
-import { ObjectId } from 'mongodb';
 
 async function handleGet(req, res) {
-  auth(req);
+  const token = auth(req);
 
   const schema = Joi.object({
     title: Joi.string().trim().min(3).max(30).optional(),
-    userId: Joi.string().optional(),
-    classId: Joi.string().optional(),
-    roomId: Joi.string().optional(),
+    class: Joi.string().optional(),
+    room: Joi.string().optional(),
+    start: Joi.date().optional(),
+    end: Joi.date().optional(),
     limit: Joi.number().integer().min(1).max(100)
       .optional()
       .default(50),
   });
   const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find('lectures', query, limit);
+  const cursor = await find('lectures', { user: token._id, ...query }, limit);
   const lectures = await cursor.toArray();
   res.status(200).json(lectures);
 }
@@ -41,9 +41,9 @@ async function handlePost(req, res) {
     findOne('rooms', { _id: createObjectId(lecture.room) })
   ]);
 
-  const lectureId = await insertOne('lectures', lecture);
+  const _id = await insertOne('lectures', lecture);
 
-  res.status(201).json({ _id: lectureId, ...lecture });
+  res.status(201).json({ _id, ...lecture });
 }
 
 export default async function (req, res) {

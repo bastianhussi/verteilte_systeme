@@ -10,6 +10,11 @@ const transport = nodemailer.createTransport({
   },
 });
 
+/**
+ * Sends a email the the user containing his verification code.
+ * @param {string} email - The users email address.
+ * @param {string} code - His verification code.
+ */
 export async function sendVerificationMail(email, code) {
   const message = {
     from: process.env.SMTP_USER,

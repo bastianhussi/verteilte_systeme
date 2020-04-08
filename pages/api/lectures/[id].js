@@ -1,13 +1,12 @@
 import { handleError, auth, validateIdAgainstToken, validateData, createObjectId } from "../../../utils/middleware";
 import { findOne, updateOne, find, deleteOne } from "../../../utils/database";
-import { ObjectId } from "mongodb";
 import Joi from "@hapi/joi";
 
 async function handleGet(req, res) {
     const token = auth(req);
-    const { id } = req.query;
+    const _id = createObjectId(req.query.id);
 
-    const lecture = await findOne('lectures', { _id: new ObjectId(id) });
+    const lecture = await findOne('lectures', { _id });
 
     validateIdAgainstToken(lecture.user, token);
 
@@ -27,26 +26,26 @@ async function handlePatch(req, res) {
 
     const modifiedLecture = await validateData(req.body, schema);
 
-    const id = createObjectId(req.query);
-    const { user } = await findOne('lectures', { _id: id });
+    const _id = createObjectId(req.query);
+    const { user } = await findOne('lectures', { _id });
 
     validateIdAgainstToken(user, token);
 
-    await updateOne('lectures', { _id: id }, { $set: modifiedLecture });
-    const updatedLecture = await findOne('lectures', { _id: id });
+    await updateOne('lectures', { _id }, { $set: modifiedLecture });
+    const updatedLecture = await findOne('lectures', { _id });
 
     res.status(200).json(updatedLecture);
 }
 
 async function handleDelete(req, res) {
     const token = auth(req);
-    const { id } = req.query;
+    const _id = createObjectId(req.query.id);
 
-    const lecture = await find('lectures', { _id: new ObjectId(id) });
+    const lecture = await find('lectures', { _id });
 
     validateIdAgainstToken(lecture.user, token);
 
-    await deleteOne('lectures', { _id: new ObjectId(id) });
+    await deleteOne('lectures', { _id });
 
     res.status(200).json(lecture);
 }

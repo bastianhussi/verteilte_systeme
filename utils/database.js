@@ -52,18 +52,6 @@ export async function deleteOne(collection, filter) {
   }
 }
 
-export async function deleteMany(collection, filter) {
-  await checkConnection();
-  const result = await client.db(dbName).collection(collection).deleteMany(filter);
-  if (result.deletedCount === 0) {
-    throw new NotFoundError(`could not find ${JSON.stringify(filter)}`, {
-      collection,
-      filter,
-    });
-  }
-  return result;
-}
-
 export async function updateOne(collection, filter, update) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).updateOne(filter, update);
