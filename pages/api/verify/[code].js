@@ -1,5 +1,5 @@
 import { handleError } from '../../../utils/middleware';
-import { updateOne, findOne } from '../../../utils/database';
+import { updateOne } from '../../../utils/database';
 
 async function handlePost(req, res) {
   const { code } = req.query;
@@ -7,6 +7,14 @@ async function handlePost(req, res) {
   res.status(200).end();
 }
 
+/**
+ * Top layer of this route.
+ * Will check the request method and if the method is supported 
+ * the matching function is called.
+ * Any errors that occurre will be handled by the handleError function from util/middleware.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 export default async function (req, res) {
   try {
     switch (req.method) {

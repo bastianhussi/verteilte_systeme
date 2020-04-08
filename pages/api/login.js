@@ -18,13 +18,24 @@ async function handlePost(req, res) {
     throw new UnauthorizedError('please verify your email address', { reqBody: req.body, user });
   }
   if (!await bcrypt.compare(password, user.password)) {
-    throw new UnauthorizedError('you entered a wrong password', { reqBody: req.body, plain: password, encrypted: user.password });
+    throw new UnauthorizedError('you entered a wrong password', { 
+      reqBody: req.body, 
+      plain: password, 
+      encrypted: user.password });
   }
   // token witch expires in 12 hours
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: '12h' });
   res.status(201).json({ token });
 }
 
+/**
+ * Top layer of this route.
+ * Will check the request method and if the method is supported 
+ * the matching function is called.
+ * Any errors that occurre will be handled by the handleError function from util/middleware.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 export default async function (req, res) {
   try {
     switch (req.method) {

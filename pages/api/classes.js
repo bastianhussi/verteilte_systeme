@@ -13,7 +13,7 @@ async function handleGet(req, res) {
   });
   const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find('classes', query, parseInt(limit));
+  const cursor = await find('classes', query, limit);
   const classes = await cursor.toArray();
   res.status(200).json(classes);
 }
@@ -27,8 +27,8 @@ async function handlePost(req, res) {
   });
   const doc = await validateData(req.body, schema);
 
-  const classId = await insertOne('classes', doc);
-  res.status(201).json({ _id: classId, ...doc });
+  const _id = await insertOne('classes', doc);
+  res.status(201).json({ _id, ...doc });
 }
 
 export default async function (req, res) {
