@@ -20,7 +20,6 @@ export default class Verify extends React.Component {
                 error: ''
             }
         } catch (err) {
-            console.log(err.response.data);
             return {
                 error: err.response.data
             };

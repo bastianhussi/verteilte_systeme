@@ -2,15 +2,14 @@ import bcrypt from 'bcrypt';
 import { ObjectId } from 'mongodb';
 import Joi from '@hapi/joi';
 import { findOne, updateOne, deleteOne } from '../../../utils/database';
-import { auth, handleError, validateData } from '../../../utils/middleware';
-import { ForbiddenError } from '../../../utils/errors';
+import { auth, handleError, validateData, validateIdAgainstToken } from '../../../utils/middleware';
 
 async function handleGet(req, res) {
   const token = auth(req);
   const { id } = req.query;
 
   const user = await findOne('users', ({ _id: new ObjectId(id) }));
-  validateIdAgainstToken(token, id);
+  validateIdAgainstToken(id, token);
   res.status(200).json(user);
 }
 
@@ -26,7 +25,7 @@ async function handlePatch(req, res) {
   const modifiedUser = await validateData(req.body, schema);
 
   const { id } = req.query;
-  validateIdAgainstToken(token, id);
+  validateIdAgainstToken(id, token);
 
   if (modifiedUser.password) {
     modifiedUser.password = await bcrypt.hash(modifiedUser.password, 10);
@@ -40,22 +39,13 @@ async function handlePatch(req, res) {
 async function handleDelete(req, res) {
   const token = auth(req);
   const { id } = req.query;
-  validateIdAgainstToken(token, id);
+  validateIdAgainstToken(id, token);
 
   const deletedUser = await findOne('users', { _id: new ObjectId(id) });
   await deleteOne('users', { _id: new ObjectId(id) });
 
   deletedUser.remove(password);
   res.status(200).json(deletedUser);
-}
-
-function validateIdAgainstToken(token, id) {
-  if (token._id !== id) {
-    throw new ForbiddenError(`invalid token for the user with the id ${id}`, {
-      reqBody: req.body,
-      token,
-    });
-  }
 }
 
 export default async (req, res) => {

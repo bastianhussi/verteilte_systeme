@@ -1,0 +1,43 @@
+.navbar {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333333;
+}
+
+.navbarItem {
+    float: left;
+}
+
+.navbarItem:hover {
+    cursor: pointer;
+}
+
+.navbarItem a {
+    display: block;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    color: white;
+    font-size: 1.5rem;
+}
+
+.menu {
+    position: relative;
+    float: right;
+    background-color: #ddffdd;
+    list-style-type: none;
+    width: min-content;
+}
+
+.menuItem:hover {
+    background-color: #92b492;
+}
+
+.menuItem a {
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 1.5rem;
+    color: #333333;
+}

@@ -10,6 +10,7 @@ export default class Login extends React.Component {
     this.state = {
       email: '',
       password: '',
+      viewPassword: false,
       message: '',
     };
     this.submitForm = this.submitForm.bind(this);
@@ -64,7 +65,8 @@ export default class Login extends React.Component {
             <label>
               Password:
               <br />
-              <input type="password" value={this.state.password} onChange={this.changePassword} required />
+              <input type={this.state.viewPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide': 'Show'}</a>
             </label>
             <br />
             <button type="submit">Login</button>

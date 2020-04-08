@@ -15,7 +15,7 @@ async function handlePost(req, res) {
   const user = await findOne('users', { email });
 
   if (user.code) {
-    throw new UnauthorizedError('please verify your email address', { reqBody: req.body, user }); 
+    throw new UnauthorizedError('please verify your email address', { reqBody: req.body, user });
   }
   if (!await bcrypt.compare(password, user.password)) {
     throw new UnauthorizedError('you entered a wrong password', { reqBody: req.body, plain: password, encrypted: user.password });

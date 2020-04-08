@@ -1,7 +1,5 @@
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 import Joi from '@hapi/joi';
-import { find, insertOne } from '../../utils/database';
+import { find } from '../../utils/database';
 import { validateData, handleError, auth } from '../../utils/middleware';
 
 async function handleGet(req, res) {
@@ -27,8 +25,6 @@ export default async function (req, res) {
     switch (req.method) {
       case 'GET':
         await handleGet(req, res);
-      case 'POST':
-        await handlePost(req, res);
       default:
         res.status(405).end();
     }
