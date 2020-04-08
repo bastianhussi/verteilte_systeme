@@ -15,7 +15,7 @@ export async function sendVerificationMail(email, code) {
     from: process.env.SMTP_USER,
     to: email,
     subject: 'Please activate your account',
-    html: `<p>http://localhost:3000/verify/${code}</p>`
+    html: `<p>http://localhost:3000/verify/${code}</p>`,
   };
   await transport.sendMail(message);
 }
