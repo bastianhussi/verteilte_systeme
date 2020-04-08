@@ -4,7 +4,7 @@ import { auth } from '../utils/auth';
 import Calendar from '../components/calendar';
 import Navbar from '../components/navbar';
 
-class Index extends React.Component {
+export default class Index extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -25,5 +25,3 @@ class Index extends React.Component {
     );
   }
 }
-
-export default Index;

@@ -4,13 +4,13 @@ import React from 'react';
 import axios from 'axios';
 import { login, noAuth } from '../utils/auth';
 
-class Login extends React.Component {
+export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
       password: '',
-      error: '',
+      message: '',
     };
     this.submitForm = this.submitForm.bind(this);
     this.changeEmail = this.changeEmail.bind(this);
@@ -34,7 +34,7 @@ class Login extends React.Component {
 
   async submitForm(event) {
     event.preventDefault();
-    this.setState({ error: '' });
+    this.setState({ message: '' });
     try {
       const res = await axios.post(this.props.apiUrl, {
         email: this.state.email,
@@ -45,7 +45,7 @@ class Login extends React.Component {
       const { token } = res.data;
       login(token);
     } catch (err) {
-      this.setState({ error: err.response.data });
+      this.setState({ password: '', message: err.response.data });
     }
   }
 
@@ -69,13 +69,10 @@ class Login extends React.Component {
             <br />
             <button type="submit">Login</button>
           </form>
-          {this.state.error.length > 0 ? <p>{this.state.error}</p> : <></>}
+          {this.state.message ? <p>{this.state.message}</p> : <></>}
           <Link href="/register"><a>Register</a></Link>
         </div>
       </>
-
     );
   }
 }
-
-export default Login;

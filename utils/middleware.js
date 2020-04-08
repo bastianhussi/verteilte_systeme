@@ -23,12 +23,13 @@ export function handleError(req, res, err) {
   } else {
     res.status(500).end();
   }
+  console.log(err);
 }
 
 export async function validateData(data, schema) {
   try {
     return await schema.validateAsync(data);
   } catch (err) {
-    throw new BadRequestError(err.details.message, { data, schema, err });
+    throw new BadRequestError(err.details[0].message, { data, schema, err });
   }
 }

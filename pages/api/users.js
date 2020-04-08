@@ -22,24 +22,6 @@ async function handleGet(req, res) {
   res.status(200).json(users);
 }
 
-async function handlePost(req, res) {
-  const schema = Joi.object({
-    email: Joi.string().email().trim().required(),
-    name: Joi.string().trim().min(3).max(50)
-      .required(),
-    password: Joi.string().min(3).max(50).required(),
-  });
-  const newUser = await validateData(req.body, schema);
-
-
-  // 10 rounds will be ok
-  const hashedPassword = await bcrypt.hash(newUser.password, 10);
-  const userId = await insertOne('users', { password: hashedPassword, ...newUser });
-
-  const token = jwt.sign({ _id: userId }, process.env.JWT_SECRET, { expiresIn: '12h' });
-  res.status(201).json({ token });
-}
-
 export default async function (req, res) {
   try {
     switch (req.method) {
