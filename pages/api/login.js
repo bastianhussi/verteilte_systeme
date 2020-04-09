@@ -55,6 +55,6 @@ export default async function (req, res) {
         res.status(405).end();
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 }

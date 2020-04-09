@@ -1,7 +1,7 @@
 import Joi from '@hapi/joi';
 import { findOne, updateOne, deleteOne } from '../../../utils/database';
 import {
-  auth, handleError, validateData, createObjectId,
+  auth, handleError, validateData, createObjectId, authAdmin,
 } from '../../../utils/middleware';
 
 /**
@@ -11,14 +11,10 @@ import {
  * @param {object} res - The outgoing response.
  */
 async function handleGet(req, res) {
-  try {
-    auth(req);
-    const _id = createObjectId(req.query.id);
-    const room = await findOne('rooms', { _id });
-    res.status(200).json(room);
-  } catch (err) {
-    handleError(req, res, err);
-  }
+  auth(req);
+  const { id } = req.query;
+  const room = await findOne('rooms', { _id: createObjectId(id) });
+  res.status(200).json(room);
 }
 
 /**
@@ -27,7 +23,7 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePatch(req, res) {
-  auth(req);
+  await authAdmin(req);
 
   const schema = Joi.object({
     name: Joi.string().trim().min(3).max(30)
@@ -42,8 +38,14 @@ async function handlePatch(req, res) {
 }
 
 async function handleDelete(req, res) {
-  auth(req);
+  await authAdmin(req);
+
   const _id = createObjectId(req.query.id);
+
+  const lecture = await findOne('lectures', { room: _id });
+  if (lecture) {
+    throw new BadRequestError('there are lectures using this room', lecture);
+  }
 
   const deletedRoom = await findOne('rooms', { _id });
   await deleteOne('rooms', { _id });
@@ -76,6 +78,6 @@ export default async function (req, res) {
         break;
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 }

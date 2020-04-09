@@ -2,8 +2,13 @@ import Router from 'next/router';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
 
-// all cookies are saved in one string and seperated by "; "
+/**
+ * 
+ * @param {*} cookieName 
+ * @param {*} param1 
+ */
 function getCookieByName(cookieName, { req }) {
+  // all cookies are saved in one string and seperated by "; "
   // check if on server or client
   let cookies;
   if (req) {
@@ -21,6 +26,11 @@ function getCookieByName(cookieName, { req }) {
   return null;
 }
 
+/**
+ * 
+ * @param {*} ctx 
+ * @param {*} path 
+ */
 function reject(ctx, path) {
   if (ctx.req) {
     ctx.res.writeHead(302, { Location: path });
@@ -30,6 +40,10 @@ function reject(ctx, path) {
   }
 }
 
+/**
+ * 
+ * @param {*} token 
+ */
 export function login(token) {
   const now = new Date();
   // expires in 12 hours
@@ -38,15 +52,18 @@ export function login(token) {
   Router.push('/');
 }
 
+/**
+ * 
+ */
 export function logout() {
   // expires now
   document.cookie = `token=; expires=${new Date().toUTCString()}; path=/`;
   Router.push('/login');
 }
 
-/*
- * Checks if the user has a token.
- * Use only for checking the access to webpages.
+/**
+ * 
+ * @param {*} ctx 
  */
 export async function auth(ctx) {
   const token = getCookieByName('token', ctx);
@@ -67,9 +84,9 @@ export async function auth(ctx) {
   }
 }
 
-/*
- * Checks if the user is logged in.
- * Use only for validating access to a webpage.
+/**
+ * 
+ * @param {*} ctx 
  */
 export function noAuth(ctx) {
   const token = getCookieByName('token', ctx);

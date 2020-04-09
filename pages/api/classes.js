@@ -1,5 +1,7 @@
 import Joi from '@hapi/joi';
-import { auth, handleError, validateData } from '../../utils/middleware';
+import {
+  auth, handleError, validateData, authAdmin,
+} from '../../utils/middleware';
 import { find, insertOne } from '../../utils/database';
 
 /**
@@ -29,7 +31,7 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePost(req, res) {
-  auth(req);
+  await authAdmin(req);
 
   const schema = Joi.object({
     name: Joi.string().trim().min(3).max(30)
@@ -63,6 +65,6 @@ export default async function (req, res) {
         break;
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 }
