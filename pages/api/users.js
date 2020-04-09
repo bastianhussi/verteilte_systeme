@@ -1,9 +1,8 @@
 import Joi from '@hapi/joi';
-import { find, findOne } from '../../utils/database';
+import { find } from '../../utils/database';
 import {
-  validateData, handleError, auth, createObjectId,
+  validateData, handleError, authAdmin,
 } from '../../utils/middleware';
-import { ForbiddenError } from '../../utils/errors';
 
 /**
  * Checks the database for users matching the request query.
@@ -13,12 +12,7 @@ import { ForbiddenError } from '../../utils/errors';
  * @param {object} res - The outgoing response.
  */
 async function handleGet(req, res) {
-  const token = auth(req);
-
-  const _id = createObjectId(token._id);
-  // only admins should view other users data
-  const requestUser = await findOne('users', { _id });
-  if (!requestUser.admin) throw new ForbiddenError('only admins can access other users data!', { reqQuery: req.query, requestUser });
+  await authAdmin(req);
 
   const schema = Joi.object({
     email: Joi.string().email().trim().optional(),
@@ -56,6 +50,6 @@ export default async function (req, res) {
         res.status(405).end();
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 }

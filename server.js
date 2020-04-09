@@ -8,7 +8,7 @@ const handle = app.getRequestHandler();
 
 const setup = require('./setup');
 
-setup().catch(err => {
+setup().catch((err) => {
   console.log(err);
   process.exit(1);
 });

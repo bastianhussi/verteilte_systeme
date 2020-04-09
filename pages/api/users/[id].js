@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import Joi from '@hapi/joi';
 import {
-  findOne, updateOne, deleteOne,
+  findOne, updateOne, deleteOne, deleteMany,
 } from '../../../utils/database';
 import {
   auth, handleError, validateData, validateIdAgainstToken, createObjectId,
@@ -66,7 +66,13 @@ async function handleDelete(req, res) {
   const deletedUser = await findOne('users', { _id });
   await deleteOne('users', { _id });
 
-  deletedUser.remove(password);
+  try {
+    await deleteMany('lectures', { user: _id });
+  } catch (err) {
+    // NotFoundErros shouldn't make this request fail
+    if (!err instanceof NotFoundError) throw err;
+  }
+
   res.status(200).json(deletedUser);
 }
 
@@ -95,6 +101,6 @@ export default async (req, res) => {
         break;
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 };

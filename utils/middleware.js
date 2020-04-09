@@ -1,8 +1,9 @@
 import jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
+import { ObjectId, MongoError } from 'mongodb';
 import ApplicationError, {
   UserFacingError, BadRequestError, UnauthorizedError, ForbiddenError,
 } from './errors';
+import { findOne } from './database';
 
 /**
  * Checks the request header for a x-access-token or a Bearer token.
@@ -25,6 +26,13 @@ export function auth(req) {
   });
 }
 
+export async function authAdmin(req) {
+  const token = auth(req);
+  const user = await findOne('users', { _id: createObjectId(token._id) });
+  if (!user.admin) throw new ForbiddenError('this resource is only accessible for admins', { reqBody, reqQuery: req.query, user });
+  return user;
+}
+
 /**
  * This function is used a top layer try/catch for every api route.
  * Will write the matching response for each error type.
@@ -32,10 +40,20 @@ export function auth(req) {
  * @param {object} res - The outgoing response.
  * @param {ApplicationError} err - The error that occurred.
  */
-export function handleError(req, res, err) {
+export function handleError(res, err) {
   if (err instanceof UserFacingError) {
     res.status(err.statusCode).send(err.message);
     if (process.env.NODE_ENV !== 'production') console.log(err);
+  } else if (err instanceof MongoError) {
+    switch (err.code) {
+      case 11000:
+        res.status(400).send(`duplicate entry for ${Object.entries(err.keyValue)}`);
+        break;
+      default:
+        res.status(500).end();
+        console.log(err);
+        break;
+    }
   } else {
     res.status(500).end();
     console.log(err);
@@ -58,9 +76,10 @@ export async function validateData(data, schema) {
 }
 
 /**
- *
+ * Checks if the given id matches the jwt.
+ * Used for checking if the user accessing data is the owner of this data.
  * @param {string} id - A MongoDB ObjectId as a string.
- * @param {object} param1 - The user's id stored in a jwt.
+ * @param {object} token - The user's id stored in a jwt.
  */
 export function validateIdAgainstToken(id, { _id }) {
   if (id !== _id) {

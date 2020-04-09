@@ -31,6 +31,6 @@ export default async function (req, res) {
         break;
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 }

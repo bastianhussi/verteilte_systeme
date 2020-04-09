@@ -5,6 +5,7 @@
 # min lenght for passwords?
 # joi: check the start of lecture is before end of lecture
 # set an production logging and a seperate debugging loggin
+# is throwing DatabaseErrors neccessary?
 
 ================================
 

@@ -1,7 +1,11 @@
-import { ObjectId } from 'mongodb';
 import Joi from '@hapi/joi';
-import { findOne, deleteOne, updateOne } from '../../../utils/database';
-import { validateData, handleError, auth } from '../../../utils/middleware';
+import {
+  findOne, find, deleteOne, updateOne,
+} from '../../../utils/database';
+import {
+  validateData, handleError, auth, createObjectId, authAdmin,
+} from '../../../utils/middleware';
+import { BadRequestError } from '../../../utils/errors';
 
 /**
  *
@@ -11,7 +15,7 @@ import { validateData, handleError, auth } from '../../../utils/middleware';
 async function handleGet(req, res) {
   auth(req);
   const { id } = req.query;
-  const foundClass = await findOne('classes', { _id: new ObjectId(id) });
+  const foundClass = await findOne('classes', { _id: createObjectId(id) });
   res.status(200).json(foundClass);
 }
 
@@ -21,7 +25,7 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePatch(req, res) {
-  auth(req);
+  await authAdmin(req);
 
   const schema = Joi.object({
     name: Joi.string().trim().min(3).max(30)
@@ -31,8 +35,8 @@ async function handlePatch(req, res) {
   const modifiedClass = await validateData(req.body, schema);
 
   const { id } = req.query;
-  await updateOne('classes', { _id: new ObjectId(id) }, { $set: modifiedClass });
-  const updatedClass = await findOne('classes', { _id: new ObjectId(id) });
+  await updateOne('classes', { _id: createObjectId(id) }, { $set: modifiedClass });
+  const updatedClass = await findOne('classes', { _id: createObjectId(id) });
   res.status(200).json(updatedClass);
 }
 
@@ -42,11 +46,16 @@ async function handlePatch(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handleDelete(req, res) {
-  auth(req);
+  await authAdmin(req);
   const { id } = req.query;
 
-  const deletedClass = await findOne('classes', { _id: new ObjectId(id) });
-  await deleteOne('classes', { _id: new ObjectId(id) });
+  const lecture = await findOne('lectures', { room: _id });
+  if (lecture) {
+    throw new BadRequestError('there are lectures for this class', lecture);
+  }
+
+  const deletedClass = await findOne('classes', { _id: createObjectId(id) });
+  await deleteOne('classes', { _id: createObjectId(id) });
 
   res.status(200).json(deletedClass);
 }
@@ -76,6 +85,6 @@ export default async function (req, res) {
         break;
     }
   } catch (err) {
-    handleError(req, res, err);
+    handleError(res, err);
   }
 }
