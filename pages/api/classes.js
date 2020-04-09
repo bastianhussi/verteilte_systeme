@@ -5,7 +5,9 @@ import {
 import { find, insertOne } from '../../utils/database';
 
 /**
- *
+ * Searches the database for classes matching the query.
+ * The query can include the class name and a limit of results.
+ * Requires a authorization header.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
