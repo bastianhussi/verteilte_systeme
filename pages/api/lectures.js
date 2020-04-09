@@ -1,12 +1,20 @@
 import Joi from '@hapi/joi';
-import { handleError, validateData, auth, createObjectId } from '../../utils/middleware';
+import {
+  handleError, validateData, auth, createObjectId,
+} from '../../utils/middleware';
 import { insertOne, find, findOne } from '../../utils/database';
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleGet(req, res) {
   const token = auth(req);
 
   const schema = Joi.object({
-    title: Joi.string().trim().min(3).max(30).optional(),
+    title: Joi.string().trim().min(3).max(30)
+      .optional(),
     class: Joi.string().optional(),
     room: Joi.string().optional(),
     start: Joi.date().optional(),
@@ -22,6 +30,11 @@ async function handleGet(req, res) {
   res.status(200).json(lectures);
 }
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handlePost(req, res) {
   auth(req);
 
@@ -38,7 +51,7 @@ async function handlePost(req, res) {
   await Promise.all([
     findOne('users', { _id: createObjectId(lecture.user) }),
     findOne('classes', { _id: createObjectId(lecture.class) }),
-    findOne('rooms', { _id: createObjectId(lecture.room) })
+    findOne('rooms', { _id: createObjectId(lecture.room) }),
   ]);
 
   const _id = await insertOne('lectures', lecture);
@@ -46,6 +59,14 @@ async function handlePost(req, res) {
   res.status(201).json({ _id, ...lecture });
 }
 
+/**
+ * Top layer of this route.
+ * Will check the request method and if the method is supported
+ * the matching function is called.
+ * Any errors that occurre will be handled by the handleError function from util/middleware.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 export default async function (req, res) {
   try {
     switch (req.method) {

@@ -3,6 +3,11 @@ import Joi from '@hapi/joi';
 import { findOne, deleteOne, updateOne } from '../../../utils/database';
 import { validateData, handleError, auth } from '../../../utils/middleware';
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleGet(req, res) {
   auth(req);
   const { id } = req.query;
@@ -10,6 +15,11 @@ async function handleGet(req, res) {
   res.status(200).json(foundClass);
 }
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handlePatch(req, res) {
   auth(req);
 
@@ -26,6 +36,11 @@ async function handlePatch(req, res) {
   res.status(200).json(updatedClass);
 }
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleDelete(req, res) {
   auth(req);
   const { id } = req.query;
@@ -36,6 +51,14 @@ async function handleDelete(req, res) {
   res.status(200).json(deletedClass);
 }
 
+/**
+ * Top layer of this route.
+ * Will check the request method and if the method is supported
+ * the matching function is called.
+ * Any errors that occurre will be handled by the handleError function from util/middleware.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 export default async function (req, res) {
   try {
     switch (req.method) {

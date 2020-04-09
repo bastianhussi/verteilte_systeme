@@ -1,6 +1,8 @@
 import Joi from '@hapi/joi';
 import { findOne, updateOne, deleteOne } from '../../../utils/database';
-import { auth, handleError, validateData, createObjectId } from '../../../utils/middleware';
+import {
+  auth, handleError, validateData, createObjectId,
+} from '../../../utils/middleware';
 
 /**
  * Returns a room if one is found in the database.
@@ -20,7 +22,7 @@ async function handleGet(req, res) {
 }
 
 /**
- * 
+ *
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -29,8 +31,7 @@ async function handlePatch(req, res) {
 
   const schema = Joi.object({
     name: Joi.string().trim().min(3).max(30)
-      .optional()
-      .default(''),
+      .optional(),
   });
   const room = await validateData(req.body, schema);
 
@@ -52,7 +53,7 @@ async function handleDelete(req, res) {
 
 /**
  * Top layer of this route.
- * Will check the request method and if the method is supported 
+ * Will check the request method and if the method is supported
  * the matching function is called.
  * Any errors that occurre will be handled by the handleError function from util/middleware.
  * @param {object} req - The incoming request.

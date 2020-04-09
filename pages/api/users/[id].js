@@ -1,8 +1,17 @@
 import bcrypt from 'bcrypt';
 import Joi from '@hapi/joi';
-import { findOne, updateOne, deleteOne, find } from '../../../utils/database';
-import { auth, handleError, validateData, validateIdAgainstToken, createObjectId } from '../../../utils/middleware';
+import {
+  findOne, updateOne, deleteOne,
+} from '../../../utils/database';
+import {
+  auth, handleError, validateData, validateIdAgainstToken, createObjectId,
+} from '../../../utils/middleware';
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleGet(req, res) {
   const token = auth(req);
   const { id } = req.query;
@@ -14,6 +23,11 @@ async function handleGet(req, res) {
   res.status(200).json(user);
 }
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handlePatch(req, res) {
   const token = auth(req);
 
@@ -38,6 +52,11 @@ async function handlePatch(req, res) {
   res.status(200).json(updatedUser);
 }
 
+/**
+ *
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleDelete(req, res) {
   const token = auth(req);
   const { id } = req.query;
@@ -51,6 +70,14 @@ async function handleDelete(req, res) {
   res.status(200).json(deletedUser);
 }
 
+/**
+ * Top layer of this route.
+ * Will check the request method and if the method is supported
+ * the matching function is called.
+ * Any errors that occurre will be handled by the handleError function from util/middleware.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 export default async (req, res) => {
   try {
     switch (req.method) {
