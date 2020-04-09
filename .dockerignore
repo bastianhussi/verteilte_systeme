@@ -1,2 +1,9 @@
 node_modules
 npm-debug.log
+.next
+.git
+.gitignore
+Dockerfile
+.eslintrc.yml
+.env.template
+README.md

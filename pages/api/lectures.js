@@ -36,27 +36,28 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePost(req, res) {
-  auth(req);
+  const token = auth(req);
 
   const schema = Joi.object({
     title: Joi.string().trim().min(3).max(30)
       .required(),
-    user: Joi.string().required(),
     class: Joi.string().required(),
     room: Joi.string().required(),
     start: Joi.date().required(),
     end: Joi.date().required(),
   });
-  const lecture = await validateData(req.body, schema);
-  await Promise.all([
-    findOne('users', { _id: createObjectId(lecture.user) }),
-    findOne('classes', { _id: createObjectId(lecture.class) }),
-    findOne('rooms', { _id: createObjectId(lecture.room) }),
-  ]);
 
-  const _id = await insertOne('lectures', lecture);
+  const doc = await validateData(req.body, schema);
+  const userId = await Promise.all([
+    findOne('users', { _id: createObjectId(token._id) }),
+    findOne('classes', { _id: createObjectId(doc.class) }),
+    findOne('rooms', { _id: createObjectId(doc.room) }),
+  ])[0];
 
-  res.status(201).json({ _id, ...lecture });
+  const newLecture = { ...doc, user: userId };
+  const _id = await insertOne('lectures', newLecture);
+
+  res.status(201).json({ _id, ...newLecture });
 }
 
 /**

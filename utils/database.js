@@ -6,6 +6,9 @@ const client = new MongoClient(process.env.MONGO_HOST || 'mongodb://localhost:27
   useUnifiedTopology: true,
 });
 
+/**
+ *
+ */
 async function checkConnection() {
   if (!client.isConnected()) {
     await client.connect();
@@ -14,6 +17,11 @@ async function checkConnection() {
 
 const dbName = process.env.MONGO_DB || 'nextjs';
 
+/**
+ *
+ * @param {*} collection
+ * @param {*} doc
+ */
 export async function insertOne(collection, doc) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).insertOne(doc);
@@ -21,6 +29,11 @@ export async function insertOne(collection, doc) {
   return result.insertedId;
 }
 
+/**
+ *
+ * @param {*} collection
+ * @param {*} filter
+ */
 export async function findOne(collection, filter) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).findOne(filter);
@@ -28,6 +41,12 @@ export async function findOne(collection, filter) {
   return result;
 }
 
+/**
+ *
+ * @param {*} collection
+ * @param {*} query
+ * @param {*} limit
+ */
 export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
   await checkConnection();
   const cursor = client.db(dbName).collection(collection).find(query).limit(limit);
@@ -41,6 +60,11 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
   return cursor;
 }
 
+/**
+ *
+ * @param {*} collection
+ * @param {*} filter
+ */
 export async function deleteOne(collection, filter) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).deleteOne(filter);
@@ -52,6 +76,12 @@ export async function deleteOne(collection, filter) {
   }
 }
 
+/**
+ *
+ * @param {*} collection
+ * @param {*} filter
+ * @param {*} update
+ */
 export async function updateOne(collection, filter, update) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).updateOne(filter, update);

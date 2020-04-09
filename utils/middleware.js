@@ -35,10 +35,11 @@ export function auth(req) {
 export function handleError(req, res, err) {
   if (err instanceof UserFacingError) {
     res.status(err.statusCode).send(err.message);
+    if (process.env.NODE_ENV !== 'production') console.log(err);
   } else {
     res.status(500).end();
+    console.log(err);
   }
-  console.log(err);
 }
 
 /**

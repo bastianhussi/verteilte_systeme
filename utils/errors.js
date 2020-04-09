@@ -1,11 +1,20 @@
+/**
+ *
+ */
 export default class ApplicationError extends Error {
   get name() {
     return this.constructor.name;
   }
 }
 
+/**
+ *
+ */
 export class UserFacingError extends ApplicationError { }
 
+/**
+ *
+ */
 export class BadRequestError extends UserFacingError {
   constructor(message, options = {}) {
     super(message);
@@ -19,6 +28,9 @@ export class BadRequestError extends UserFacingError {
   }
 }
 
+/**
+ *
+ */
 export class NotFoundError extends UserFacingError {
   constructor(message, options = {}) {
     super(message);
@@ -32,6 +44,9 @@ export class NotFoundError extends UserFacingError {
   }
 }
 
+/**
+ *
+ */
 export class ForbiddenError extends UserFacingError {
   constructor(message, options = {}) {
     super(message);
@@ -45,6 +60,9 @@ export class ForbiddenError extends UserFacingError {
   }
 }
 
+/**
+ *
+ */
 export class UnauthorizedError extends UserFacingError {
   constructor(message, options = {}) {
     super(message);
@@ -58,6 +76,9 @@ export class UnauthorizedError extends UserFacingError {
   }
 }
 
+/**
+ *
+ */
 export class DatabaseError extends ApplicationError {
   constructor(message, options = {}) {
     super(message);
