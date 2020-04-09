@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
-import ApplicationError, { UserFacingError, BadRequestError, UnauthorizedError, ForbiddenError } from './errors';
 import { ObjectId } from 'mongodb';
+import ApplicationError, {
+  UserFacingError, BadRequestError, UnauthorizedError, ForbiddenError,
+} from './errors';
 
 /**
  * Checks the request header for a x-access-token or a Bearer token.
@@ -55,7 +57,7 @@ export async function validateData(data, schema) {
 }
 
 /**
- * 
+ *
  * @param {string} id - A MongoDB ObjectId as a string.
  * @param {object} param1 - The user's id stored in a jwt.
  */
