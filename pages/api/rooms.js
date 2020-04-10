@@ -32,7 +32,7 @@ async function handleGet(req, res) {
 /**
  * Creates a new room.
  * The requst body must have a name attribute.
- * Requires a authorization header.
+ * This route may only be called by an admin.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
