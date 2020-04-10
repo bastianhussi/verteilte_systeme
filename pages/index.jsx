@@ -10,17 +10,21 @@ export default class Index extends React.Component {
   }
 
   static async getInitialProps(ctx) {
-    const user = await auth(ctx);
-    // fetch user data
+    // destructuring the properties user and token immediately would cause an TypeError, if authentication fails.
+    const res = await auth(ctx);
+    const { user } = res;
     return { user };
   }
 
   render() {
     return (
       <>
-        <Head />
+        <Head>
+          <meta charSet="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Overview</title>
+        </Head>
         <Navbar user={this.props.user} />
-        <Calendar />
       </>
     );
   }

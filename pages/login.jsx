@@ -13,11 +13,15 @@ export default class Login extends React.Component {
       viewPassword: false,
       message: '',
     };
-    this.submitForm = this.submitForm.bind(this);
     this.changeEmail = this.changeEmail.bind(this);
     this.changePassword = this.changePassword.bind(this);
+    this.submitLoginForm = this.submitLoginForm.bind(this);
   }
 
+  /**
+   * 
+   * @param {*} ctx 
+   */
   static getInitialProps(ctx) {
     noAuth(ctx);
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
@@ -33,7 +37,11 @@ export default class Login extends React.Component {
     this.setState({ password: event.target.value });
   }
 
-  async submitForm(event) {
+  /**
+   * 
+   * @param {*} event 
+   */
+  async submitLoginForm(event) {
     event.preventDefault();
     this.setState({ message: '' });
     try {
@@ -53,9 +61,13 @@ export default class Login extends React.Component {
   render() {
     return (
       <>
-        <Head />
+        <Head>
+          <meta charSet="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Login</title>
+        </Head>
         <div>
-          <form onSubmit={this.submitForm}>
+          <form onSubmit={this.submitLoginForm}>
             <label>
               Email:
               <br />
@@ -66,7 +78,7 @@ export default class Login extends React.Component {
               Password:
               <br />
               <input type={this.state.viewPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
-              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide': 'Show'}</a>
+              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide' : 'Show'}</a>
             </label>
             <br />
             <button type="submit">Login</button>

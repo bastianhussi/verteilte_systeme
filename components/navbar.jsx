@@ -6,38 +6,22 @@ import styles from './navbar.module.css';
 export default class Navbar extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      showMenu: false
-    }
   }
 
   render() {
     return (
-      <>
-        <ul className={styles.navbar}>
-          <li className={styles.navbarItem}><Link href="/"><a>Overview</a></Link></li>
-          <li className={styles.navbarItem}><Link href="/"><a>Classes</a></Link></li>
-          <li className={styles.navbarItem}><Link href="/"><a>Up next...</a></Link></li>
-          {this.props.user.admin ? (<li className={styles.navbarItem}><Link href="/"><a>Admin Stuff</a></Link></li>) : (<></>)}
-          <li className={styles.navbarItem} style={{ float: 'right' }}>
-            <a onMouseOver={() => this.setState({ showMenu: !this.state.showMenu })}>
-              {this.props.user.name}
-            </a>
-          </li>
-        </ul>
-        {this.state.showMenu ? (<Menu />) : (<></>)}
-      </>
+      <div className={styles.navbar}>
+        <a href="#home">Home</a>
+        <a href="#news">Up next...</a>
+        <div className={styles.dropdown} style={{ float: 'right' }}>
+          <button className={styles.dropbtn}>{this.props.user.name}</button>
+          <div className={styles.dropdownContent}>
+            <Link href="/account"><a >Account</a></Link>
+            <a href="#">Help</a>
+            <a href="#" onClick={logout}>Logout</a>
+          </div>
+        </div>
+      </div>
     );
   }
-}
-
-function Menu(props) {
-  return (
-    <div>
-      <ul className={styles.menu}>
-        <li className={styles.menuItem}><Link href="/account"><a>Settings</a></Link></li>
-        <li className={styles.menuItem}><a href="#" onClick={logout}>Logout</a></li>
-      </ul>
-    </div>
-  );
 }
