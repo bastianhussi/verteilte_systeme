@@ -7,6 +7,9 @@ import Navbar from '../components/navbar';
 export default class Index extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      current: <Calendar />
+    }
   }
 
   static async getInitialProps(ctx) {
@@ -25,6 +28,9 @@ export default class Index extends React.Component {
           <title>Overview</title>
         </Head>
         <Navbar user={this.props.user} />
+        <div>
+          {this.state.current}
+        </div>
       </>
     );
   }

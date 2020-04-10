@@ -95,7 +95,7 @@ export default class Account extends React.Component {
                     'Authorization': `Bearer ${this.props.token}`
                 },
             });
-            this.setState({ user: res });
+            this.setState({ user: res.data });
         } catch (err) {
             this.setState({ message: err.response.data });
         }

@@ -1,0 +1,25 @@
+.month {
+    display: grid;
+    grid-template-columns: repeat(7, 10%);
+    grid-template-rows: auto;
+    justify-content: center;
+    column-gap: 5px;
+    row-gap: 5px;
+}
+
+.monthHeader {
+    font-size: 20px;
+    text-align: center;
+}
+
+/* same as .hour */
+
+.monthDay {
+    height: 50px;
+    width: auto;
+    border-bottom: 2px solid black;
+}
+
+.monthDay:hover {
+    cursor: pointer;
+}
