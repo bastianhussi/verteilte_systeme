@@ -14,10 +14,10 @@ export default class Register extends React.Component {
       viewPassword: false,
       message: ''
     };
-    this.submitForm = this.submitForm.bind(this);
     this.changeEmail = this.changeEmail.bind(this);
     this.changeName = this.changeName.bind(this);
     this.changePassword = this.changePassword.bind(this);
+    this.submitRegisterForm = this.submitRegisterForm.bind(this);
   }
 
   static getInitialProps(ctx) {
@@ -39,7 +39,11 @@ export default class Register extends React.Component {
     this.setState({ password: event.target.value });
   }
 
-  async submitForm(event) {
+  /**
+   * 
+   * @param {*} event 
+   */
+  async submitRegisterForm(event) {
     this.setState({ message: '' });
     event.preventDefault();
     try {
@@ -59,9 +63,13 @@ export default class Register extends React.Component {
   render() {
     return (
       <>
-        <Head />
+        <Head>
+          <meta charSet="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Register</title>
+        </Head>
         <div>
-          <form onSubmit={this.submitForm}>
+          <form onSubmit={this.submitRegisterForm}>
             <label>
               Email:
               <br />
@@ -78,13 +86,13 @@ export default class Register extends React.Component {
               Password:
               <br />
               <input type={this.state.viewPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
-              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide': 'Show'}</a>
+              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide' : 'Show'}</a>
             </label>
             <br />
-              <button type="submit">Register</button>
+            <button type="submit">Register</button>
           </form>
-            {this.state.message ? <p>{this.state.message}</p> : <></>}
-            <Link href="/login"><a>Login</a></Link>
+          {this.state.message ? <p>{this.state.message}</p> : <></>}
+          <Link href="/login"><a>Login</a></Link>
         </div>
       </>
     );

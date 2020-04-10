@@ -75,10 +75,10 @@ export async function auth(ctx) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const res =  await axios.get(`http://localhost:3000/api/users/${decoded._id}`, {
+    const res = await axios.get(`http://localhost:3000/api/users/${decoded._id}`, {
       headers: { 'Authorization': `Bearer ${token}` }
     });
-    return res.data;
+    return { user: res.data, token };
   } catch {
     reject(ctx, '/login');
   }
