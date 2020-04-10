@@ -7,10 +7,10 @@ import { BadRequestError } from '../../utils/errors';
 
 /**
  * Searches the database for lectures matching the query.
- * The query may include the tile, user, class, room, 
+ * The query may include the tile, user, class, room,
  * start date, end date and a limit of results.
  * The user, class and room attribute have to be the _id of
- * an existing user, class or room. 
+ * an existing user, class or room.
  * Requires a authorization header.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
@@ -40,7 +40,7 @@ async function handleGet(req, res) {
 /**
  * Creates a new lecture.
  * The request body must have a title-, class-, room-,
- * start- and end attribute. 
+ * start- and end attribute.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -67,8 +67,8 @@ async function handlePost(req, res) {
     $or: [
       { user: createObjectId(token._id) },
       { class: createObjectId(doc.class) },
-      { room: createObjectId(doc.room) }
-    ]
+      { room: createObjectId(doc.room) },
+    ],
   });
 
   const otherLectures = await cursor.toArray();
