@@ -1,6 +1,8 @@
 import React from 'react';
 import AppContext from './appContext';
 import axios from 'axios';
+import Course from './adminPanel/course';
+import Room from './adminPanel/room';
 
 export default class AdminPanel extends React.Component {
     constructor(props) {
@@ -44,11 +46,12 @@ export default class AdminPanel extends React.Component {
     }
 
     render() {
-        const rooms = this.state.rooms.map(room => 
-            <li key={room._id}>{room.name}</li>
+
+        const rooms = this.state.rooms.map(room =>
+            <Room value={room} onSubmit={() => console.log('test')} />
         );
-        const courses = this.state.courses.map(course => 
-            <li key={course._id}>{course.name}</li>
+        const courses = this.state.courses.map(course =>
+            <Course value={course} onSubmit={() => console.log('test')} />
         );
 
         return (

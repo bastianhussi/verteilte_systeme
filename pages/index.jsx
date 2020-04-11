@@ -27,9 +27,9 @@ export default class Index extends React.Component {
 
   static async getInitialProps(ctx) {
     try {
-      const { user, token } = await auth(ctx);
       const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
       const apiUrl = process.browser ? `${protocol}://${window.location.host}/api` : `${protocol}://${ctx.req.headers.host}/api`;
+      const { user, token } = await auth(ctx, apiUrl);
       return { user, token, apiUrl };
     } catch (err) {
 
