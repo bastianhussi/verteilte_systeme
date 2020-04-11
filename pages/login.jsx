@@ -10,11 +10,12 @@ export default class Login extends React.Component {
     this.state = {
       email: '',
       password: '',
-      viewPassword: false,
+      showPassword: false,
       message: '',
     };
     this.changeEmail = this.changeEmail.bind(this);
     this.changePassword = this.changePassword.bind(this);
+    this.changeShowPassword = this.changeShowPassword.bind(this);
     this.submitLoginForm = this.submitLoginForm.bind(this);
   }
 
@@ -35,6 +36,10 @@ export default class Login extends React.Component {
 
   changePassword(event) {
     this.setState({ password: event.target.value });
+  }
+
+  changeShowPassword() {
+    this.setState({ showPassword: !this.state.showPassword });
   }
 
   /**
@@ -77,8 +82,13 @@ export default class Login extends React.Component {
             <label>
               Password:
               <br />
-              <input type={this.state.viewPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
-              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide' : 'Show'}</a>
+              <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+              <a ></a>
+            </label>
+            <br />
+            <label>
+              <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
+              Show password
             </label>
             <br />
             <button type="submit">Login</button>

@@ -3,6 +3,13 @@ import axios from 'axios';
 import AppContext from './appContext';
 
 export default class Account extends React.Component {
+    
+    /**
+     * The Account class only stores the values of its forms.
+     * The user information, apiUrl and the token are provided through
+     * the AppContext.
+     * @param {*} props 
+     */
     constructor(props) {
         super(props);
         this.state = {
@@ -20,9 +27,7 @@ export default class Account extends React.Component {
         this.submitPasswordForm = this.submitPasswordForm.bind(this);
     }
 
-    componentDidMount() {
-        this.setState({ user: this.context.user });
-    }
+    static contextType = AppContext;
 
     changeEmail(event) {
         this.setState({ email: event.target.value });
@@ -37,8 +42,11 @@ export default class Account extends React.Component {
     }
 
     /**
-     * 
-     * @param {*} event 
+     * This function will be called when the email-form is submitted.
+     * Checks if the new email differs from the old one.
+     * If that is true a patch request is send.
+     * When this succeeds the changeUser function from the AppContext is called.
+     * @param {*} event - The form obSubmit event.
      */
     async submitEmailForm(event) {
         event.preventDefault();
@@ -67,8 +75,11 @@ export default class Account extends React.Component {
     }
 
     /**
-     * 
-     * @param {*} event 
+     * This function will be called when the name-form is submitted.
+     * Checks if the new name differs from the old one.
+     * If that is true a patch request is send.
+     * When this succeeds the changeUser function from the AppContext is called.
+     * @param {*} event - The form obSubmit event.
      */
     async submitNameForm(event) {
         event.preventDefault();
@@ -97,8 +108,11 @@ export default class Account extends React.Component {
     }
 
     /**
-     * 
-     * @param {*} event 
+     * This function will be called when the password-form is submitted.
+     * Checks if the new password differs from the old one.
+     * If that is true a patch request is send.
+     * When this succeeds the changeUser function from the AppContext is called.
+     * @param {*} event - The form obSubmit event.
      */
     async submitPasswordForm(event) {
         event.preventDefault();
@@ -126,6 +140,11 @@ export default class Account extends React.Component {
         this.setState({ password: '' });
     }
 
+    /**
+     * Consumes the AppContext. This way the user information doesnt need to be stored
+     * in the state. If the user's information change (e.g. changing name with the form)
+     * the affected elements will be rendered. 
+     */
     render() {
         return (
             <AppContext.Consumer>{
@@ -174,5 +193,3 @@ export default class Account extends React.Component {
         );
     }
 }
-
-Account.contextType = AppContext;

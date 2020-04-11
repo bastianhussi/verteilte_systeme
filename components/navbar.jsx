@@ -11,6 +11,8 @@ export default class Navbar extends React.Component {
     super(props);
   }
 
+  static contextType = AppContext;
+
   render() {
     const { user } = this.context;
     const { changeView } = this.props;
@@ -34,5 +36,3 @@ export default class Navbar extends React.Component {
     );
   }
 }
-
-Navbar.contextType = AppContext;

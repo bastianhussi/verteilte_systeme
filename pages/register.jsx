@@ -11,12 +11,13 @@ export default class Register extends React.Component {
       email: '',
       name: '',
       password: '',
-      viewPassword: false,
+      showPassword: false,
       message: ''
     };
     this.changeEmail = this.changeEmail.bind(this);
     this.changeName = this.changeName.bind(this);
     this.changePassword = this.changePassword.bind(this);
+    this.changeShowPassword = this.changeShowPassword.bind(this);
     this.submitRegisterForm = this.submitRegisterForm.bind(this);
   }
 
@@ -39,13 +40,17 @@ export default class Register extends React.Component {
     this.setState({ password: event.target.value });
   }
 
+  changeShowPassword() {
+    this.setState({ showPassword: !this.state.showPassword });
+  }
+
   /**
    * 
    * @param {*} event 
    */
   async submitRegisterForm(event) {
-    this.setState({ message: '' });
     event.preventDefault();
+    this.setState({ message: '' });
     try {
       await axios.post(this.props.apiUrl, {
         email: this.state.email,
@@ -73,20 +78,24 @@ export default class Register extends React.Component {
             <label>
               Email:
               <br />
-              <input type="email" value={this.state.email} onChange={this.changeEmail} required autoComplete="on" />
+              <input type="email" value={this.state.email} onChange={this.changeEmail} required />
             </label>
             <br />
             <label>
               Name:
               <br />
-              <input type="text" value={this.state.name} onChange={this.changeName} required autoComplete="on" />
+              <input type="text" value={this.state.name} onChange={this.changeName} required />
             </label>
             <br />
             <label>
               Password:
               <br />
-              <input type={this.state.viewPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
-              <a onClick={() => this.setState({ viewPassword: !this.state.viewPassword })}>{this.state.viewPassword ? 'Hide' : 'Show'}</a>
+              <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+            </label>
+            <br />
+            <label>
+              <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
+              Show password
             </label>
             <br />
             <button type="submit">Register</button>
