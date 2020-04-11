@@ -1,6 +1,7 @@
 import Router from 'next/router';
 import jwt from 'jsonwebtoken';
 import axios from 'axios';
+import { UnauthorizedError } from './errors';
 
 /**
  * 
@@ -65,12 +66,12 @@ export function logout() {
  * 
  * @param {*} ctx 
  */
-export async function auth(ctx) {
+export async function auth (ctx) {
   const token = getCookieByName('token', ctx);
 
   if (!token) {
     reject(ctx, '/login');
-    return;
+    throw new UnauthorizedError('missing jwt', ctx);
   }
 
   try {
@@ -81,6 +82,7 @@ export async function auth(ctx) {
     return { user: res.data, token };
   } catch {
     reject(ctx, '/login');
+    throw new UnauthorizedError('invalid jwt', ctx);
   }
 }
 

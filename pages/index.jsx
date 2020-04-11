@@ -3,23 +3,44 @@ import Head from 'next/head';
 import { auth } from '../utils/auth';
 import Calendar from '../components/calendar';
 import Navbar from '../components/navbar';
+import AppContext from '../components/appContext';
 
 export default class Index extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      current: <Calendar />
-    }
+      user: this.props.user,
+      currentView: <Calendar />,
+    };
+
+    this.changeView = this.changeView.bind(this);
+    this.changeUser = this.changeUser.bind(this);
+  }
+
+  changeView(newView) {
+    this.setState({ currentView: newView });
+  }
+
+  changeUser(newUser) {
+    this.setState({ user: newUser });
   }
 
   static async getInitialProps(ctx) {
-    // destructuring the properties user and token immediately would cause an TypeError, if authentication fails.
-    const res = await auth(ctx);
-    const { user } = res;
-    return { user };
+    try {
+      const { user, token } = await auth(ctx);
+      const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
+      const apiUrl = process.browser ? `${protocol}://${window.location.host}/api` : `${protocol}://${ctx.req.headers.host}/api`;
+      return { user, token, apiUrl };
+    } catch (err) {
+
+    }
   }
 
+  static contextType = AppContext;
+
   render() {
+    const { token, apiUrl } = this.props;
+    const { user } = this.state;
     return (
       <>
         <Head>
@@ -27,10 +48,12 @@ export default class Index extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>Overview</title>
         </Head>
-        <Navbar user={this.props.user} />
-        <div>
-          {this.state.current}
-        </div>
+        <AppContext.Provider value={{ user, token, apiUrl, changeUser: this.changeUser }} >
+          <Navbar changeView={this.changeView} />
+          <div>
+            {this.state.currentView}
+          </div>
+        </AppContext.Provider>
       </>
     );
   }
