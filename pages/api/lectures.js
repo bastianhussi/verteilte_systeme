@@ -39,7 +39,7 @@ async function handleGet(req, res) {
 
 /**
  * Creates a new lecture.
- * The request body must have a title-, class-, room-,
+ * The request body must have a title-, course-, room-,
  * start- and end attribute.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
@@ -50,7 +50,7 @@ async function handlePost(req, res) {
   const schema = Joi.object({
     title: Joi.string().trim().min(3).max(30)
       .required(),
-    class: Joi.string().required(),
+    course: Joi.string().required(),
     room: Joi.string().required(),
     start: Joi.date().required(),
     end: Joi.date().required(),
@@ -59,7 +59,7 @@ async function handlePost(req, res) {
   const doc = await validateData(req.body, schema);
   const user = await findOne('users', { _id: createObjectId(token._id) });
   await Promise.all([
-    findOne('classes', { _id: createObjectId(doc.class) }),
+    findOne('courses', { _id: createObjectId(doc.class) }),
     findOne('rooms', { _id: createObjectId(doc.room) }),
   ]);
 

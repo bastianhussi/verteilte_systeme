@@ -42,12 +42,12 @@ async function setup() {
   await Promise.all([
     createAdminIfNotExits(),
     createCollectionIfNotExists('rooms'),
-    createCollectionIfNotExists('classes'),
+    createCollectionIfNotExists('courses'),
     createCollectionIfNotExists('lectures'),
   ]);
   await Promise.all([
     createUniqueIndexIfNotExists('users', 'email', 'users_email'),
-    createUniqueIndexIfNotExists('classes', 'name', 'clases_name'),
+    createUniqueIndexIfNotExists('courses', 'name', 'courses_name'),
     createUniqueIndexIfNotExists('rooms', 'name', 'rooms_name'),
   ]);
   await client.close();
