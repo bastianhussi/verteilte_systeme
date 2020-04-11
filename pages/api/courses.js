@@ -5,8 +5,8 @@ import {
 import { find, insertOne } from '../../utils/database';
 
 /**
- * Searches the database for classes matching the query.
- * The query can include the class name and a limit of results.
+ * Searches the database for courses matching the query.
+ * The query can include the course name and a limit of results.
  * Requires a authorization header.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
@@ -22,9 +22,9 @@ async function handleGet(req, res) {
   });
   const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find('classes', query, limit);
-  const classes = await cursor.toArray();
-  res.status(200).json(classes);
+  const cursor = await find('courses', query, limit);
+  const courses = await cursor.toArray();
+  res.status(200).json(courses);
 }
 
 /**
@@ -41,7 +41,7 @@ async function handlePost(req, res) {
   });
   const doc = await validateData(req.body, schema);
 
-  const _id = await insertOne('classes', doc);
+  const _id = await insertOne('courses', doc);
   res.status(201).json({ _id, ...doc });
 }
 

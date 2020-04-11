@@ -28,7 +28,6 @@ export function auth(req) {
 
 export async function authAdmin(req) {
   const token = auth(req);
-  console.log(token);
   const user = await findOne('users', { _id: createObjectId(token._id) });
   if (!user.admin) throw new ForbiddenError('this resource is only accessible for admins', { reqBody, reqQuery: req.query, user });
   return user;

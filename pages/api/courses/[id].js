@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi';
 import {
-  findOne, find, deleteOne, updateOne,
+  findOne, deleteOne, updateOne,
 } from '../../../utils/database';
 import {
   validateData, handleError, auth, createObjectId, authAdmin,
@@ -15,8 +15,8 @@ import { BadRequestError } from '../../../utils/errors';
 async function handleGet(req, res) {
   auth(req);
   const { id } = req.query;
-  const foundClass = await findOne('classes', { _id: createObjectId(id) });
-  res.status(200).json(foundClass);
+  const course = await findOne('courses', { _id: createObjectId(id) });
+  res.status(200).json(course);
 }
 
 /**
@@ -32,12 +32,12 @@ async function handlePatch(req, res) {
       .optional()
       .default(''),
   });
-  const modifiedClass = await validateData(req.body, schema);
+  const modifiedCourse = await validateData(req.body, schema);
 
   const { id } = req.query;
-  await updateOne('classes', { _id: createObjectId(id) }, { $set: modifiedClass });
-  const updatedClass = await findOne('classes', { _id: createObjectId(id) });
-  res.status(200).json(updatedClass);
+  await updateOne('courses', { _id: createObjectId(id) }, { $set: modifiedCourse });
+  const updatedCourse = await findOne('courses', { _id: createObjectId(id) });
+  res.status(200).json(updatedCourse);
 }
 
 /**
@@ -54,10 +54,10 @@ async function handleDelete(req, res) {
     throw new BadRequestError('there are lectures for this class', lecture);
   }
 
-  const deletedClass = await findOne('classes', { _id: createObjectId(id) });
-  await deleteOne('classes', { _id: createObjectId(id) });
+  const deletedCourse = await findOne('courses', { _id: createObjectId(id) });
+  await deleteOne('courses', { _id: createObjectId(id) });
 
-  res.status(200).json(deletedClass);
+  res.status(200).json(deletedCourse);
 }
 
 /**

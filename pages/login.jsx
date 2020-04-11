@@ -100,7 +100,6 @@ export default class Login extends React.Component {
             </div>
           </form>
           {this.state.message ? <p>{this.state.message}</p> : <></>}
-
         </div>
       </>
     );
