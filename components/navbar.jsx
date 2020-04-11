@@ -1,7 +1,10 @@
 import React from 'react';
-import Link from 'next/link';
 import { logout } from '../utils/auth';
 import styles from './navbar.module.css';
+import Calendar from './calendar';
+import AdminPanel from './adminPanel';
+import Account from './account';
+import AppContext from './appContext';
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -9,15 +12,20 @@ export default class Navbar extends React.Component {
   }
 
   render() {
+    const { user } = this.context;
+    const { changeView } = this.props;
     return (
       <div className={styles.navbar}>
-        <Link href="/"><a>Home</a></Link>
-        <a href="#next">Up next...</a>
-        {this.props.user.admin ? (<a href="#">Admin</a>) : (<></>)}
+        <a onClick={() => changeView(<Calendar />)}>Home</a>
+        <a>Up next...</a>
+        {
+          user.admin ?
+            (<a onClick={() => changeView(<AdminPanel />)}>Admin</a>) : (<></>)
+        }
         <div className={styles.dropdown} style={{ float: 'right' }}>
-          <button className={styles.dropbtn}>{this.props.user.name}</button>
+          <button className={styles.dropbtn}>{user.name}</button>
           <div className={styles.dropdownContent}>
-            <Link href="/account"><a >Account</a></Link>
+            <a onClick={() => changeView(<Account />)}>Account</a>
             <a href="#help">Help</a>
             <a onClick={logout}>Logout</a>
           </div>
@@ -26,3 +34,5 @@ export default class Navbar extends React.Component {
     );
   }
 }
+
+Navbar.contextType = AppContext;
