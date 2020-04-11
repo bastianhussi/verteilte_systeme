@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import axios from 'axios';
 import { noAuth } from '../utils/auth';
+import styles from './login.module.css'
 
 export default class Register extends React.Component {
   constructor(props) {
@@ -73,35 +74,41 @@ export default class Register extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>Register</title>
         </Head>
-        <div>
-          <form onSubmit={this.submitRegisterForm}>
-            <label>
-              Email:
+        <h1 style={{ textAlign: "center" }}>Register</h1>
+        <div className={styles.center}>
+          <form onSubmit={this.submitRegisterForm} className={styles.loginForm}>
+            <div>
+              <label>
+                Email:
               <br />
-              <input type="email" value={this.state.email} onChange={this.changeEmail} required />
-            </label>
-            <br />
-            <label>
-              Name:
+                <input type="email" value={this.state.email} onChange={this.changeEmail} required />
+              </label>
+            </div>
+            <div>
+              <label>
+                Name:
               <br />
-              <input type="text" value={this.state.name} onChange={this.changeName} required />
-            </label>
-            <br />
-            <label>
-              Password:
+                <input type="text" value={this.state.name} onChange={this.changeName} required />
+              </label>
+            </div>
+            <div>
+              <label>
+                Password:
               <br />
-              <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
-            </label>
-            <br />
-            <label>
-              <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
+                <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+              </label>
+              <br />
+              <label>
+                <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
               Show password
             </label>
-            <br />
-            <button type="submit">Register</button>
+            </div>
+            <div>
+              <Link href="/login"><a>Login</a></Link>
+              <button type="submit" className={styles.loginButton}>Register</button>
+            </div>
           </form>
           {this.state.message ? <p>{this.state.message}</p> : <></>}
-          <Link href="/login"><a>Login</a></Link>
         </div>
       </>
     );

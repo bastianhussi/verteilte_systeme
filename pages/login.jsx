@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import axios from 'axios';
 import { login, noAuth } from '../utils/auth';
+import styles from './login.module.css';
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -71,30 +72,35 @@ export default class Login extends React.Component {
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
           <title>Login</title>
         </Head>
-        <div>
-          <form onSubmit={this.submitLoginForm}>
-            <label>
-              Email:
+        <h1 style={{ textAlign: "center" }}>Login</h1>
+        <div className={styles.center}>
+          <form onSubmit={this.submitLoginForm} className={styles.loginForm}>
+            <div>
+              <label>
+                Email:
               <br />
-              <input type="email" value={this.state.email} onChange={this.changeEmail} required />
-            </label>
-            <br />
-            <label>
-              Password:
+                <input type="email" value={this.state.email} onChange={this.changeEmail} required />
+              </label>
+            </div>
+            <div>
+              <label>
+                Password:
               <br />
-              <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
-              <a ></a>
-            </label>
-            <br />
-            <label>
-              <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
-              Show password
-            </label>
-            <br />
-            <button type="submit">Login</button>
+                <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+              </label>
+              <br />
+              <label>
+                <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
+                Show password
+              </label>
+            </div>
+            <div>
+              <Link href="/register" ><a>Register</a></Link>
+              <button type="submit" className={styles.loginButton}>Sign in</button>
+            </div>
           </form>
           {this.state.message ? <p>{this.state.message}</p> : <></>}
-          <Link href="/register"><a>Register</a></Link>
+
         </div>
       </>
     );

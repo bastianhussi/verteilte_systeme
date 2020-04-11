@@ -1,0 +1,27 @@
+.center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    align-content: center;
+}
+
+.loginForm {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 1rem;
+    border: solid 2px #0000002f;
+    border-radius: 1rem;
+}
+
+.loginForm div {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.loginButton {
+    float: right;
+    background-color: #1aaa55;
+}
