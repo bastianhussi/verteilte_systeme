@@ -13,11 +13,11 @@ export default class Index extends React.Component {
       currentView: <Calendar />,
     };
 
-    this.changeView = this.changeView.bind(this);
+    this.changeCurrentView = this.changeCurrentView.bind(this);
     this.changeUser = this.changeUser.bind(this);
   }
 
-  changeView(newView) {
+  changeCurrentView(newView) {
     this.setState({ currentView: newView });
   }
 
@@ -49,7 +49,7 @@ export default class Index extends React.Component {
           <title>Overview</title>
         </Head>
         <AppContext.Provider value={{ user, token, apiUrl, changeUser: this.changeUser }} >
-          <Navbar changeView={this.changeView} />
+          <Navbar changeView={this.changeCurrentView} />
           <div>
             {this.state.currentView}
           </div>

@@ -6,6 +6,7 @@ import {
 import {
   auth, handleError, validateData, validateIdAgainstToken, createObjectId,
 } from '../../../utils/middleware';
+import { NotFoundError } from '../../../utils/errors';
 
 /**
  *
