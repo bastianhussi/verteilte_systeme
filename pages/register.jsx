@@ -36,8 +36,9 @@ export default class Register extends React.Component {
   }
 
   /**
-   * This function and the other three below are called whenever
-   * a value in the register form changes. This way the state will always be up to date.
+   * This function and the other three below are beeing called 
+   * whenever the value of an input field changes.
+   * This way the components state will always be up to date.
    * @param {object} event - The input event.
    */
   changeEmail(event) {
@@ -62,6 +63,7 @@ export default class Register extends React.Component {
    * @param {*} event - The form submit event.
    */
   async submitRegisterForm(event) {
+    // prevent the standard behavior of the html form (refreshing the page).
     event.preventDefault();
     this.setState({ message: '' });
     try {
@@ -79,11 +81,11 @@ export default class Register extends React.Component {
   }
 
   /**
-   * This Component will render a register form with an email,
-   * name and password input field. It's also possible to show the password as
+   * This Component will render a register form with an email-,
+   * name- and password input field. It's also possible to show the password as
    * plain text by using the checkbox. If the user wants to login instead a link
    * to do so is also provided.
-   * If an error occurres when making a post request (email address taken)
+   * If an error occurres when making a post request (e.g. email address taken)
    * it will be displayed below the form.
    * The css styles beeing used are comming from './login.module.css' because the styling
    * of both the login- and register form do not differ.

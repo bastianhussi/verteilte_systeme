@@ -13,6 +13,11 @@ export default class AdminPanel extends React.Component {
             loading: true,
             message: ''
         };
+
+        this.changeCourse = this.changeCourse.bind(this);
+        this.deleteCourse = this.deleteCourse.bind(this);
+        this.changeRoom = this.changeRoom.bind(this);
+        this.deleteRoom = this.deleteRoom.bind(this);
     }
 
     static contextType = AppContext;
@@ -45,13 +50,97 @@ export default class AdminPanel extends React.Component {
         });
     }
 
+    async changeCourse(id, name) {
+        const { apiUrl, token } = this.context;
+
+        this.setState({ message: '' });
+        try {
+            const res = await axios.patch(`${apiUrl}/courses/${id}`, {
+                name
+            }, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            const courseIndex = this.state.courses.indexOf(course => course._id === id);
+            const newCourses = this.state.courses;
+            newCourses[courseIndex] = res.data;
+            this.setState({ courses: newCourses });
+        } catch (err) {
+            this.setState({ message: err.response.data });
+        }
+    }
+
+    async deleteCourse(id) {
+        const { apiUrl, token } = this.context;
+
+        this.setState({ message: '' });
+        try {
+            await axios.delete(`${apiUrl}/courses/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            const courseId = this.state.courses.findIndex(course => course._id === id);
+            const newCourses = this.state.courses;
+            delete newCourses[courseId];
+            this.setState({ courses: newCourses });
+        } catch (err) {
+            this.setState({ message: err.response.data });
+        }
+    }
+
+    async changeRoom(id, name) {
+        const { apiUrl, token } = this.context;
+
+        this.setState({ message: '' });
+        try {
+            const res = await axios.patch(`${apiUrl}/rooms/${id}`, {
+                name
+            }, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            const roomIndex = this.state.rooms.indexOf(room => room._id === id);
+            const newRooms = this.state.rooms;
+            newRooms[roomIndex] = res.data;
+            this.setState({ rooms: newRooms });
+        } catch (err) {
+            this.setState({ message: err.response.data });
+        }
+    }
+
+    async deleteRoom(id) {
+        const { apiUrl, token } = this.context;
+
+        this.setState({ message: '' });
+        try {
+            await axios.delete(`${apiUrl}/rooms/${id}`, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            const roomId = this.state.rooms.findIndex(room => room._id === id);
+            const newRooms = this.state.rooms;
+            delete newRooms[roomId];
+            this.setState({ rooms: newRooms });
+        } catch (err) {
+            this.setState({ message: err.response.data });
+        }
+    }
+
     render() {
 
         const rooms = this.state.rooms.map(room =>
-            <Room value={room} onSubmit={() => console.log('test')} />
+            <Room key={room._id} value={room} onChange={this.changeRoom} onDelete={this.deleteRoom} />
         );
         const courses = this.state.courses.map(course =>
-            <Course value={course} onSubmit={() => console.log('test')} />
+            <Course key={course._id} value={course} onChange={this.changeCourse} onDelete={this.deleteCourse} />
         );
 
         return (
