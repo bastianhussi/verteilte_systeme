@@ -26,6 +26,12 @@ export function auth(req) {
   });
 }
 
+/**
+ * Just like the auth-function above but on top this function
+ * checks if the user is also an admin.
+ * This function is usefull for making sure only admins can make certain http requests.
+ * @param {object} req - The incoming request.
+ */
 export async function authAdmin(req) {
   const token = auth(req);
   const user = await findOne('users', { _id: createObjectId(token._id) });
