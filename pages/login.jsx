@@ -21,8 +21,10 @@ export default class Login extends React.Component {
   }
 
   /**
-   * 
-   * @param {*} ctx 
+   * Uses the noAuth-function to check if the user is not logged in.
+   * After that this function will check which protocol is beeing used and gets the url for making
+   * api calls.
+   * @param {*} ctx - The context
    */
   static getInitialProps(ctx) {
     noAuth(ctx);
@@ -31,6 +33,12 @@ export default class Login extends React.Component {
     return { apiUrl };
   }
 
+  /**
+   * This function and the other two below are beeing called 
+   * whenever the value of an input field changes.
+   * This way the components state will always be up to date.
+   * @param {*} event - The input event.
+   */
   changeEmail(event) {
     this.setState({ email: event.target.value });
   }
@@ -44,10 +52,13 @@ export default class Login extends React.Component {
   }
 
   /**
-   * 
-   * @param {*} event 
+   * This function will make a (axios) post request in attempt to log the user in.
+   * If the request succeeds the user will be redirected to "/" by calling the login-function.
+   * In case of an error the error will be displayed below the form.
+   * @param {*} event - The form submit event.
    */
   async submitLoginForm(event) {
+    // prevent the standard behavior of the html form (refreshing the page).
     event.preventDefault();
     this.setState({ message: '' });
     try {
@@ -64,6 +75,14 @@ export default class Login extends React.Component {
     }
   }
 
+  /**
+   * This component will render a form with a email- and password input field.
+   * It's also possible to show the password as
+   * plain text by using the checkbox. If the user wants to register instead a link
+   * to do so is also provided.
+   * If an error occurres when making a post request (e.g. wrong password)
+   * it will be displayed below the form.
+   */
   render() {
     return (
       <>

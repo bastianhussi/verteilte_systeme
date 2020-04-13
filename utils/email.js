@@ -12,10 +12,11 @@ const transport = nodemailer.createTransport({
 
 /**
  * Sends a email the the user containing his verification code.
+ * This function requires the entire url to activate the users accout.
  * @param {string} email - The users email address.
- * @param {string} code - His verification code.
+ * @param {string} urlWithCode - The url that will activate the account.
  */
-export async function sendVerificationMail(email, code) {
+export async function sendVerificationMail(email, urlWithCode) {
   const message = {
     from: process.env.SMTP_USER,
     to: email,

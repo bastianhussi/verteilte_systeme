@@ -22,6 +22,12 @@ export default class Register extends React.Component {
     this.submitRegisterForm = this.submitRegisterForm.bind(this);
   }
 
+  /**
+   * Uses the noAuth-function to check if the user is not logged in.
+   * After that this function will check which protocol is beeing used and gets the url for making
+   * api calls.
+   * @param {object} ctx - The context.
+   */
   static getInitialProps(ctx) {
     noAuth(ctx);
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
@@ -29,6 +35,12 @@ export default class Register extends React.Component {
     return { apiUrl };
   }
 
+  /**
+   * This function and the other three below are beeing called 
+   * whenever the value of an input field changes.
+   * This way the components state will always be up to date.
+   * @param {object} event - The input event.
+   */
   changeEmail(event) {
     this.setState({ email: event.target.value });
   }
@@ -46,10 +58,12 @@ export default class Register extends React.Component {
   }
 
   /**
-   * 
-   * @param {*} event 
+   * This function will make a (axios) post request to register the user.
+   * If the request succeeds the user is promted to check his inbox.
+   * @param {*} event - The form submit event.
    */
   async submitRegisterForm(event) {
+    // prevent the standard behavior of the html form (refreshing the page).
     event.preventDefault();
     this.setState({ message: '' });
     try {
@@ -66,6 +80,16 @@ export default class Register extends React.Component {
     }
   }
 
+  /**
+   * This Component will render a register form with an email-,
+   * name- and password input field. It's also possible to show the password as
+   * plain text by using the checkbox. If the user wants to login instead a link
+   * to do so is also provided.
+   * If an error occurres when making a post request (e.g. email address taken)
+   * it will be displayed below the form.
+   * The css styles beeing used are comming from './login.module.css' because the styling
+   * of both the login- and register form do not differ.
+   */
   render() {
     return (
       <>

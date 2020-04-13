@@ -25,7 +25,7 @@ export default class Navbar extends React.Component {
             (<a onClick={() => changeView(<AdminPanel />)}>Admin</a>) : (<></>)
         }
         <div className={styles.dropdown} style={{ float: 'right' }}>
-          <button className={styles.dropbtn}>{user.name}</button>
+          <div className={styles.dropbtn}>{user.name}</div>
           <div className={styles.dropdownContent}>
             <a onClick={() => changeView(<Account />)}>Account</a>
             <a href="#help">Help</a>

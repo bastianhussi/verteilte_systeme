@@ -5,7 +5,7 @@ import {
 import {
   validateData, handleError, auth, createObjectId, authAdmin,
 } from '../../../utils/middleware';
-import { BadRequestError } from '../../../utils/errors';
+import { BadRequestError, NotFoundError } from '../../../utils/errors';
 
 /**
  *
@@ -49,7 +49,14 @@ async function handleDelete(req, res) {
   await authAdmin(req);
   const { id } = req.query;
 
-  const lecture = await findOne('lectures', { room: _id });
+  let lecture;
+  try {
+    lecture = await findOne('lectures', { room: createObjectId(id) });
+  } catch (err) {
+    // NotFoundErros should make this fail
+    if (!err instanceof NotFoundError) throw err;
+  }
+
   if (lecture) {
     throw new BadRequestError('there are lectures for this class', lecture);
   }

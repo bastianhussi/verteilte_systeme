@@ -4,7 +4,9 @@ import axios from 'axios';
 import { UnauthorizedError } from './errors';
 
 /**
- * 
+ * This helper function will search the users browser for a cookie with the given name.
+ * It will then return the content of the cookie.
+ * The function was written to avoid a unnecessary libary like js-cookie.
  * @param {*} cookieName 
  * @param {*} param1 
  */
@@ -28,11 +30,13 @@ function getCookieByName(cookieName, { req }) {
 }
 
 /**
- * 
+ * This helper function will be invoked, when a user has to be redirected.
+ * It is necessary to use such a function because redirecting a user has to be done
+ * differently on the server / client.
  * @param {*} ctx 
  * @param {*} path 
  */
-function reject(ctx, path) {
+function redirect(ctx, path) {
   if (ctx.req) {
     ctx.res.writeHead(302, { Location: path });
     ctx.res.end();
@@ -42,7 +46,9 @@ function reject(ctx, path) {
 }
 
 /**
- * 
+ * Will log an authorized user in by creating a cookie named token with the jwt in it.
+ * This cookie will expire in 12 hours.
+ * The user is redirected to / .
  * @param {*} token 
  */
 export function login(token) {
@@ -54,7 +60,8 @@ export function login(token) {
 }
 
 /**
- * 
+ * Will log an authorized user out by expirering his cookie immediately.
+ * The user will then be redirected to /login.
  */
 export function logout() {
   // expires now
@@ -63,14 +70,17 @@ export function logout() {
 }
 
 /**
- * 
+ * Checks if a cookie with the name token exits.
+ * If so the jwt inside the cookie gets validated.
+ * If this succeeds the user may proceed, if not he is redirected to /login.
  * @param {*} ctx 
+ * @param {*} apiUrl 
  */
 export async function auth (ctx, apiUrl) {
   const token = getCookieByName('token', ctx);
 
   if (!token) {
-    reject(ctx, '/login');
+    redirect(ctx, '/login');
     throw new UnauthorizedError('missing jwt', ctx);
   }
 
@@ -81,20 +91,24 @@ export async function auth (ctx, apiUrl) {
     });
     return { user: res.data, token };
   } catch {
-    reject(ctx, '/login');
+    redirect(ctx, '/login');
     throw new UnauthorizedError('invalid jwt', ctx);
   }
 }
 
 /**
- * 
+ * Checks if a cookie with the name token exits.
+ * If not the user may proceed, if so he will be redirected to /.
+ * NOTE: In case of a existing, but unvalid token a loop will accrue.
+ * This behavior is desired, because the browser (tested on firefox, chrome, vivaldi)
+ * will show a prompt asking the user to delete his cookies.
  * @param {*} ctx 
  */
 export function noAuth(ctx) {
   const token = getCookieByName('token', ctx);
   if (token) {
     jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (!err) reject(ctx, '/');
+      if (!err) redirect(ctx, '/');
     });
   }
 }
