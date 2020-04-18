@@ -3,6 +3,7 @@ import { findOne, updateOne, deleteOne } from '../../../utils/database';
 import {
   auth, handleError, validateData, createObjectId, authAdmin,
 } from '../../../utils/middleware';
+import { NotFoundError } from '../../../utils/errors';
 
 /**
  * Returns a room if one is found in the database.
@@ -42,7 +43,13 @@ async function handleDelete(req, res) {
 
   const _id = createObjectId(req.query.id);
 
-  const lecture = await findOne('lectures', { room: _id });
+  let lecture;
+  try {
+    lecture = await findOne('lectures', { room: _id });
+  } catch (err) {
+    if (!err instanceof NotFoundError) throw err;
+  }
+
   if (lecture) {
     throw new BadRequestError('there are lectures using this room', lecture);
   }

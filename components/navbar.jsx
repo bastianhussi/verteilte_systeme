@@ -5,6 +5,7 @@ import Calendar from './calendar';
 import AdminPanel from './adminPanel';
 import Account from './account';
 import AppContext from './appContext';
+import MyCourses from './myCourses';
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -24,6 +25,7 @@ export default class Navbar extends React.Component {
           user.admin ?
             (<a onClick={() => changeView(<AdminPanel />)}>Admin</a>) : (<></>)
         }
+        <a onClick={() => changeView(<MyCourses />)}>My Courses</a>
         <div className={styles.dropdown} style={{ float: 'right' }}>
           <div className={styles.dropbtn}>{user.name}</div>
           <div className={styles.dropdownContent}>

@@ -35,7 +35,9 @@ export default class MyCourses extends React.Component {
             });
             this.setState({ selectedCourse: courses[0]._id, courses });
         }).catch(err => {
-            this.setState({ message: err.response.data });
+            if (err.response.status !== 404) {
+                this.setState({ message: err.response.data });
+            }
         }).finally(() => {
             this.setState({ loading: false });
         });
