@@ -4,6 +4,7 @@ import React from 'react';
 import axios from 'axios';
 import { noAuth } from '../utils/auth';
 import styles from './login.module.css'
+import Message from '../components/message';
 
 export default class Register extends React.Component {
   constructor(props) {
@@ -132,7 +133,7 @@ export default class Register extends React.Component {
               <button type="submit" className={styles.loginButton}>Register</button>
             </div>
           </form>
-          {this.state.message ? <p>{this.state.message}</p> : <></>}
+          <Message value={this.state.message} />
         </div>
       </>
     );

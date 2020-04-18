@@ -1,7 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import styles from './email.module.css';
 import AppContext from '../appContext';
+import Message from '../message';
+import styles from './email.module.css';
 
 export default class Password extends React.Component {
     constructor(props) {
@@ -68,7 +69,7 @@ export default class Password extends React.Component {
                     </label>
                     <button type="submit">Change</button>
                 </form>
-                {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                <Message value={this.state.message} />
             </>
         );
     }

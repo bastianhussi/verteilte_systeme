@@ -3,6 +3,7 @@ import axios from 'axios';
 import AppContext from '../appContext';
 import styles from './deleteAccount.module.css';
 import { logout } from '../../utils/auth';
+import Message from '../message';
 
 export default class DeleteAccount extends React.Component {
     constructor(props) {
@@ -43,7 +44,7 @@ export default class DeleteAccount extends React.Component {
                         <button type="submit">Delete</button>
                     </label>
                 </form>
-                {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                <Message value={this.state.message} />
             </>
         );
     }

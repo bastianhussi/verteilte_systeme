@@ -4,6 +4,7 @@ import { auth } from '../utils/auth';
 import Calendar from '../components/calendar';
 import Navbar from '../components/navbar';
 import AppContext from '../components/appContext';
+import Message from '../components/message';
 
 export default class Index extends React.Component {
   constructor(props) {
@@ -11,6 +12,7 @@ export default class Index extends React.Component {
     this.state = {
       user: this.props.user,
       currentView: <Calendar />,
+      message: ''
     };
 
     this.changeCurrentView = this.changeCurrentView.bind(this);
@@ -32,7 +34,7 @@ export default class Index extends React.Component {
       const { user, token } = await auth(ctx, apiUrl);
       return { user, token, apiUrl };
     } catch (err) {
-
+      this.setState({ message: err.message });
     }
   }
 
@@ -51,6 +53,7 @@ export default class Index extends React.Component {
         <AppContext.Provider value={{ user, token, apiUrl, changeUser: this.changeUser }} >
           <Navbar changeView={this.changeCurrentView} />
           <div>
+            <Message value={this.state.message} />
             {this.state.currentView}
           </div>
         </AppContext.Provider>

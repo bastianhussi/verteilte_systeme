@@ -3,6 +3,7 @@ import Link from 'next/link';
 import React from 'react';
 import axios from 'axios';
 import { login, noAuth } from '../utils/auth';
+import Message from '../components/message';
 import styles from './login.module.css';
 
 export default class Login extends React.Component {
@@ -118,7 +119,7 @@ export default class Login extends React.Component {
               <button type="submit" className={styles.loginButton}>Sign in</button>
             </div>
           </form>
-          {this.state.message ? <p>{this.state.message}</p> : <></>}
+          <Message value={this.state.message} />
         </div>
       </>
     );

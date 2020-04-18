@@ -3,6 +3,7 @@ import AppContext from './appContext';
 import axios from 'axios';
 import Course from './adminPanel/course';
 import Room from './adminPanel/room';
+import Message from './message';
 
 export default class AdminPanel extends React.Component {
     constructor(props) {
@@ -157,7 +158,7 @@ export default class AdminPanel extends React.Component {
                         </ul>
                     </div>
                 )}
-                {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                <Message value={this.state.message} />
             </>
         );
     }

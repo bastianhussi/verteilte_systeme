@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import styles from './name.module.css';
 import AppContext from '../appContext';
+import Message from '../message';
 
 export default class Name extends React.Component {
     constructor(props) {
@@ -60,7 +61,7 @@ export default class Name extends React.Component {
                             </label>
                             <button type="submit">Change</button>
                         </form>
-                        {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                        <Message value={this.state.message} />
                     </>
                 )
             }</AppContext.Consumer>
