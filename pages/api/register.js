@@ -26,7 +26,9 @@ async function handlePost(req, res) {
   const salt = crypto.randomBytes(128).toString('base64');
   const code = crypto.pbkdf2Sync(newUser.email, salt, 10, 32, 'sha256').toString('hex');
 
-  await insertOne('users', { code, ...newUser, password: hashedPassword });
+  await insertOne('users', {
+    code, ...newUser, password: hashedPassword, courses: [],
+  });
   await sendVerificationMail(newUser.email, code);
 
   res.status(201).end();

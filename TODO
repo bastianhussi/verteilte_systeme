@@ -2,7 +2,7 @@
 # when should jwt expire? 12h?
 # min lenght for passwords?
 # set an production logging and a seperate debugging loggin
-
+# throw error, if no data changed on patch-req?
 ================================
 
 Bugs:
