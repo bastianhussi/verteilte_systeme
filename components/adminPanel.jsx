@@ -6,7 +6,6 @@ import axios from 'axios';
 import Course from './adminPanel/course';
 import Room from './adminPanel/room';
 import Message from './message';
-import { compareSync } from 'bcrypt';
 
 export default class AdminPanel extends React.Component {
     constructor(props) {
@@ -79,10 +78,10 @@ export default class AdminPanel extends React.Component {
                     'Authorization': `Bearer ${token}`
                 },
             });
-            const courseIndex = this.state.courses.indexOf(course => course._id === id);
-            const newCourses = this.state.courses;
-            newCourses[courseIndex] = res.data;
-            this.setState({ courses: newCourses });
+            const courseIndex = this.state.courses.findIndex(course => course._id === id);
+            const updatedCourses = this.state.courses;
+            updatedCourses[courseIndex] = res.data;
+            this.setState({ courses: updatedCourses });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -109,7 +108,7 @@ export default class AdminPanel extends React.Component {
     }
 
     createRoom(room) {
-        const updatedRooms = this.state.courses;
+        const updatedRooms = this.state.rooms;
         updatedRooms.push(room);
         this.setState({ rooms: updatedRooms });
     }
@@ -127,10 +126,10 @@ export default class AdminPanel extends React.Component {
                     'Authorization': `Bearer ${token}`
                 },
             });
-            const roomIndex = this.state.rooms.indexOf(room => room._id === id);
-            const newRooms = this.state.rooms;
-            newRooms[roomIndex] = res.data;
-            this.setState({ rooms: newRooms });
+            const roomIndex = this.state.rooms.findIndex(room => room._id === id);
+            const updatedRooms = this.state.rooms;
+            updatedRooms[roomIndex] = res.data;
+            this.setState({ rooms: updatedRooms });
         } catch (err) {
             this.setState({ message: err.response.data });
         }

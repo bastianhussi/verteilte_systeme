@@ -34,7 +34,7 @@ export default class Index extends React.Component {
       const { user, token } = await auth(ctx, apiUrl);
       return { user, token, apiUrl };
     } catch (err) {
-      this.setState({ message: err.message });
+      
     }
   }
 

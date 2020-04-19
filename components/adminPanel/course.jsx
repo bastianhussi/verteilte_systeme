@@ -25,7 +25,7 @@ export default class Course extends React.Component {
     async submitEditingForm(event) {
         event.preventDefault();
         await this.props.onChange(this.props.value._id, this.state.name);
-
+        this.setState({ name: '', showEditing: false });
     }
 
     async deleteCourse() {
