@@ -39,7 +39,7 @@ export default class Month extends React.Component {
   render() {
     const days = [];
     for (let d = 1; d <= this.state.date.getMonthDays(); d++) {
-      days.push(<Day key={d} number={d} />);
+      days.push(<Day key={d} number={d} changeView={this.props.changeView} />);
     }
     return (
       <>
@@ -63,7 +63,7 @@ class Day extends React.Component {
 
   render() {
     return (
-      <div className={styles.monthDay}>{this.props.number}</div>
+      <div className={styles.monthDay} onClick={this.props.changeView}>{this.props.number}</div>
     );
   }
 }

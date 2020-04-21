@@ -14,23 +14,23 @@ export default class Form extends React.Component {
           <form>
             <label>
               Title:
-                <br />
+              <br />
               <input type="text" required />
             </label>
             <br />
             <label>
               Time:
-                <br />
+              <br />
               <span>
                 <input type="time" />
-                  -
-                  <input type="time" />
+                -
+                <input type="time" />
               </span>
             </label>
             <br />
             <label>
               Room:
-                <br />
+              <br />
               <input type="text" />
             </label>
             <button type="submit">Create</button>
