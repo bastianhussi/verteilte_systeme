@@ -8,7 +8,7 @@ export default class MyCourses extends React.Component {
         super(props);
         this.state = {
             loading: true,
-            selectIndex: -1,
+            selectedCourse: '',
             courses: [],
             message: '',
         };
@@ -19,6 +19,10 @@ export default class MyCourses extends React.Component {
 
     static contextType = AppContext;
 
+    /**
+     * Fetches courses from the api. Unfortunately this method has to be used,
+     * because this is just a component and so cannot make use of getInitialProps.
+     */
     componentDidMount() {
         const { user, apiUrl, token } = this.context;
         axios.get(`${apiUrl}/courses`, {
@@ -27,13 +31,12 @@ export default class MyCourses extends React.Component {
                 'Authorization': `Bearer ${token}`
             },
         }).then(res => {
-            const courses = res.data;
-            courses.forEach((course, index) => {
-                if (user.courses.find(({ _id }) => _id === course._id)) {
-                    courses.splice(index, 1);
-                }
+            // filters courses out that the user already selected.
+            const courses = res.data.filter(course => {
+                const result = user.courses.find(userCourse => userCourse._id === course._id);
+                return result ? false : true;
             });
-            this.setState({ selectedCourse: courses ? 0 : -1, courses });
+            this.setState({ selectedCourse: courses.length > 0 ? courses[0]._id : '', courses });
         }).catch(err => {
             if (err.response.status !== 404) {
                 this.setState({ message: err.response.data });
@@ -51,13 +54,11 @@ export default class MyCourses extends React.Component {
         event.preventDefault();
         this.setState({ message: '' });
 
+        const selectedCourse = this.state.courses.find((course) => course._id === this.state.selectedCourse);
         const { apiUrl, token, user, changeUser } = this.context;
-
-        const index = this.state.courses.findIndex(({ _id }) => _id === this.state.selectedCourse);
-        const newCourse = this.state.courses[index];
         try {
             const res = await axios.patch(`${apiUrl}/users/${user._id}`, {
-                courses: [...user.courses, newCourse]
+                courses: [...user.courses, selectedCourse]
             }, {
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8',
@@ -66,14 +67,34 @@ export default class MyCourses extends React.Component {
             });
 
             // remove this course from the list of courses
-            const modifiedCourses = this.state.courses;
-            modifiedCourses.splice(index, 1);
-            this.setState({ selectedCourse: this.state.courses ? 0 : -1, courses: modifiedCourses });
+            const modifiedCourses = this.state.courses.filter((course) => course._id !== this.state.selectedCourse);
+            this.setState({ selectedCourse: modifiedCourses.length > 0 ? modifiedCourses[0]._id : '', courses: modifiedCourses });
 
             // update the user
-            const modifiedUser = res.data;
-            changeUser(modifiedUser);
+            changeUser(res.data);
         } catch (err) {
+            console.log(err);
+            this.setState({ message: err.response.data });
+        }
+    }
+
+    async deleteCourse(id) {
+        const { user, token, apiUrl, changeUser } = this.context;
+        const deletedCourse = user.courses.find(course => course._id === id);
+        const modifiedCourses = user.courses.filter(course => course._id !== id);
+        try {
+            const res = await axios.patch(`${apiUrl}/users/${user._id}`, {
+                 courses: modifiedCourses, 
+            }, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    'Authorization': `Bearer ${token}`
+                },
+            });
+            this.setState({ courses: [...this.state.courses, deletedCourse]});
+            this.setState({ selectedCourse: this.state.courses[0]._id });
+            changeUser(res.data);
+        } catch(err) {
             console.log(err);
             this.setState({ message: err.response.data });
         }
@@ -90,15 +111,20 @@ export default class MyCourses extends React.Component {
                                 <form onSubmit={this.submitCourseForm}>
                                     <label>
                                         Add a new course to your list:
-                                    <select selectedIndex={this.state.selectIndex} onChange={this.changeSelectedCourse}>
-                                            {this.state.courses.map(course => <option value={course._id} key={course._id}>{course.name}</option>)}
-                                        </select>
+                                    <select value={this.state.selectedCourse} onChange={this.changeSelectedCourse}>
+                                        {this.state.courses.map(course => <option value={course._id} key={course._id}>{course.name}</option>)}
+                                    </select>
                                     </label>
                                     <button type="submit">Submit</button>
                                 </form>
                                 <div>
                                     <ul>
-                                        {user.courses.map(({_id, name}) => <li key={_id}>{name}</li>)}
+                                        {user.courses.map(({ _id, name }) => <li key={_id}>
+                                            {name} 
+                                            <span className="material-icons" onClick={() => this.deleteCourse(_id)}>
+                                                delete
+                                            </span>
+                                        </li>)}
                                     </ul>
                                 </div>
                             </div>

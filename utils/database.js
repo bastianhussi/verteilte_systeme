@@ -91,13 +91,13 @@ export async function updateOne(collection, filter, update) {
   }
 
   // if this really needed?
-  if (result.modifiedCount === 0) {
+  /* if (result.modifiedCount === 0) {
     throw new DatabaseError(`could not modify ${JSON.stringify(filter)}`, {
       collection,
       filter,
       update,
     });
-  }
+  } */
 }
 
 /**
