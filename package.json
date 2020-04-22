@@ -11,7 +11,6 @@
     "@hapi/joi": "^17.1.1",
     "axios": "^0.19.2",
     "bcrypt": "^4.0.1",
-    "dotenv": "^8.2.0",
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.5.5",
     "next": "9.3.3",
@@ -20,6 +19,7 @@
     "react-dom": "16.13.1"
   },
   "devDependencies": {
+    "dotenv": "^8.2.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb": "^18.1.0",
     "eslint-config-prettier": "^6.11.0",
