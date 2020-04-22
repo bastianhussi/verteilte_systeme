@@ -13,7 +13,7 @@ export default class ApplicationError extends Error {
  * All classes extending from this class will have a statusCode.
  * See: https://en.wikipedia.org/wiki/List_of_HTTP_status_codes
  */
-export class UserFacingError extends ApplicationError { }
+export class UserFacingError extends ApplicationError {}
 
 /**
  * Bad request errors will be thrown if a users request

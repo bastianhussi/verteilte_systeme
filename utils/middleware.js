@@ -1,9 +1,12 @@
-import jwt from 'jsonwebtoken';
-import { ObjectId, MongoError } from 'mongodb';
+import jwt from "jsonwebtoken";
+import { ObjectId, MongoError } from "mongodb";
 import ApplicationError, {
-  UserFacingError, BadRequestError, UnauthorizedError, ForbiddenError,
-} from './errors';
-import { findOne } from './database';
+  UserFacingError,
+  BadRequestError,
+  UnauthorizedError,
+  ForbiddenError,
+} from "./errors";
+import { findOne } from "./database";
 
 /**
  * Checks the request header for a x-access-token or a Bearer token.
@@ -12,16 +15,18 @@ import { findOne } from './database';
  * @param {object} req - The incoming request.
  */
 export function auth(req) {
-  let token = req.headers['x-access-token'] || req.headers.authorization;
-  if (!token) throw new UnauthorizedError('missing authorization header', { token, req });
+  let token = req.headers["x-access-token"] || req.headers.authorization;
+  if (!token)
+    throw new UnauthorizedError("missing authorization header", { token, req });
 
   // in case of Bearer token
-  if (token.startsWith('Bearer ')) {
-    [, token] = token.split(' ');
+  if (token.startsWith("Bearer ")) {
+    [, token] = token.split(" ");
   }
 
   return jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    if (err) throw new UnauthorizedError('unvalid jwt token', { err, token, req });
+    if (err)
+      throw new UnauthorizedError("unvalid jwt token", { err, token, req });
     return decoded;
   });
 }
@@ -34,8 +39,13 @@ export function auth(req) {
  */
 export async function authAdmin(req) {
   const token = auth(req);
-  const user = await findOne('users', { _id: createObjectId(token._id) });
-  if (!user.admin) throw new ForbiddenError('this resource is only accessible for admins', { reqBody, reqQuery: req.query, user });
+  const user = await findOne("users", { _id: createObjectId(token._id) });
+  if (!user.admin)
+    throw new ForbiddenError("this resource is only accessible for admins", {
+      reqBody,
+      reqQuery: req.query,
+      user,
+    });
   return user;
 }
 
@@ -49,11 +59,13 @@ export async function authAdmin(req) {
 export function handleError(res, err) {
   if (err instanceof UserFacingError) {
     res.status(err.statusCode).send(err.message);
-    if (process.env.NODE_ENV !== 'production') console.log(err);
+    if (process.env.NODE_ENV !== "production") console.log(err);
   } else if (err instanceof MongoError) {
     switch (err.code) {
       case 11000:
-        res.status(400).send(`duplicate entry for ${Object.entries(err.keyValue)}`);
+        res
+          .status(400)
+          .send(`duplicate entry for ${Object.entries(err.keyValue)}`);
         break;
       default:
         res.status(500).end();

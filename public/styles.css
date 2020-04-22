@@ -1,53 +1,53 @@
 body {
-    font-family: 'Roboto', sans-serif;
-    padding: 0;
-    margin: 0;
+  font-family: "Roboto", sans-serif;
+  padding: 0;
+  margin: 0;
 }
 
 a {
-    text-decoration: none;
-    cursor: pointer;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 button {
-    color: #ffffff;
-    background-color: red;
-    border: 2px solid;
-    border-radius: 6px;
-    padding: 8px;
-    cursor: pointer;
-    font-weight: bold;
+  color: #ffffff;
+  background-color: red;
+  border: 2px solid;
+  border-radius: 6px;
+  padding: 8px;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 @font-face {
-    font-family: 'Material Icons';
-    font-style: normal;
-    font-weight: 400;
-    src: url(/iconfont/MaterialIcons-Regular.eot);
-    /* For IE6-8 */
-    src: local('Material Icons'), local('MaterialIcons-Regular'), 
-    url(/iconfont/MaterialIcons-Regular.woff2) format('woff2'), 
-    url(/iconfont/MaterialIcons-Regular.woff) format('woff'), 
-    url(/iconfont/MaterialIcons-Regular.ttf) format('truetype');
+  font-family: "Material Icons";
+  font-style: normal;
+  font-weight: 400;
+  src: url(/iconfont/MaterialIcons-Regular.eot);
+  /* For IE6-8 */
+  src: local("Material Icons"), local("MaterialIcons-Regular"),
+    url(/iconfont/MaterialIcons-Regular.woff2) format("woff2"),
+    url(/iconfont/MaterialIcons-Regular.woff) format("woff"),
+    url(/iconfont/MaterialIcons-Regular.ttf) format("truetype");
 }
 
 .material-icons {
-    font-family: 'Material Icons';
-    font-weight: normal;
-    font-style: normal;
-    font-size: 24px;
-    line-height: 1;
-    letter-spacing: normal;
-    text-transform: none;
-    display: inline-block;
-    white-space: nowrap;
-    word-wrap: normal;
-    direction: ltr;
-    cursor: pointer;
-    -moz-font-feature-settings: 'liga';
-    -moz-osx-font-smoothing: grayscale;
+  font-family: "Material Icons";
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  cursor: pointer;
+  -moz-font-feature-settings: "liga";
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .material-icons:hover {
-    color: red;
+  color: red;
 }

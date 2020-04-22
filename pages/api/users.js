@@ -1,8 +1,6 @@
-import Joi from '@hapi/joi';
-import { find } from '../../utils/database';
-import {
-  validateData, handleError, authAdmin,
-} from '../../utils/middleware';
+import Joi from "@hapi/joi";
+import { find } from "../../utils/database";
+import { validateData, handleError, authAdmin } from "../../utils/middleware";
 
 /**
  * Checks the database for users matching the request query.
@@ -16,15 +14,12 @@ async function handleGet(req, res) {
 
   const schema = Joi.object({
     email: Joi.string().email().trim().optional(),
-    name: Joi.string().trim().min(3).max(50)
-      .optional(),
-    limit: Joi.number().integer().min(1).max(100)
-      .optional()
-      .default(50),
+    name: Joi.string().trim().min(3).max(50).optional(),
+    limit: Joi.number().integer().min(1).max(100).optional().default(50),
   });
   const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find('users', query, limit);
+  const cursor = await find("users", query, limit);
   const users = await cursor.toArray();
 
   // removing password, although they are hashed
@@ -44,7 +39,7 @@ async function handleGet(req, res) {
 export default async function (req, res) {
   try {
     switch (req.method) {
-      case 'GET':
+      case "GET":
         await handleGet(req, res);
       default:
         res.status(405).end();

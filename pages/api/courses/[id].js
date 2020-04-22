@@ -1,11 +1,13 @@
-import Joi from '@hapi/joi';
+import Joi from "@hapi/joi";
+import { findOne, deleteOne, updateOne } from "../../../utils/database";
 import {
-  findOne, deleteOne, updateOne,
-} from '../../../utils/database';
-import {
-  validateData, handleError, auth, createObjectId, authAdmin,
-} from '../../../utils/middleware';
-import { BadRequestError, NotFoundError } from '../../../utils/errors';
+  validateData,
+  handleError,
+  auth,
+  createObjectId,
+  authAdmin,
+} from "../../../utils/middleware";
+import { BadRequestError, NotFoundError } from "../../../utils/errors";
 
 /**
  *
@@ -15,7 +17,7 @@ import { BadRequestError, NotFoundError } from '../../../utils/errors';
 async function handleGet(req, res) {
   auth(req);
   const { id } = req.query;
-  const course = await findOne('courses', { _id: createObjectId(id) });
+  const course = await findOne("courses", { _id: createObjectId(id) });
   res.status(200).json(course);
 }
 
@@ -28,15 +30,17 @@ async function handlePatch(req, res) {
   await authAdmin(req);
 
   const schema = Joi.object({
-    name: Joi.string().trim().min(3).max(30)
-      .optional()
-      .default(''),
+    name: Joi.string().trim().min(3).max(30).optional().default(""),
   });
   const modifiedCourse = await validateData(req.body, schema);
 
   const { id } = req.query;
-  await updateOne('courses', { _id: createObjectId(id) }, { $set: modifiedCourse });
-  const updatedCourse = await findOne('courses', { _id: createObjectId(id) });
+  await updateOne(
+    "courses",
+    { _id: createObjectId(id) },
+    { $set: modifiedCourse }
+  );
+  const updatedCourse = await findOne("courses", { _id: createObjectId(id) });
   res.status(200).json(updatedCourse);
 }
 
@@ -51,18 +55,18 @@ async function handleDelete(req, res) {
 
   let lecture;
   try {
-    lecture = await findOne('lectures', { room: createObjectId(id) });
+    lecture = await findOne("lectures", { room: createObjectId(id) });
   } catch (err) {
     // NotFoundErros should make this fail
     if (!err instanceof NotFoundError) throw err;
   }
 
   if (lecture) {
-    throw new BadRequestError('there are lectures for this class', lecture);
+    throw new BadRequestError("there are lectures for this class", lecture);
   }
 
-  const deletedCourse = await findOne('courses', { _id: createObjectId(id) });
-  await deleteOne('courses', { _id: createObjectId(id) });
+  const deletedCourse = await findOne("courses", { _id: createObjectId(id) });
+  await deleteOne("courses", { _id: createObjectId(id) });
 
   res.status(200).json(deletedCourse);
 }
@@ -78,13 +82,13 @@ async function handleDelete(req, res) {
 export default async function (req, res) {
   try {
     switch (req.method) {
-      case 'GET':
+      case "GET":
         await handleGet(req, res);
         break;
-      case 'PATCH':
+      case "PATCH":
         await handlePatch(req, res);
         break;
-      case 'DELETE':
+      case "DELETE":
         await handleDelete(req, res);
         break;
       default:

@@ -18,7 +18,6 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-
 ## Working with Docker
 
 Due to the need of a database a second Docker image is required to run this app.

@@ -1,9 +1,12 @@
-import Joi from '@hapi/joi';
+import Joi from "@hapi/joi";
 import {
-  handleError, validateData, auth, createObjectId,
-} from '../../utils/middleware';
-import { insertOne, find, findOne } from '../../utils/database';
-import { BadRequestError } from '../../utils/errors';
+  handleError,
+  validateData,
+  auth,
+  createObjectId,
+} from "../../utils/middleware";
+import { insertOne, find, findOne } from "../../utils/database";
+import { BadRequestError } from "../../utils/errors";
 
 /**
  * Searches the database for lectures matching the query.
@@ -19,20 +22,17 @@ async function handleGet(req, res) {
   auth(req);
 
   const schema = Joi.object({
-    title: Joi.string().trim().min(3).max(30)
-      .optional(),
+    title: Joi.string().trim().min(3).max(30).optional(),
     user: Joi.string().optional(),
     class: Joi.string().optional(),
     room: Joi.string().optional(),
     start: Joi.date().optional(),
     end: Joi.date().optional(),
-    limit: Joi.number().integer().min(1).max(100)
-      .optional()
-      .default(50),
+    limit: Joi.number().integer().min(1).max(100).optional().default(50),
   });
   const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find('lectures', query, limit);
+  const cursor = await find("lectures", query, limit);
   const lectures = await cursor.toArray();
   res.status(200).json(lectures);
 }
@@ -48,8 +48,7 @@ async function handlePost(req, res) {
   const token = auth(req);
 
   const schema = Joi.object({
-    title: Joi.string().trim().min(3).max(30)
-      .required(),
+    title: Joi.string().trim().min(3).max(30).required(),
     course: Joi.string().required(),
     room: Joi.string().required(),
     start: Joi.date().required(),
@@ -57,13 +56,13 @@ async function handlePost(req, res) {
   });
 
   const doc = await validateData(req.body, schema);
-  const user = await findOne('users', { _id: createObjectId(token._id) });
+  const user = await findOne("users", { _id: createObjectId(token._id) });
   await Promise.all([
-    findOne('courses', { _id: createObjectId(doc.class) }),
-    findOne('rooms', { _id: createObjectId(doc.room) }),
+    findOne("courses", { _id: createObjectId(doc.class) }),
+    findOne("rooms", { _id: createObjectId(doc.room) }),
   ]);
 
-  const cursor = await find('lectures', {
+  const cursor = await find("lectures", {
     $or: [
       { user: createObjectId(token._id) },
       { class: createObjectId(doc.class) },
@@ -75,15 +74,17 @@ async function handlePost(req, res) {
 
   // checking for other lectures start and end conflicting with this new one.
   otherLectures.filter((otherLecture) => {
-    (otherLecture.start <= doc.end) && (otherLecture.end >= doc.start);
+    otherLecture.start <= doc.end && otherLecture.end >= doc.start;
   });
 
   if (otherLectures.length !== 0) {
-    throw new BadRequestError(`this lectures conflicts with ${JSON.stringify(otherLectures)}`);
+    throw new BadRequestError(
+      `this lectures conflicts with ${JSON.stringify(otherLectures)}`
+    );
   }
 
   const newLecture = { ...doc, user: user._id };
-  const _id = await insertOne('lectures', newLecture);
+  const _id = await insertOne("lectures", newLecture);
 
   res.status(201).json({ _id, ...newLecture });
 }
@@ -99,10 +100,10 @@ async function handlePost(req, res) {
 export default async function (req, res) {
   try {
     switch (req.method) {
-      case 'GET':
+      case "GET":
         await handleGet(req, res);
         break;
-      case 'POST':
+      case "POST":
         await handlePost(req, res);
         break;
       default:

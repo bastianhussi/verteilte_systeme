@@ -1,6 +1,6 @@
-import React from 'react';
-import Month from './calendar/month';
-import Week from './calendar/week';
+import React from "react";
+import Month from "./calendar/month";
+import Week from "./calendar/week";
 
 const CalendarContext = React.createContext({ selectedDate: new Date() });
 
@@ -14,14 +14,15 @@ export default class Calendar extends React.Component {
   }
 
   changeView() {
-    this.state.current = this.state.current instanceof Month ? <Week changeView={this.changeView} /> : <Month changeView={this.changeView} />;
+    this.state.current =
+      this.state.current instanceof Month ? (
+        <Week changeView={this.changeView} />
+      ) : (
+        <Month changeView={this.changeView} />
+      );
   }
 
   render() {
-    return (
-      <>
-        {this.state.current}
-      </>
-    );
+    return <>{this.state.current}</>;
   }
 }

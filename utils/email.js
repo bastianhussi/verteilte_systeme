@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer from "nodemailer";
 
 const transport = nodemailer.createTransport({
   host: process.env.SMTP_HOST,
@@ -20,7 +20,7 @@ export async function sendVerificationMail(email, urlWithCode) {
   const message = {
     from: process.env.SMTP_USER,
     to: email,
-    subject: 'Please activate your account',
+    subject: "Please activate your account",
     html: `<p>http://localhost:3000/verify/${code}</p>`,
   };
   await transport.sendMail(message);

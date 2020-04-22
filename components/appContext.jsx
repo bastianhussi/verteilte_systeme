@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 /**
  * The AppContext will store information about the user,
@@ -7,6 +7,6 @@ import React from 'react';
  * This information will be provided by the Index Component (pages/index.jsx).
  */
 const AppContext = React.createContext();
-AppContext.displayName = 'AppContext';
+AppContext.displayName = "AppContext";
 
 export default AppContext;

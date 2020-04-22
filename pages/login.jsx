@@ -1,19 +1,19 @@
-import Head from 'next/head';
-import Link from 'next/link';
-import React from 'react';
-import axios from 'axios';
-import { login, noAuth } from '../utils/auth';
-import Message from '../components/message';
-import styles from './login.module.css';
+import Head from "next/head";
+import Link from "next/link";
+import React from "react";
+import axios from "axios";
+import { login, noAuth } from "../utils/auth";
+import Message from "../components/message";
+import styles from "./login.module.css";
 
 export default class Login extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       showPassword: false,
-      message: '',
+      message: "",
     };
     this.changeEmail = this.changeEmail.bind(this);
     this.changePassword = this.changePassword.bind(this);
@@ -29,13 +29,15 @@ export default class Login extends React.Component {
    */
   static getInitialProps(ctx) {
     noAuth(ctx);
-    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-    const apiUrl = process.browser ? `${protocol}://${window.location.host}/api/login` : `${protocol}://${ctx.req.headers.host}/api/login`;
+    const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+    const apiUrl = process.browser
+      ? `${protocol}://${window.location.host}/api/login`
+      : `${protocol}://${ctx.req.headers.host}/api/login`;
     return { apiUrl };
   }
 
   /**
-   * This function and the other two below are beeing called 
+   * This function and the other two below are beeing called
    * whenever the value of an input field changes.
    * This way the components state will always be up to date.
    * @param {*} event - The input event.
@@ -61,18 +63,22 @@ export default class Login extends React.Component {
   async submitLoginForm(event) {
     // prevent the standard behavior of the html form (refreshing the page).
     event.preventDefault();
-    this.setState({ message: '' });
+    this.setState({ message: "" });
     try {
-      const res = await axios.post(this.props.apiUrl, {
-        email: this.state.email,
-        password: this.state.password,
-      }, {
-        headers: { 'Content-Type': 'application/json; charset=utf-8' },
-      });
+      const res = await axios.post(
+        this.props.apiUrl,
+        {
+          email: this.state.email,
+          password: this.state.password,
+        },
+        {
+          headers: { "Content-Type": "application/json; charset=utf-8" },
+        }
+      );
       const { token } = res.data;
       login(token);
     } catch (err) {
-      this.setState({ password: '', message: err.response.data });
+      this.setState({ password: "", message: err.response.data });
     }
   }
 
@@ -89,7 +95,10 @@ export default class Login extends React.Component {
       <>
         <Head>
           <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
           <title>Login</title>
         </Head>
         <h1 style={{ textAlign: "center" }}>Login</h1>
@@ -98,25 +107,43 @@ export default class Login extends React.Component {
             <div>
               <label>
                 Email:
-              <br />
-                <input type="email" value={this.state.email} onChange={this.changeEmail} required />
+                <br />
+                <input
+                  type="email"
+                  value={this.state.email}
+                  onChange={this.changeEmail}
+                  required
+                />
               </label>
             </div>
             <div>
               <label>
                 Password:
-              <br />
-                <input type={this.state.showPassword ? "text" : "password"} value={this.state.password} onChange={this.changePassword} required />
+                <br />
+                <input
+                  type={this.state.showPassword ? "text" : "password"}
+                  value={this.state.password}
+                  onChange={this.changePassword}
+                  required
+                />
               </label>
               <br />
               <label>
-                <input type="checkbox" defaultChecked={this.state.showPassword} onClick={this.changeShowPassword} />
+                <input
+                  type="checkbox"
+                  defaultChecked={this.state.showPassword}
+                  onClick={this.changeShowPassword}
+                />
                 Show password
               </label>
             </div>
             <div>
-              <Link href="/register" ><a>Register</a></Link>
-              <button type="submit" className={styles.loginButton}>Sign in</button>
+              <Link href="/register">
+                <a>Register</a>
+              </Link>
+              <button type="submit" className={styles.loginButton}>
+                Sign in
+              </button>
             </div>
           </form>
           <Message value={this.state.message} />

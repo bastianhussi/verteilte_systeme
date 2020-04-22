@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './week.module.css';
+import React from "react";
+import styles from "./week.module.css";
 
 export default class Week extends React.Component {
   constructor(props) {
@@ -9,7 +9,9 @@ export default class Week extends React.Component {
   render() {
     return (
       <>
-        <div><button onClick={this.props.changeView}>back to Month</button></div>
+        <div>
+          <button onClick={this.props.changeView}>back to Month</button>
+        </div>
         <div className={styles.week}>
           <Day name="Monday" />
           <Day name="Tuesday" />
@@ -37,11 +39,8 @@ class Day extends React.Component {
 
     return (
       <>
-
         <div className={styles.weekDay}>
-          <div className={styles.weekDayHeader}>
-            {this.props.name}
-          </div>
+          <div className={styles.weekDayHeader}>{this.props.name}</div>
           {hours}
         </div>
       </>
@@ -58,9 +57,7 @@ class Hour extends React.Component {
     return (
       <>
         <div className={styles.hour}>
-          {this.props.start}
-          -
-          {this.props.end}
+          {this.props.start}-{this.props.end}
         </div>
       </>
     );

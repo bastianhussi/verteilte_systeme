@@ -1,10 +1,10 @@
-import React from 'react';
-import Head from 'next/head';
-import { auth } from '../utils/auth';
-import Calendar from '../components/calendar';
-import Navbar from '../components/navbar';
-import AppContext from '../components/appContext';
-import Message from '../components/message';
+import React from "react";
+import Head from "next/head";
+import { auth } from "../utils/auth";
+import Calendar from "../components/calendar";
+import Navbar from "../components/navbar";
+import AppContext from "../components/appContext";
+import Message from "../components/message";
 
 export default class Index extends React.Component {
   constructor(props) {
@@ -12,7 +12,7 @@ export default class Index extends React.Component {
     this.state = {
       user: this.props.user,
       currentView: <Calendar />,
-      message: ''
+      message: "",
     };
 
     this.changeCurrentView = this.changeCurrentView.bind(this);
@@ -29,13 +29,13 @@ export default class Index extends React.Component {
 
   static async getInitialProps(ctx) {
     try {
-      const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
-      const apiUrl = process.browser ? `${protocol}://${window.location.host}/api` : `${protocol}://${ctx.req.headers.host}/api`;
+      const protocol = process.env.NODE_ENV === "production" ? "https" : "http";
+      const apiUrl = process.browser
+        ? `${protocol}://${window.location.host}/api`
+        : `${protocol}://${ctx.req.headers.host}/api`;
       const { user, token } = await auth(ctx, apiUrl);
       return { user, token, apiUrl };
-    } catch (err) {
-      
-    }
+    } catch (err) {}
   }
 
   static contextType = AppContext;
@@ -47,10 +47,15 @@ export default class Index extends React.Component {
       <>
         <Head>
           <meta charSet="UTF-8" />
-          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+          />
           <title>Overview</title>
         </Head>
-        <AppContext.Provider value={{ user, token, apiUrl, changeUser: this.changeUser }} >
+        <AppContext.Provider
+          value={{ user, token, apiUrl, changeUser: this.changeUser }}
+        >
           <Navbar changeView={this.changeCurrentView} />
           <div>
             <Message value={this.state.message} />

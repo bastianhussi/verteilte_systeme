@@ -1,10 +1,13 @@
-import { MongoClient } from 'mongodb';
-import { NotFoundError, DatabaseError } from './errors';
+import { MongoClient } from "mongodb";
+import { NotFoundError, DatabaseError } from "./errors";
 
-const client = new MongoClient(process.env.MONGO_HOST || 'mongodb://localhost:27017', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const client = new MongoClient(
+  process.env.MONGO_HOST || "mongodb://localhost:27017",
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  }
+);
 
 /**
  * This function checks if the client inside the "client"-variable (see above)
@@ -17,7 +20,7 @@ async function checkConnection() {
   }
 }
 
-const dbName = process.env.MONGO_DB || 'nextjs';
+const dbName = process.env.MONGO_DB || "nextjs";
 
 /**
  * Inserts the given document into a collection.
@@ -28,7 +31,11 @@ const dbName = process.env.MONGO_DB || 'nextjs';
 export async function insertOne(collection, doc) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).insertOne(doc);
-  if (result.insertedCount !== 1) throw new DatabaseError(`could not insert ${JSON.stringify(doc)}`, { collection, doc });
+  if (result.insertedCount !== 1)
+    throw new DatabaseError(`could not insert ${JSON.stringify(doc)}`, {
+      collection,
+      doc,
+    });
   return result.insertedId;
 }
 
@@ -42,7 +49,11 @@ export async function insertOne(collection, doc) {
 export async function findOne(collection, filter) {
   await checkConnection();
   const result = await client.db(dbName).collection(collection).findOne(filter);
-  if (!result) throw new NotFoundError(`no results searching for ${JSON.stringify(filter)}`, { collection, query: filter });
+  if (!result)
+    throw new NotFoundError(
+      `no results searching for ${JSON.stringify(filter)}`,
+      { collection, query: filter }
+    );
   return result;
 }
 
@@ -57,13 +68,20 @@ export async function findOne(collection, filter) {
  */
 export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
   await checkConnection();
-  const cursor = client.db(dbName).collection(collection).find(query).limit(limit);
-  if (!await cursor.hasNext()) {
-    throw new NotFoundError(`no results searching for ${JSON.stringify(query)}`, {
-      collection,
-      query,
-      limit,
-    });
+  const cursor = client
+    .db(dbName)
+    .collection(collection)
+    .find(query)
+    .limit(limit);
+  if (!(await cursor.hasNext())) {
+    throw new NotFoundError(
+      `no results searching for ${JSON.stringify(query)}`,
+      {
+        collection,
+        query,
+        limit,
+      }
+    );
   }
   return cursor;
 }
@@ -81,13 +99,19 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
  */
 export async function updateOne(collection, filter, update) {
   await checkConnection();
-  const result = await client.db(dbName).collection(collection).updateOne(filter, update);
+  const result = await client
+    .db(dbName)
+    .collection(collection)
+    .updateOne(filter, update);
   if (result.matchedCount === 0) {
-    throw new NotFoundError(`no results searching for ${JSON.stringify(filter)}`, {
-      collection,
-      filter,
-      update,
-    });
+    throw new NotFoundError(
+      `no results searching for ${JSON.stringify(filter)}`,
+      {
+        collection,
+        filter,
+        update,
+      }
+    );
   }
 
   // if this really needed?
@@ -108,7 +132,10 @@ export async function updateOne(collection, filter, update) {
  */
 export async function deleteOne(collection, filter) {
   await checkConnection();
-  const result = await client.db(dbName).collection(collection).deleteOne(filter);
+  const result = await client
+    .db(dbName)
+    .collection(collection)
+    .deleteOne(filter);
   if (result.deletedCount === 0) {
     throw new NotFoundError(`could not find ${JSON.stringify(filter)}`, {
       collection,

@@ -1,9 +1,13 @@
-import Joi from '@hapi/joi';
-import { findOne, updateOne, deleteOne } from '../../../utils/database';
+import Joi from "@hapi/joi";
+import { findOne, updateOne, deleteOne } from "../../../utils/database";
 import {
-  auth, handleError, validateData, createObjectId, authAdmin,
-} from '../../../utils/middleware';
-import { NotFoundError } from '../../../utils/errors';
+  auth,
+  handleError,
+  validateData,
+  createObjectId,
+  authAdmin,
+} from "../../../utils/middleware";
+import { NotFoundError } from "../../../utils/errors";
 
 /**
  * Returns a room if one is found in the database.
@@ -14,7 +18,7 @@ import { NotFoundError } from '../../../utils/errors';
 async function handleGet(req, res) {
   auth(req);
   const { id } = req.query;
-  const room = await findOne('rooms', { _id: createObjectId(id) });
+  const room = await findOne("rooms", { _id: createObjectId(id) });
   res.status(200).json(room);
 }
 
@@ -27,14 +31,13 @@ async function handlePatch(req, res) {
   await authAdmin(req);
 
   const schema = Joi.object({
-    name: Joi.string().trim().min(3).max(30)
-      .optional(),
+    name: Joi.string().trim().min(3).max(30).optional(),
   });
   const room = await validateData(req.body, schema);
 
   const _id = createObjectId(req.query.id);
-  await updateOne('rooms', { _id }, { $set: room });
-  const updatedRoom = await findOne('rooms', { _id });
+  await updateOne("rooms", { _id }, { $set: room });
+  const updatedRoom = await findOne("rooms", { _id });
   res.status(200).json(updatedRoom);
 }
 
@@ -45,17 +48,17 @@ async function handleDelete(req, res) {
 
   let lecture;
   try {
-    lecture = await findOne('lectures', { room: _id });
+    lecture = await findOne("lectures", { room: _id });
   } catch (err) {
     if (!err instanceof NotFoundError) throw err;
   }
 
   if (lecture) {
-    throw new BadRequestError('there are lectures using this room', lecture);
+    throw new BadRequestError("there are lectures using this room", lecture);
   }
 
-  const deletedRoom = await findOne('rooms', { _id });
-  await deleteOne('rooms', { _id });
+  const deletedRoom = await findOne("rooms", { _id });
+  await deleteOne("rooms", { _id });
 
   res.status(200).json(deletedRoom);
 }
@@ -71,13 +74,13 @@ async function handleDelete(req, res) {
 export default async function (req, res) {
   try {
     switch (req.method) {
-      case 'GET':
+      case "GET":
         await handleGet(req, res);
         break;
-      case 'PATCH':
+      case "PATCH":
         await handlePatch(req, res);
         break;
-      case 'DELETE':
+      case "DELETE":
         await handleDelete(req, res);
         break;
       default:

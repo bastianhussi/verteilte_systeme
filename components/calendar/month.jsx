@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './month.module.css';
+import React from "react";
+import styles from "./month.module.css";
 
 Date.prototype.getMonthDays = function () {
   const d = new Date(this.getFullYear(), this.getMonth() + 1, 0);
@@ -21,7 +21,11 @@ export default class Month extends React.Component {
     if (this.state.date.getMonth() == 1) {
       previousMonth = new Date(this.state.date.getFullYear() - 1, 0, 1);
     } else {
-      previousMonth = new Date(this.state.date.getFullYear(), this.state.date.getMonth() - 1, 1);
+      previousMonth = new Date(
+        this.state.date.getFullYear(),
+        this.state.date.getMonth() - 1,
+        1
+      );
     }
     this.setState({ date: previousMonth });
   }
@@ -31,7 +35,11 @@ export default class Month extends React.Component {
     if (this.state.date.getMonth() == 11) {
       nextMonth = new Date(this.state.date.getFullYear() + 1, 0, 1);
     } else {
-      nextMonth = new Date(this.state.date.getFullYear(), this.state.date.getMonth() + 1, 1);
+      nextMonth = new Date(
+        this.state.date.getFullYear(),
+        this.state.date.getMonth() + 1,
+        1
+      );
     }
     this.setState({ date: nextMonth });
   }
@@ -48,9 +56,7 @@ export default class Month extends React.Component {
           {this.state.date.toDateString()}
           <button onClick={this.nextMonth}>next</button>
         </div>
-        <div className={styles.month}>
-          {days}
-        </div>
+        <div className={styles.month}>{days}</div>
       </>
     );
   }
@@ -63,7 +69,9 @@ class Day extends React.Component {
 
   render() {
     return (
-      <div className={styles.monthDay} onClick={this.props.changeView}>{this.props.number}</div>
+      <div className={styles.monthDay} onClick={this.props.changeView}>
+        {this.props.number}
+      </div>
     );
   }
 }
