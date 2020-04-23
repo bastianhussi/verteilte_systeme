@@ -1,5 +1,5 @@
-import { handleError } from "../../../utils/middleware";
-import { updateOne } from "../../../utils/database";
+import { handleError } from '../../../utils/middleware';
+import { updateOne } from '../../../utils/database';
 
 /**
  *
@@ -7,9 +7,9 @@ import { updateOne } from "../../../utils/database";
  * @param {object} res - The outgoing response.
  */
 async function handlePost(req, res) {
-  const { code } = req.query;
-  await updateOne("users", { code }, { $unset: { code } });
-  res.status(200).end();
+    const { code } = req.query;
+    await updateOne('users', { code }, { $unset: { code } });
+    res.status(200).end();
 }
 
 /**
@@ -21,16 +21,16 @@ async function handlePost(req, res) {
  * @param {object} res - The outgoing response.
  */
 export default async function (req, res) {
-  try {
-    switch (req.method) {
-      case "POST":
-        await handlePost(req, res);
-        break;
-      default:
-        res.status(405).end();
-        break;
+    try {
+        switch (req.method) {
+            case 'POST':
+                await handlePost(req, res);
+                break;
+            default:
+                res.status(405).end();
+                break;
+        }
+    } catch (err) {
+        handleError(res, err);
     }
-  } catch (err) {
-    handleError(res, err);
-  }
 }

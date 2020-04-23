@@ -3,9 +3,9 @@
  * which erros where thrown on purpose.
  */
 export default class ApplicationError extends Error {
-  get name() {
-    return this.constructor.name;
-  }
+    get name() {
+        return this.constructor.name;
+    }
 }
 
 /**
@@ -23,16 +23,16 @@ export class UserFacingError extends ApplicationError {}
  * will be wrapped inside this object.
  */
 export class BadRequestError extends UserFacingError {
-  constructor(message, options = {}) {
-    super(message);
-    for (const [key, value] of Object.entries(options)) {
-      this[key] = value;
+    constructor(message, options = {}) {
+        super(message);
+        for (const [key, value] of Object.entries(options)) {
+            this[key] = value;
+        }
     }
-  }
 
-  get statusCode() {
-    return 400;
-  }
+    get statusCode() {
+        return 400;
+    }
 }
 
 /**
@@ -40,16 +40,16 @@ export class BadRequestError extends UserFacingError {
  * for a query exists.
  */
 export class NotFoundError extends UserFacingError {
-  constructor(message, options = {}) {
-    super(message);
-    for (const [key, value] of Object.entries(options)) {
-      this[key] = value;
+    constructor(message, options = {}) {
+        super(message);
+        for (const [key, value] of Object.entries(options)) {
+            this[key] = value;
+        }
     }
-  }
 
-  get statusCode() {
-    return 404;
-  }
+    get statusCode() {
+        return 404;
+    }
 }
 
 /**
@@ -57,16 +57,16 @@ export class NotFoundError extends UserFacingError {
  * access information he has no access to.
  */
 export class ForbiddenError extends UserFacingError {
-  constructor(message, options = {}) {
-    super(message);
-    for (const [key, value] of Object.entries(options)) {
-      this[key] = value;
+    constructor(message, options = {}) {
+        super(message);
+        for (const [key, value] of Object.entries(options)) {
+            this[key] = value;
+        }
     }
-  }
 
-  get statusCode() {
-    return 403;
-  }
+    get statusCode() {
+        return 403;
+    }
 }
 
 /**
@@ -75,16 +75,16 @@ export class ForbiddenError extends UserFacingError {
  * (e.g. Bearer token, cookie with jwt inside)
  */
 export class UnauthorizedError extends UserFacingError {
-  constructor(message, options = {}) {
-    super(message);
-    for (const [key, value] of Object.entries(options)) {
-      this[key] = value;
+    constructor(message, options = {}) {
+        super(message);
+        for (const [key, value] of Object.entries(options)) {
+            this[key] = value;
+        }
     }
-  }
 
-  get statusCode() {
-    return 401;
-  }
+    get statusCode() {
+        return 401;
+    }
 }
 
 /**
@@ -92,10 +92,10 @@ export class UnauthorizedError extends UserFacingError {
  * the database layer of this application.
  */
 export class DatabaseError extends ApplicationError {
-  constructor(message, options = {}) {
-    super(message);
-    for (const [key, value] of Object.entries(options)) {
-      this[key] = value;
+    constructor(message, options = {}) {
+        super(message);
+        for (const [key, value] of Object.entries(options)) {
+            this[key] = value;
+        }
     }
-  }
 }

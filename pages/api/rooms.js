@@ -1,11 +1,11 @@
-import Joi from "@hapi/joi";
-import { find, insertOne } from "../../utils/database";
+import Joi from '@hapi/joi';
+import { find, insertOne } from '../../utils/database';
 import {
-  auth,
-  handleError,
-  validateData,
-  authAdmin,
-} from "../../utils/middleware";
+    auth,
+    handleError,
+    validateData,
+    authAdmin,
+} from '../../utils/middleware';
 
 /**
  * Searches the database for rooms and returns the ones
@@ -16,17 +16,17 @@ import {
  * @param {object} res - The outgoing response.
  */
 async function handleGet(req, res) {
-  auth(req);
+    auth(req);
 
-  const schema = Joi.object({
-    name: Joi.string().trim().min(3).max(30).optional(),
-    limit: Joi.number().integer().min(1).max(100).optional().default(50),
-  });
-  const { limit, ...query } = await validateData(req.query, schema);
+    const schema = Joi.object({
+        name: Joi.string().trim().min(3).max(30).optional(),
+        limit: Joi.number().integer().min(1).max(100).optional().default(50),
+    });
+    const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find("rooms", query, limit);
-  const rooms = await cursor.toArray();
-  res.status(200).json(rooms);
+    const cursor = await find('rooms', query, limit);
+    const rooms = await cursor.toArray();
+    res.status(200).json(rooms);
 }
 
 /**
@@ -37,15 +37,15 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePost(req, res) {
-  await authAdmin(req);
+    await authAdmin(req);
 
-  const schema = Joi.object({
-    name: Joi.string().trim().min(3).max(30).required(),
-  });
-  const room = await validateData(req.body, schema);
+    const schema = Joi.object({
+        name: Joi.string().trim().min(3).max(30).required(),
+    });
+    const room = await validateData(req.body, schema);
 
-  const _id = await insertOne("rooms", room);
-  res.status(201).json({ ...room, _id });
+    const _id = await insertOne('rooms', room);
+    res.status(201).json({ ...room, _id });
 }
 
 /**
@@ -57,19 +57,19 @@ async function handlePost(req, res) {
  * @param {object} res - The outgoing response.
  */
 export default async function (req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        await handleGet(req, res);
-        break;
-      case "POST":
-        await handlePost(req, res);
-        break;
-      default:
-        res.status(405).end();
-        break;
+    try {
+        switch (req.method) {
+            case 'GET':
+                await handleGet(req, res);
+                break;
+            case 'POST':
+                await handlePost(req, res);
+                break;
+            default:
+                res.status(405).end();
+                break;
+        }
+    } catch (err) {
+        handleError(res, err);
     }
-  } catch (err) {
-    handleError(res, err);
-  }
 }

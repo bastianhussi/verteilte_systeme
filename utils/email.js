@@ -1,13 +1,13 @@
-import nodemailer from "nodemailer";
+import nodemailer from 'nodemailer';
 
 const transport = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: process.env.SMTP_SECURE,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASSWORD,
-  },
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_SECURE,
+    auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+    },
 });
 
 /**
@@ -17,11 +17,11 @@ const transport = nodemailer.createTransport({
  * @param {string} urlWithCode - The url that will activate the account.
  */
 export async function sendVerificationMail(email, urlWithCode) {
-  const message = {
-    from: process.env.SMTP_USER,
-    to: email,
-    subject: "Please activate your account",
-    html: `<p>http://localhost:3000/verify/${code}</p>`,
-  };
-  await transport.sendMail(message);
+    const message = {
+        from: process.env.SMTP_USER,
+        to: email,
+        subject: 'Please activate your account',
+        html: `<p>http://localhost:3000/verify/${code}</p>`,
+    };
+    await transport.sendMail(message);
 }

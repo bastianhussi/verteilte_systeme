@@ -1,24 +1,24 @@
 .center {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .loginForm {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1rem;
-  border: solid 2px #0000002f;
-  border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    border: solid 2px #0000002f;
+    border-radius: 1rem;
 }
 
 .loginForm div {
-  width: 100%;
-  margin-bottom: 1rem;
+    width: 100%;
+    margin-bottom: 1rem;
 }
 
 .loginButton {
-  float: right;
-  background-color: #1aaa55;
+    float: right;
+    background-color: #1aaa55;
 }

@@ -1,11 +1,11 @@
-import Joi from "@hapi/joi";
+import Joi from '@hapi/joi';
 import {
-  auth,
-  handleError,
-  validateData,
-  authAdmin,
-} from "../../utils/middleware";
-import { find, insertOne } from "../../utils/database";
+    auth,
+    handleError,
+    validateData,
+    authAdmin,
+} from '../../utils/middleware';
+import { find, insertOne } from '../../utils/database';
 
 /**
  * Searches the database for courses matching the query.
@@ -15,17 +15,17 @@ import { find, insertOne } from "../../utils/database";
  * @param {object} res - The outgoing response.
  */
 async function handleGet(req, res) {
-  auth(req);
+    auth(req);
 
-  const schema = Joi.object({
-    name: Joi.string().trim().max(30).optional(),
-    limit: Joi.number().integer().min(1).max(100).optional().default(50),
-  });
-  const { limit, ...query } = await validateData(req.query, schema);
+    const schema = Joi.object({
+        name: Joi.string().trim().max(30).optional(),
+        limit: Joi.number().integer().min(1).max(100).optional().default(50),
+    });
+    const { limit, ...query } = await validateData(req.query, schema);
 
-  const cursor = await find("courses", query, limit);
-  const courses = await cursor.toArray();
-  res.status(200).json(courses);
+    const cursor = await find('courses', query, limit);
+    const courses = await cursor.toArray();
+    res.status(200).json(courses);
 }
 
 /**
@@ -34,15 +34,15 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePost(req, res) {
-  await authAdmin(req);
+    await authAdmin(req);
 
-  const schema = Joi.object({
-    name: Joi.string().trim().min(3).max(30).required(),
-  });
-  const doc = await validateData(req.body, schema);
+    const schema = Joi.object({
+        name: Joi.string().trim().min(3).max(30).required(),
+    });
+    const doc = await validateData(req.body, schema);
 
-  const _id = await insertOne("courses", doc);
-  res.status(201).json({ _id, ...doc });
+    const _id = await insertOne('courses', doc);
+    res.status(201).json({ _id, ...doc });
 }
 
 /**
@@ -54,19 +54,19 @@ async function handlePost(req, res) {
  * @param {object} res - The outgoing response.
  */
 export default async function (req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        await handleGet(req, res);
-        break;
-      case "POST":
-        await handlePost(req, res);
-        break;
-      default:
-        res.status(405).end();
-        break;
+    try {
+        switch (req.method) {
+            case 'GET':
+                await handleGet(req, res);
+                break;
+            case 'POST':
+                await handlePost(req, res);
+                break;
+            default:
+                res.status(405).end();
+                break;
+        }
+    } catch (err) {
+        handleError(res, err);
     }
-  } catch (err) {
-    handleError(res, err);
-  }
 }

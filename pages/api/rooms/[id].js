@@ -1,13 +1,13 @@
-import Joi from "@hapi/joi";
-import { findOne, updateOne, deleteOne } from "../../../utils/database";
+import Joi from '@hapi/joi';
+import { findOne, updateOne, deleteOne } from '../../../utils/database';
 import {
-  auth,
-  handleError,
-  validateData,
-  createObjectId,
-  authAdmin,
-} from "../../../utils/middleware";
-import { NotFoundError } from "../../../utils/errors";
+    auth,
+    handleError,
+    validateData,
+    createObjectId,
+    authAdmin,
+} from '../../../utils/middleware';
+import { NotFoundError } from '../../../utils/errors';
 
 /**
  * Returns a room if one is found in the database.
@@ -16,10 +16,10 @@ import { NotFoundError } from "../../../utils/errors";
  * @param {object} res - The outgoing response.
  */
 async function handleGet(req, res) {
-  auth(req);
-  const { id } = req.query;
-  const room = await findOne("rooms", { _id: createObjectId(id) });
-  res.status(200).json(room);
+    auth(req);
+    const { id } = req.query;
+    const room = await findOne('rooms', { _id: createObjectId(id) });
+    res.status(200).json(room);
 }
 
 /**
@@ -28,39 +28,42 @@ async function handleGet(req, res) {
  * @param {object} res - The outgoing response.
  */
 async function handlePatch(req, res) {
-  await authAdmin(req);
+    await authAdmin(req);
 
-  const schema = Joi.object({
-    name: Joi.string().trim().min(3).max(30).optional(),
-  });
-  const room = await validateData(req.body, schema);
+    const schema = Joi.object({
+        name: Joi.string().trim().min(3).max(30).optional(),
+    });
+    const room = await validateData(req.body, schema);
 
-  const _id = createObjectId(req.query.id);
-  await updateOne("rooms", { _id }, { $set: room });
-  const updatedRoom = await findOne("rooms", { _id });
-  res.status(200).json(updatedRoom);
+    const _id = createObjectId(req.query.id);
+    await updateOne('rooms', { _id }, { $set: room });
+    const updatedRoom = await findOne('rooms', { _id });
+    res.status(200).json(updatedRoom);
 }
 
 async function handleDelete(req, res) {
-  await authAdmin(req);
+    await authAdmin(req);
 
-  const _id = createObjectId(req.query.id);
+    const _id = createObjectId(req.query.id);
 
-  let lecture;
-  try {
-    lecture = await findOne("lectures", { room: _id });
-  } catch (err) {
-    if (!err instanceof NotFoundError) throw err;
-  }
+    let lecture;
+    try {
+        lecture = await findOne('lectures', { room: _id });
+    } catch (err) {
+        if (!err instanceof NotFoundError) throw err;
+    }
 
-  if (lecture) {
-    throw new BadRequestError("there are lectures using this room", lecture);
-  }
+    if (lecture) {
+        throw new BadRequestError(
+            'there are lectures using this room',
+            lecture
+        );
+    }
 
-  const deletedRoom = await findOne("rooms", { _id });
-  await deleteOne("rooms", { _id });
+    const deletedRoom = await findOne('rooms', { _id });
+    await deleteOne('rooms', { _id });
 
-  res.status(200).json(deletedRoom);
+    res.status(200).json(deletedRoom);
 }
 
 /**
@@ -72,22 +75,22 @@ async function handleDelete(req, res) {
  * @param {object} res - The outgoing response.
  */
 export default async function (req, res) {
-  try {
-    switch (req.method) {
-      case "GET":
-        await handleGet(req, res);
-        break;
-      case "PATCH":
-        await handlePatch(req, res);
-        break;
-      case "DELETE":
-        await handleDelete(req, res);
-        break;
-      default:
-        res.status(405).end();
-        break;
+    try {
+        switch (req.method) {
+            case 'GET':
+                await handleGet(req, res);
+                break;
+            case 'PATCH':
+                await handlePatch(req, res);
+                break;
+            case 'DELETE':
+                await handleDelete(req, res);
+                break;
+            default:
+                res.status(405).end();
+                break;
+        }
+    } catch (err) {
+        handleError(res, err);
     }
-  } catch (err) {
-    handleError(res, err);
-  }
 }

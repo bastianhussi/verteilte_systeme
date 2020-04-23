@@ -1,7 +1,7 @@
-import Router from "next/router";
-import jwt from "jsonwebtoken";
-import axios from "axios";
-import { UnauthorizedError } from "./errors";
+import Router from 'next/router';
+import jwt from 'jsonwebtoken';
+import axios from 'axios';
+import { UnauthorizedError } from './errors';
 
 /**
  * This helper function will search the users browser for a cookie with the given name.
@@ -11,22 +11,22 @@ import { UnauthorizedError } from "./errors";
  * @param {*} param1
  */
 function getCookieByName(cookieName, { req }) {
-  // all cookies are saved in one string and seperated by "; "
-  // check if on server or client
-  let cookies;
-  if (req) {
-    if (!req.headers.cookie) return null;
-    cookies = req.headers.cookie.split("; ");
-  } else {
-    if (document.cookie === "") return null;
-    cookies = document.cookie.split("; ");
-  }
+    // all cookies are saved in one string and seperated by "; "
+    // check if on server or client
+    let cookies;
+    if (req) {
+        if (!req.headers.cookie) return null;
+        cookies = req.headers.cookie.split('; ');
+    } else {
+        if (document.cookie === '') return null;
+        cookies = document.cookie.split('; ');
+    }
 
-  const cookie = cookies.filter((c) => c.startsWith(cookieName))[0];
-  if (cookie) {
-    return cookie.split("=")[1];
-  }
-  return null;
+    const cookie = cookies.filter((c) => c.startsWith(cookieName))[0];
+    if (cookie) {
+        return cookie.split('=')[1];
+    }
+    return null;
 }
 
 /**
@@ -37,12 +37,12 @@ function getCookieByName(cookieName, { req }) {
  * @param {*} path
  */
 function redirect(ctx, path) {
-  if (ctx.req) {
-    ctx.res.writeHead(302, { Location: path });
-    ctx.res.end();
-  } else {
-    Router.push(path);
-  }
+    if (ctx.req) {
+        ctx.res.writeHead(302, { Location: path });
+        ctx.res.end();
+    } else {
+        Router.push(path);
+    }
 }
 
 /**
@@ -52,11 +52,11 @@ function redirect(ctx, path) {
  * @param {*} token
  */
 export function login(token) {
-  const now = new Date();
-  // expires in 12 hours
-  now.setHours(now.getHours + 12);
-  document.cookie = `token=${token}; expires=${now.toUTCString()}; path=/`;
-  Router.push("/");
+    const now = new Date();
+    // expires in 12 hours
+    now.setHours(now.getHours + 12);
+    document.cookie = `token=${token}; expires=${now.toUTCString()}; path=/`;
+    Router.push('/');
 }
 
 /**
@@ -64,9 +64,9 @@ export function login(token) {
  * The user will then be redirected to /login.
  */
 export function logout() {
-  // expires now
-  document.cookie = `token=; expires=${new Date().toUTCString()}; path=/`;
-  Router.push("/login");
+    // expires now
+    document.cookie = `token=; expires=${new Date().toUTCString()}; path=/`;
+    Router.push('/login');
 }
 
 /**
@@ -77,23 +77,23 @@ export function logout() {
  * @param {*} apiUrl
  */
 export async function auth(ctx, apiUrl) {
-  const token = getCookieByName("token", ctx);
+    const token = getCookieByName('token', ctx);
 
-  if (!token) {
-    redirect(ctx, "/login");
-    throw new UnauthorizedError("missing jwt", ctx);
-  }
+    if (!token) {
+        redirect(ctx, '/login');
+        throw new UnauthorizedError('missing jwt', ctx);
+    }
 
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const res = await axios.get(`${apiUrl}/users/${decoded._id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    return { user: res.data, token };
-  } catch {
-    redirect(ctx, "/login");
-    throw new UnauthorizedError("invalid jwt", ctx);
-  }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const res = await axios.get(`${apiUrl}/users/${decoded._id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return { user: res.data, token };
+    } catch {
+        redirect(ctx, '/login');
+        throw new UnauthorizedError('invalid jwt', ctx);
+    }
 }
 
 /**
@@ -105,10 +105,10 @@ export async function auth(ctx, apiUrl) {
  * @param {*} ctx
  */
 export function noAuth(ctx) {
-  const token = getCookieByName("token", ctx);
-  if (token) {
-    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-      if (!err) redirect(ctx, "/");
-    });
-  }
+    const token = getCookieByName('token', ctx);
+    if (token) {
+        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+            if (!err) redirect(ctx, '/');
+        });
+    }
 }
