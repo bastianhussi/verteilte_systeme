@@ -1,4 +1,4 @@
-FROM node:13
+FROM node:13.13.0-buster
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -11,12 +11,7 @@ COPY package*.json ./
 # If you are building your code for production
 RUN npm ci --only=production
 
-
 # Bundle app source
 COPY . .
 
 RUN npm run build
-
-
-EXPOSE 3000
-CMD [ "npm", "run" ,"start" ]

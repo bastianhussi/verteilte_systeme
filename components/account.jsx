@@ -6,7 +6,6 @@ import Name from './account/name';
 import DeleteAccount from './account/deleteAccount';
 
 export default class Account extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -24,10 +23,26 @@ export default class Account extends React.Component {
             <div className={styles.center}>
                 <div className={styles.container}>
                     <div className={styles.containerHeader}>
-                        <button onClick={() => this.changeCurrentView(<Email />)}>Email</button>
-                        <button onClick={() => this.changeCurrentView(<Name />)}>Name</button>
-                        <button onClick={() => this.changeCurrentView(<Password />)}>Password</button>
-                        <button onClick={() => this.changeCurrentView(<DeleteAccount />)}>Danger Zone</button>
+                        <button
+                            onClick={() => this.changeCurrentView(<Email />)}>
+                            Email
+                        </button>
+                        <button
+                            onClick={() => this.changeCurrentView(<Name />)}>
+                            Name
+                        </button>
+                        <button
+                            onClick={() =>
+                                this.changeCurrentView(<Password />)
+                            }>
+                            Password
+                        </button>
+                        <button
+                            onClick={() =>
+                                this.changeCurrentView(<DeleteAccount />)
+                            }>
+                            Danger Zone
+                        </button>
                     </div>
                     <hr />
                     <div className={styles.containerBody}>

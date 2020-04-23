@@ -25,7 +25,7 @@ export default class Course extends React.Component {
     async submitEditingForm(event) {
         event.preventDefault();
         await this.props.onChange(this.props.value._id, this.state.name);
-
+        this.setState({ name: '', showEditing: false });
     }
 
     async deleteCourse() {
@@ -37,14 +37,31 @@ export default class Course extends React.Component {
             <>
                 <div>
                     <p>{this.props.value.name}</p>
-                    <span className="material-icons" onClick={this.changeShowEditing}>edit</span>
-                    <span className="material-icons" onClick={this.deleteCourse}>delete</span>
-                    {this.state.showEditing ? (<>
-                        <form onSubmit={this.submitEditingForm}>
-                            <input type="text" value={this.state.name} onChange={this.changeName} required />
-                            <button type="submit">Save</button>
-                        </form>
-                    </>) : (<></>)}
+                    <span
+                        className='material-icons'
+                        onClick={this.changeShowEditing}>
+                        edit
+                    </span>
+                    <span
+                        className='material-icons'
+                        onClick={this.deleteCourse}>
+                        delete
+                    </span>
+                    {this.state.showEditing ? (
+                        <>
+                            <form onSubmit={this.submitEditingForm}>
+                                <input
+                                    type='text'
+                                    value={this.state.name}
+                                    onChange={this.changeName}
+                                    required
+                                />
+                                <button type='submit'>Save</button>
+                            </form>
+                        </>
+                    ) : (
+                        <></>
+                    )}
                 </div>
             </>
         );

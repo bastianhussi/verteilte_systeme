@@ -2,7 +2,8 @@
 # when should jwt expire? 12h?
 # min lenght for passwords?
 # set an production logging and a seperate debugging loggin
-
+# throw error, if no data changed on patch-req?
+# still show rooms if no courses are avalible and the other way around
 ================================
 
 Bugs:

@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import styles from './name.module.css';
 import AppContext from '../appContext';
+import Message from '../message';
 
 export default class Name extends React.Component {
     constructor(props) {
@@ -30,14 +31,18 @@ export default class Name extends React.Component {
         }
         this.setState({ message: '' });
         try {
-            const res = await axios.patch(`${apiUrl}/users/${user._id}`, {
-                name: this.state.name,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Authorization': `Bearer ${token}`
+            const res = await axios.patch(
+                `${apiUrl}/users/${user._id}`,
+                {
+                    name: this.state.name,
                 },
-            });
+                {
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             changeUser(res.data);
         } catch (err) {
             this.setState({ message: err.response.data });
@@ -49,21 +54,28 @@ export default class Name extends React.Component {
 
     render() {
         return (
-            <AppContext.Consumer>{
-                ({ user }) => (
+            <AppContext.Consumer>
+                {({ user }) => (
                     <>
-                        <p>Current name: <strong>{user.name}</strong></p>
+                        <p>
+                            Current name: <strong>{user.name}</strong>
+                        </p>
                         <form onSubmit={this.submitNameForm}>
                             <label>
                                 New name:
-                        <input type="text" value={this.state.name} onChange={this.changeName} required />
+                                <input
+                                    type='text'
+                                    value={this.state.name}
+                                    onChange={this.changeName}
+                                    required
+                                />
                             </label>
-                            <button type="submit">Change</button>
+                            <button type='submit'>Change</button>
                         </form>
-                        {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                        <Message value={this.state.message} />
                     </>
-                )
-            }</AppContext.Consumer>
+                )}
+            </AppContext.Consumer>
         );
     }
 }

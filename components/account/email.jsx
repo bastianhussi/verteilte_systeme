@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import styles from './email.module.css';
 import AppContext from '../appContext';
+import Message from '../message';
 
 export default class Email extends React.Component {
     constructor(props) {
@@ -30,14 +31,18 @@ export default class Email extends React.Component {
         }
         this.setState({ message: '' });
         try {
-            const res = await axios.patch(`${apiUrl}/users/${user._id}`, {
-                email: this.state.email,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    'Authorization': `Bearer ${token}`
+            const res = await axios.patch(
+                `${apiUrl}/users/${user._id}`,
+                {
+                    email: this.state.email,
                 },
-            });
+                {
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
             changeUser(res.data);
         } catch (err) {
             this.setState({ message: err.response.data });
@@ -49,21 +54,28 @@ export default class Email extends React.Component {
 
     render() {
         return (
-            <AppContext.Consumer>{
-                ({ user }) => (
+            <AppContext.Consumer>
+                {({ user }) => (
                     <>
-                        <p>Current email: <strong>{user.email}</strong></p>
+                        <p>
+                            Current email: <strong>{user.email}</strong>
+                        </p>
                         <form onSubmit={this.submitEmailForm}>
                             <label>
                                 New email:
-                        <input type="email" value={this.state.email} onChange={this.changeEmail} required />
+                                <input
+                                    type='email'
+                                    value={this.state.email}
+                                    onChange={this.changeEmail}
+                                    required
+                                />
                             </label>
-                            <button type="submit">Change</button>
+                            <button type='submit'>Change</button>
                         </form>
-                        {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                        <Message value={this.state.message} />
                     </>
-                )
-            }</AppContext.Consumer>
+                )}
+            </AppContext.Consumer>
         );
     }
 }

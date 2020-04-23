@@ -3,6 +3,7 @@ import axios from 'axios';
 import AppContext from '../appContext';
 import styles from './deleteAccount.module.css';
 import { logout } from '../../utils/auth';
+import Message from '../message';
 
 export default class DeleteAccount extends React.Component {
     constructor(props) {
@@ -25,7 +26,7 @@ export default class DeleteAccount extends React.Component {
             await axios.delete(`${apiUrl}/users/${user._id}`, {
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8',
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${token}`,
                 },
             });
             logout();
@@ -40,10 +41,10 @@ export default class DeleteAccount extends React.Component {
                 <form onSubmit={this.submitDeleteForm}>
                     <label>
                         Delete Account:
-                        <button type="submit">Delete</button>
+                        <button type='submit'>Delete</button>
                     </label>
                 </form>
-                {this.state.message ? (<p>{this.state.message}</p>) : (<></>)}
+                <Message value={this.state.message} />
             </>
         );
     }
