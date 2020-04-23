@@ -8,8 +8,6 @@ const handle = app.getRequestHandler();
 
 const setup = require('./setup');
 
-console.log(process.env.JWT_TOKEN, process.env.MONGO_HOST);
-
 setup()
     .then(() => {
         // see: https://nextjs.org/docs/advanced-features/custom-server

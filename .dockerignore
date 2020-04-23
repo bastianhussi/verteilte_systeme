@@ -3,7 +3,12 @@ npm-debug.log
 .next
 .git
 .gitignore
+.dockerignore
 Dockerfile
+docker-compose.yml
 .eslintrc.yml
+.prettierrc.yml
+.env
 .env.template
+TODO
 README.md

@@ -1,28 +1,40 @@
 import React from 'react';
 import Month from './calendar/month';
-import Week from './calendar/week';
-
-const CalendarContext = React.createContext({ selectedDate: new Date() });
+import CalendarContext from './calendarContext';
 
 export default class Calendar extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            current: <Month changeView={this.changeView} />,
+            selectedDate: new Date(),
+            selectedView: <Month />,
         };
         this.changeView = this.changeView.bind(this);
+        this.changeDate = this.changeDate.bind(this);
     }
 
-    changeView() {
-        this.state.current =
-            this.state.current instanceof Month ? (
-                <Week changeView={this.changeView} />
-            ) : (
-                <Month changeView={this.changeView} />
-            );
+    static contextType = CalendarContext;
+
+    changeView(view) {
+        this.setState({
+            selectedView: view,
+        });
+    }
+
+    changeDate(newDate) {
+        this.setState({ selectedDate: newDate });
     }
 
     render() {
-        return <>{this.state.current}</>;
+        return (
+            <CalendarContext.Provider
+                value={{
+                    selectedDate: this.state.selectedDate,
+                    changeDate: this.changeDate,
+                    changeView: this.changeView,
+                }}>
+                {this.state.selectedView}
+            </CalendarContext.Provider>
+        );
     }
 }

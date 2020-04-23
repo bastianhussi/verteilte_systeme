@@ -1,4 +1,6 @@
 import React from 'react';
+import CalendarContext from '../calendarContext';
+import Month from './month';
 import styles from './week.module.css';
 
 export default class Week extends React.Component {
@@ -6,11 +8,13 @@ export default class Week extends React.Component {
         super(props);
     }
 
+    static contextType = CalendarContext;
+
     render() {
         return (
             <>
                 <div>
-                    <button onClick={this.props.changeView}>
+                    <button onClick={() => this.context.changeView(<Month />)}>
                         back to Month
                     </button>
                 </div>

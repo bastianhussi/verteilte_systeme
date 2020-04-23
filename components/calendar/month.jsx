@@ -1,4 +1,6 @@
 import React from 'react';
+import CalendarContext from '../calendarContext';
+import Week from './week';
 import styles from './month.module.css';
 
 Date.prototype.getMonthDays = function () {
@@ -15,6 +17,8 @@ export default class Month extends React.Component {
         this.previousMonth = this.previousMonth.bind(this);
         this.nextMonth = this.nextMonth.bind(this);
     }
+
+    static contextType = CalendarContext;
 
     previousMonth() {
         let previousMonth;
@@ -47,9 +51,7 @@ export default class Month extends React.Component {
     render() {
         const days = [];
         for (let d = 1; d <= this.state.date.getMonthDays(); d++) {
-            days.push(
-                <Day key={d} number={d} changeView={this.props.changeView} />
-            );
+            days.push(<Day key={d} number={d} />);
         }
         return (
             <>
@@ -69,9 +71,13 @@ class Day extends React.Component {
         super(props);
     }
 
+    static contextType = CalendarContext;
+
     render() {
         return (
-            <div className={styles.monthDay} onClick={this.props.changeView}>
+            <div
+                className={styles.monthDay}
+                onClick={() => this.context.changeView(<Week />)}>
                 {this.props.number}
             </div>
         );
