@@ -3,6 +3,19 @@ import CalendarContext from '../calendarContext';
 import Month from './month';
 import styles from './week.module.css';
 
+Date.prototype.getDayName = function () {
+    const weekDays = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+    ];
+    return weekDays[this.getDay()];
+};
+
 export default class Week extends React.Component {
     constructor(props) {
         super(props);
@@ -11,22 +24,22 @@ export default class Week extends React.Component {
     static contextType = CalendarContext;
 
     render() {
+        // Returns an array of dates that are days in the same week as the given date.
+        const days = [];
+        for (let day = 0; day < 7; day++) {
+            const dayDate = new Date(this.context.selectedDate);
+            dayDate.setDate(dayDate.getDate() + day - dayDate.getDay());
+            days.push(<Day key={day} date={dayDate} />);
+        }
+
         return (
             <>
                 <div>
                     <button onClick={() => this.context.changeView(<Month />)}>
-                        back to Month
+                        back to month view
                     </button>
                 </div>
-                <div className={styles.week}>
-                    <Day name='Monday' />
-                    <Day name='Tuesday' />
-                    <Day name='Wednesday' />
-                    <Day name='Thursday' />
-                    <Day name='Friday' />
-                    <Day name='Saturday' />
-                    <Day name='Sunday' />
-                </div>
+                <div className={styles.week}>{days}</div>
             </>
         );
     }
@@ -37,17 +50,21 @@ class Day extends React.Component {
         super(props);
     }
 
+    static contextType = CalendarContext;
+
     render() {
         const hours = [];
-        for (let h = 8; h < 18; h++) {
-            hours.push(<Hour start={h} end={h + 1} key={h} />);
+        for (let hour = 8; hour < 18; hour++) {
+            const hourDate = new Date(this.props.date);
+            hourDate.setHours(hour);
+            hours.push(<Hour key={hour} date={hourDate} />);
         }
 
         return (
             <>
-                <div className={styles.weekDay}>
-                    <div className={styles.weekDayHeader}>
-                        {this.props.name}
+                <div className={styles.day}>
+                    <div className={styles.dayHeader}>
+                        {`${this.props.date.getDate()}. ${this.props.date.getDayName()}`}
                     </div>
                     {hours}
                 </div>
@@ -61,11 +78,18 @@ class Hour extends React.Component {
         super(props);
     }
 
+    static contextType = CalendarContext;
+
     render() {
         return (
             <>
-                <div className={styles.hour}>
-                    {this.props.start}-{this.props.end}
+                <div
+                    className={styles.hour}
+                    onClick={() => {
+                        this.context.changeDate(this.props.date);
+                        this.context.showForm();
+                    }}>
+                    {this.props.date.getHours()}
                 </div>
             </>
         );

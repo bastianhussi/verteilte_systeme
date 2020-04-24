@@ -4,15 +4,28 @@ import Week from './week';
 import styles from './month.module.css';
 
 Date.prototype.getMonthDays = function () {
-    const d = new Date(this.getFullYear(), this.getMonth() + 1, 0);
-    return d.getDate();
+    const date = new Date(this.getFullYear(), this.getMonth() + 1, 0);
+    return date.getDate();
+};
+
+Date.prototype.getDayName = function () {
+    const weekDays = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+    ];
+    return weekDays[this.getDay()];
 };
 
 export default class Month extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            date: new Date(),
+            selectedMonth: new Date(),
         };
         this.previousMonth = this.previousMonth.bind(this);
         this.nextMonth = this.nextMonth.bind(this);
@@ -22,45 +35,82 @@ export default class Month extends React.Component {
 
     previousMonth() {
         let previousMonth;
-        if (this.state.date.getMonth() == 1) {
-            previousMonth = new Date(this.state.date.getFullYear() - 1, 0, 1);
+        if (this.state.selectedMonth.getMonth() == 1) {
+            previousMonth = new Date(
+                this.state.selectedMonth.getFullYear() - 1,
+                0,
+                1
+            );
         } else {
             previousMonth = new Date(
-                this.state.date.getFullYear(),
-                this.state.date.getMonth() - 1,
+                this.state.selectedMonth.getFullYear(),
+                this.state.selectedMonth.getMonth() - 1,
                 1
             );
         }
-        this.setState({ date: previousMonth });
+        this.setState({ selectedMonth: previousMonth });
     }
 
     nextMonth() {
         let nextMonth;
-        if (this.state.date.getMonth() == 11) {
-            nextMonth = new Date(this.state.date.getFullYear() + 1, 0, 1);
+        if (this.state.selectedMonth.getMonth() == 11) {
+            nextMonth = new Date(
+                this.state.selectedMonth.getFullYear() + 1,
+                0,
+                1
+            );
         } else {
             nextMonth = new Date(
-                this.state.date.getFullYear(),
-                this.state.date.getMonth() + 1,
+                this.state.selectedMonth.getFullYear(),
+                this.state.selectedMonth.getMonth() + 1,
                 1
             );
         }
-        this.setState({ date: nextMonth });
+        this.setState({ selectedMonth: nextMonth });
     }
 
     render() {
-        const days = [];
-        for (let d = 1; d <= this.state.date.getMonthDays(); d++) {
-            days.push(<Day key={d} number={d} />);
+        const header = [];
+        for (let day = 1; day <= 7; day++) {
+            const dayName = new Date(
+                this.state.selectedMonth.getFullYear(),
+                this.state.selectedMonth.getMonth(),
+                day
+            ).getDayName();
+            header.push(<div key={dayName}>{dayName}</div>);
         }
+
+        const days = [];
+        for (
+            let day = 1;
+            day <= this.state.selectedMonth.getMonthDays();
+            day++
+        ) {
+            days.push(
+                <Day
+                    key={day}
+                    date={
+                        new Date(
+                            this.state.selectedMonth.getFullYear(),
+                            this.state.selectedMonth.getMonth(),
+                            day
+                        )
+                    }
+                />
+            );
+        }
+
         return (
             <>
                 <div className={styles.monthHeader}>
                     <button onClick={this.previousMonth}>previous</button>
-                    {this.state.date.toDateString()}
+                    {this.state.selectedMonth.toDateString()}
                     <button onClick={this.nextMonth}>next</button>
                 </div>
-                <div className={styles.month}>{days}</div>
+                <div className={styles.month}>
+                    {header}
+                    {days}
+                </div>
             </>
         );
     }
@@ -77,8 +127,11 @@ class Day extends React.Component {
         return (
             <div
                 className={styles.monthDay}
-                onClick={() => this.context.changeView(<Week />)}>
-                {this.props.number}
+                onClick={() => {
+                    this.context.changeDate(this.props.date);
+                    this.context.changeView(<Week />);
+                }}>
+                {this.props.date.getDate()}
             </div>
         );
     }
