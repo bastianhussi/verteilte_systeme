@@ -4,8 +4,8 @@ import Week from './week';
 import styles from './month.module.css';
 
 Date.prototype.getMonthDays = function () {
-    const d = new Date(this.getFullYear(), this.getMonth() + 1, 0);
-    return d.getDate();
+    const date = new Date(this.getFullYear(), this.getMonth() + 1, 0);
+    return date.getDate();
 };
 
 Date.prototype.getDayName = function () {
@@ -72,12 +72,20 @@ export default class Month extends React.Component {
     render() {
         const header = [];
         for (let day = 1; day <= 7; day++) {
-            const dayName = new Date(this.state.selectedMonth.getFullYear(), this.state.selectedMonth.getMonth(), day).getDayName(); 
-            header.push(<div key={dayName}>{dayName}</div>)
+            const dayName = new Date(
+                this.state.selectedMonth.getFullYear(),
+                this.state.selectedMonth.getMonth(),
+                day
+            ).getDayName();
+            header.push(<div key={dayName}>{dayName}</div>);
         }
 
         const days = [];
-        for (let day = 1; day <= this.state.selectedMonth.getMonthDays(); day++) {
+        for (
+            let day = 1;
+            day <= this.state.selectedMonth.getMonthDays();
+            day++
+        ) {
             days.push(
                 <Day
                     key={day}

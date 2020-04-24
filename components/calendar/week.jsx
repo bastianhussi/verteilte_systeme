@@ -26,10 +26,10 @@ export default class Week extends React.Component {
     render() {
         // Returns an array of dates that are days in the same week as the given date.
         const days = [];
-        for (let d = 0; d < 7; d++) {
+        for (let day = 0; day < 7; day++) {
             const dayDate = new Date(this.context.selectedDate);
-            dayDate.setDate(dayDate.getDate() + d - dayDate.getDay());
-            days.push(<Day key={d} date={dayDate} />);
+            dayDate.setDate(dayDate.getDate() + day - dayDate.getDay());
+            days.push(<Day key={day} date={dayDate} />);
         }
 
         return (
@@ -54,8 +54,10 @@ class Day extends React.Component {
 
     render() {
         const hours = [];
-        for (let h = 8; h < 18; h++) {
-            hours.push(<Hour start={h} end={h + 1} key={h} />);
+        for (let hour = 8; hour < 18; hour++) {
+            const hourDate = new Date(this.props.date);
+            hourDate.setHours(hour);
+            hours.push(<Hour key={hour} date={hourDate} />);
         }
 
         return (
@@ -76,11 +78,18 @@ class Hour extends React.Component {
         super(props);
     }
 
+    static contextType = CalendarContext;
+
     render() {
         return (
             <>
-                <div className={styles.hour}>
-                    {this.props.start}-{this.props.end}
+                <div
+                    className={styles.hour}
+                    onClick={() => {
+                        this.context.changeDate(this.props.date);
+                        this.context.showForm();
+                    }}>
+                    {this.props.date.getHours()}
                 </div>
             </>
         );
