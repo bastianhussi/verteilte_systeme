@@ -8,6 +8,7 @@ Dockerfile
 docker-compose.yml
 .eslintrc.yml
 .prettierrc.yml
+.prettierignore
 .env
 .env.template
 TODO

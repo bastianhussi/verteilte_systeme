@@ -5,6 +5,7 @@
 # throw error, if no data changed on patch-req?
 # still show rooms if no courses are avalible and the other way around
 # highlight current day
+# set min and max time (08:00-18:00?) in week.jsx and form.jsx
 ================================
 
 Bugs:

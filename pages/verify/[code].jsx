@@ -39,7 +39,7 @@ export default class Verify extends React.Component {
                     </div>
                 ) : (
                     <div>
-                        <h1>Congratulations!</h1>
+                        <h1>Yay!</h1>
                         <Link href='/'>
                             <a>login now</a>
                         </Link>
