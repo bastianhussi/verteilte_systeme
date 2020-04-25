@@ -19,22 +19,53 @@ Date.prototype.getDayName = function () {
 export default class Week extends React.Component {
     constructor(props) {
         super(props);
+
+        this.nextWeek = this.nextWeek.bind(this);
+        this.previousWeek = this.previousWeek.bind(this);
     }
 
     static contextType = CalendarContext;
 
+    nextWeek() {
+        const newDate = this.context.selectedDate;
+        newDate.setDate(newDate.getDate() + 7);
+        this.context.changeDate(newDate);
+    }
+
+    previousWeek() {
+        const newDate = this.context.selectedDate;
+        newDate.setDate(newDate.getDate() - 7);
+        this.context.changeDate(newDate);
+    }
+
     render() {
         // Returns an array of dates that are days in the same week as the given date.
         const days = [];
+
+        // we only need the lectures within the same month
+        const lectures = this.context.lectures.filter(
+            (lecture) =>
+                lecture.start.getMonth() ===
+                this.context.selectedDate.getMonth() &&
+                lecture.start.getFullYear() ===
+                this.context.selectedDate.getFullYear()
+        );
+
         for (let day = 0; day < 7; day++) {
             const dayDate = new Date(this.context.selectedDate);
             dayDate.setDate(dayDate.getDate() + day - dayDate.getDay());
-            days.push(<Day key={day} date={dayDate} />);
+
+            // find the lectures that take place on that day.
+            const dayLectures = lectures.filter(({ start }) => start.getDate() === dayDate.getDate());
+
+            days.push(<Day key={day} date={dayDate} lectures={dayLectures} />);
         }
 
         return (
             <>
-                <div>
+                <div className={styles.header}>
+                    <button onClick={this.previousWeek}>previous</button>
+                    <button onClick={this.nextWeek}>next</button>
                     <button onClick={() => this.context.changeView(<Month />)}>
                         back to month view
                     </button>
@@ -57,7 +88,10 @@ class Day extends React.Component {
         for (let hour = 8; hour < 18; hour++) {
             const hourDate = new Date(this.props.date);
             hourDate.setHours(hour);
-            hours.push(<Hour key={hour} date={hourDate} />);
+
+            const hourLectures = this.props.lectures.filter((lecture) => lecture.start.getHours() <= hour && lecture.end.getHours() >= hour);
+
+            hours.push(<Hour key={hour} date={hourDate} lectures={hourLectures} />);
         }
 
         return (

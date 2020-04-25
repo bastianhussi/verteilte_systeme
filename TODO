@@ -6,6 +6,7 @@
 # still show rooms if no courses are avalible and the other way around
 # highlight current day
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
+# check that lectures are not longer than a day
 ================================
 
 Bugs:

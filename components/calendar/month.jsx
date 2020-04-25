@@ -24,9 +24,6 @@ Date.prototype.getDayName = function () {
 export default class Month extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            selectedMonth: new Date(),
-        };
         this.previousMonth = this.previousMonth.bind(this);
         this.nextMonth = this.nextMonth.bind(this);
     }
@@ -48,7 +45,7 @@ export default class Month extends React.Component {
                 1
             );
         }
-        this.setState({ selectedMonth: previousMonth });
+        this.context.changeDate(previousMonth);
     }
 
     nextMonth() {
@@ -66,15 +63,17 @@ export default class Month extends React.Component {
                 1
             );
         }
-        this.setState({ selectedMonth: nextMonth });
+        this.context.changeDate(nextMonth);
     }
 
     render() {
+        const selectedDate = this.context.selectedDate;
+
         const header = [];
         for (let day = 1; day <= 7; day++) {
             const dayName = new Date(
-                this.state.selectedMonth.getFullYear(),
-                this.state.selectedMonth.getMonth(),
+                selectedDate.getFullYear(),
+                selectedDate.getMonth(),
                 day
             ).getDayName();
             header.push(<div key={dayName}>{dayName}</div>);
@@ -83,7 +82,7 @@ export default class Month extends React.Component {
         const days = [];
         for (
             let day = 1;
-            day <= this.state.selectedMonth.getMonthDays();
+            day <= selectedDate.getMonthDays();
             day++
         ) {
             days.push(
@@ -91,8 +90,8 @@ export default class Month extends React.Component {
                     key={day}
                     date={
                         new Date(
-                            this.state.selectedMonth.getFullYear(),
-                            this.state.selectedMonth.getMonth(),
+                            selectedDate.getFullYear(),
+                            selectedDate.getMonth(),
                             day
                         )
                     }
@@ -102,9 +101,9 @@ export default class Month extends React.Component {
 
         return (
             <>
-                <div className={styles.monthHeader}>
+                <div className={styles.header}>
                     <button onClick={this.previousMonth}>previous</button>
-                    {this.state.selectedMonth.toDateString()}
+                    {selectedDate.toDateString()}
                     <button onClick={this.nextMonth}>next</button>
                 </div>
                 <div className={styles.month}>
@@ -126,7 +125,7 @@ class Day extends React.Component {
     render() {
         return (
             <div
-                className={styles.monthDay}
+                className={styles.day}
                 onClick={() => {
                     this.context.changeDate(this.props.date);
                     this.context.changeView(<Week />);

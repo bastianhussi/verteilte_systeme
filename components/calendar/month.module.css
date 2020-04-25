@@ -7,19 +7,19 @@
     row-gap: 5px;
 }
 
-.monthHeader {
+.header {
     font-size: 20px;
     text-align: center;
 }
 
 /* same as .hour */
 
-.monthDay {
+.day {
     height: 50px;
     width: auto;
     border-bottom: 2px solid black;
 }
 
-.monthDay:hover {
+.day:hover {
     cursor: pointer;
 }

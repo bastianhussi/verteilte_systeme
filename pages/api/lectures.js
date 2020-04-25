@@ -10,29 +10,34 @@ import { BadRequestError, NotFoundError } from '../../utils/errors';
 
 /**
  * Searches the database for lectures matching the query.
- * The query may include the tile, user, class, room,
- * start date, end date and a limit of results.
- * The user, class and room attribute have to be the _id of
- * an existing user, class or room.
- * Requires a authorization header.
+ * This only returns lectures belonging to the user that
+ * made this request.
+ * Possible queries are a limit of results, the title, course, room, start- 
+ * and end time.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
 async function handleGet(req, res) {
-    auth(req);
+    const token = auth(req);
 
     const schema = Joi.object({
         title: Joi.string().trim().min(3).max(30).optional(),
-        user: Joi.string().optional(),
-        class: Joi.string().optional(),
+        course: Joi.string().optional(),
         room: Joi.string().optional(),
         start: Joi.date().optional(),
         end: Joi.date().optional(),
         limit: Joi.number().integer().min(1).max(100).optional().default(50),
     });
-    const { limit, ...query } = await validateData(req.query, schema);
+    let { limit, ...query } = await validateData(req.query, schema);
 
-    const cursor = await find('lectures', query, limit);
+    // parse the course- and room-id to ObjectId objects.
+    if(query.course) query.course = createObjectId(query.course);
+    if(query.room) query.room = createObjectId(query.room);
+
+    const cursor = await find('lectures', {
+        user: createObjectId(token._id),
+        ...query,
+    }, limit);
     const lectures = await cursor.toArray();
     res.status(200).json(lectures);
 }
