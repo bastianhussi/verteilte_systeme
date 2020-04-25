@@ -62,7 +62,10 @@ async function handleDelete(req, res) {
     }
 
     if (lecture) {
-        throw new BadRequestError('there are lectures for this course', lecture);
+        throw new BadRequestError(
+            'there are lectures for this course',
+            lecture
+        );
     }
 
     const deletedCourse = await findOne('courses', { _id: createObjectId(id) });

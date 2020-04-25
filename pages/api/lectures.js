@@ -12,7 +12,7 @@ import { BadRequestError, NotFoundError } from '../../utils/errors';
  * Searches the database for lectures matching the query.
  * This only returns lectures belonging to the user that
  * made this request.
- * Possible queries are a limit of results, the title, course, room, start- 
+ * Possible queries are a limit of results, the title, course, room, start-
  * and end time.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
@@ -31,13 +31,17 @@ async function handleGet(req, res) {
     let { limit, ...query } = await validateData(req.query, schema);
 
     // parse the course- and room-id to ObjectId objects.
-    if(query.course) query.course = createObjectId(query.course);
-    if(query.room) query.room = createObjectId(query.room);
+    if (query.course) query.course = createObjectId(query.course);
+    if (query.room) query.room = createObjectId(query.room);
 
-    const cursor = await find('lectures', {
-        user: createObjectId(token._id),
-        ...query,
-    }, limit);
+    const cursor = await find(
+        'lectures',
+        {
+            user: createObjectId(token._id),
+            ...query,
+        },
+        limit
+    );
     const lectures = await cursor.toArray();
     res.status(200).json(lectures);
 }

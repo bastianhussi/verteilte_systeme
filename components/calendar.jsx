@@ -42,9 +42,9 @@ export default class Calendar extends React.Component {
                     return {
                         start: new Date(start),
                         end: new Date(end),
-                        ...lecture
-                    }
-                })
+                        ...lecture,
+                    };
+                });
                 this.setState({ lectures });
             })
             .catch((err) => {
@@ -78,25 +78,25 @@ export default class Calendar extends React.Component {
                 {this.state.loading ? (
                     <p>fetching...</p>
                 ) : (
-                        <CalendarContext.Provider
-                            value={{
-                                lectures: this.state.lectures,
-                                selectedDate: this.state.selectedDate,
-                                changeDate: this.changeDate,
-                                changeView: this.changeView,
-                                showForm: this.showForm,
-                            }}>
-                            {this.state.selectedView}
-                        </CalendarContext.Provider>
-                    )}
+                    <CalendarContext.Provider
+                        value={{
+                            lectures: this.state.lectures,
+                            selectedDate: this.state.selectedDate,
+                            changeDate: this.changeDate,
+                            changeView: this.changeView,
+                            showForm: this.showForm,
+                        }}>
+                        {this.state.selectedView}
+                    </CalendarContext.Provider>
+                )}
                 {this.state.showForm ? (
                     <Form
                         date={this.state.selectedDate}
                         onClose={this.showForm}
                     />
                 ) : (
-                        <></>
-                    )}
+                    <></>
+                )}
             </>
         );
     }

@@ -32,16 +32,16 @@ export default class Month extends React.Component {
 
     previousMonth() {
         let previousMonth;
-        if (this.state.selectedMonth.getMonth() == 1) {
+        if (this.context.selectedDate.getMonth() == 1) {
             previousMonth = new Date(
-                this.state.selectedMonth.getFullYear() - 1,
+                this.context.selectedDate.getFullYear() - 1,
                 0,
                 1
             );
         } else {
             previousMonth = new Date(
-                this.state.selectedMonth.getFullYear(),
-                this.state.selectedMonth.getMonth() - 1,
+                this.context.selectedDate.getFullYear(),
+                this.context.selectedDate.getMonth() - 1,
                 1
             );
         }
@@ -50,16 +50,16 @@ export default class Month extends React.Component {
 
     nextMonth() {
         let nextMonth;
-        if (this.state.selectedMonth.getMonth() == 11) {
+        if (this.context.selectedDate.getMonth() == 11) {
             nextMonth = new Date(
-                this.state.selectedMonth.getFullYear() + 1,
+                this.context.selectedDate.getFullYear() + 1,
                 0,
                 1
             );
         } else {
             nextMonth = new Date(
-                this.state.selectedMonth.getFullYear(),
-                this.state.selectedMonth.getMonth() + 1,
+                this.context.selectedDate.getFullYear(),
+                this.context.selectedDate.getMonth() + 1,
                 1
             );
         }
@@ -80,11 +80,7 @@ export default class Month extends React.Component {
         }
 
         const days = [];
-        for (
-            let day = 1;
-            day <= selectedDate.getMonthDays();
-            day++
-        ) {
+        for (let day = 1; day <= selectedDate.getMonthDays(); day++) {
             days.push(
                 <Day
                     key={day}
