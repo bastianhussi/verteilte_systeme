@@ -96,7 +96,6 @@ export default class MyCourses extends React.Component {
             // update the user
             changeUser(res.data);
         } catch (err) {
-            console.log(err);
             this.setState({ message: err.response.data });
         }
     }
@@ -128,7 +127,6 @@ export default class MyCourses extends React.Component {
             });
             changeUser(res.data);
         } catch (err) {
-            console.log(err);
             this.setState({ message: err.response.data });
         }
     }

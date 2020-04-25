@@ -2,6 +2,7 @@ import React from 'react';
 import Month from './calendar/month';
 import Form from './calendar/form';
 import CalendarContext from './calendarContext';
+import styles from './calendar.module.css';
 
 export default class Calendar extends React.Component {
     constructor(props) {
@@ -42,7 +43,14 @@ export default class Calendar extends React.Component {
                     changeView: this.changeView,
                     showForm: this.showForm,
                 }}>
-                {this.state.showForm ? <Form /> : <></>}
+                {this.state.showForm ? (
+                    <Form
+                        date={this.state.selectedDate}
+                        onClose={this.showForm}
+                    />
+                ) : (
+                    <></>
+                )}
                 {this.state.selectedView}
             </CalendarContext.Provider>
         );

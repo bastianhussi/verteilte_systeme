@@ -1,3 +1,11 @@
+.closeButton {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    color: red;
+    font-size: 4rem;
+}
+
 .lightbox {
     position: fixed;
     top: 0;
@@ -9,9 +17,20 @@
     align-items: center;
 }
 
-.closeButton {
-    position: absolute;
-    top: 10px;
-    right: 25px;
-    color: red;
-  }
+.lectureForm {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 1rem;
+    border: solid 2px #0000002f;
+    border-radius: 1rem;
+}
+
+.lightbox div {
+    background-color: #fff;
+}
+
+.lectureForm div {
+    width: 100%;
+    margin-bottom: 1rem;
+}

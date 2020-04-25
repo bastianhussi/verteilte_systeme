@@ -13,15 +13,21 @@ const transport = nodemailer.createTransport({
 /**
  * Sends a email the the user containing his verification code.
  * This function requires the entire url to activate the users accout.
- * @param {string} email - The users email address.
- * @param {string} urlWithCode - The url that will activate the account.
+ * @param {Object} user - The new user.
+ * @param {string} link - The url that will activate the account.
  */
-export async function sendVerificationMail(email, urlWithCode) {
+export default async function sendVerificationMail(user, link) {
     const message = {
         from: process.env.SMTP_USER,
-        to: email,
+        to: user.email,
         subject: 'Please activate your account',
-        html: `<p>http://localhost:3000/verify/${code}</p>`,
+        html: `
+        <body>
+            <h1>Congratulations!🎉</h1>
+            <p>You almost made it ${user.name}! Now just click the link below and activate your account.</p>
+            <a href=${link}>verify account</a>
+        </body>
+        `,
     };
     await transport.sendMail(message);
 }

@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import Joi from '@hapi/joi';
 import bcrypt from 'bcrypt';
 import { handleError, validateData } from '../../utils/middleware';
-import { sendVerificationMail } from '../../utils/email';
+import sendVerificationMail from '../../utils/email';
 import { insertOne } from '../../utils/database';
 
 /**
@@ -33,7 +33,7 @@ async function handlePost(req, res) {
         password: hashedPassword,
         courses: [],
     });
-    await sendVerificationMail(newUser.email, code);
+    await sendVerificationMail(newUser, `${req.headers.origin}/verify/${code}`);
 
     res.status(201).end();
 }

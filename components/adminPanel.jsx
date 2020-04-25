@@ -185,6 +185,7 @@ export default class AdminPanel extends React.Component {
                 onDelete={this.deleteRoom}
             />
         ));
+
         const courses = this.state.courses.map((course) => (
             <Course
                 key={course._id}
