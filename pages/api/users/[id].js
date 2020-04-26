@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 import Joi from '@hapi/joi';
 import {
     findOne,
@@ -13,6 +14,7 @@ import {
     validateIdAgainstToken,
     createObjectId,
 } from '../../../utils/middleware';
+import sendVerificationMail from '../../../utils/email';
 import { NotFoundError } from '../../../utils/errors';
 
 /**
@@ -43,12 +45,7 @@ async function handlePatch(req, res) {
         email: Joi.string().email().trim().optional(),
         name: Joi.string().trim().min(3).max(50).optional(),
         password: Joi.string().min(3).max(50).optional(),
-        courses: Joi.array()
-            .items({
-                _id: Joi.string().required(),
-                name: Joi.string().min(3).max(30).required(),
-            })
-            .unique(),
+        courses: Joi.array().items(Joi.string().required()).unique(),
     });
     const modifiedUser = await validateData(req.body, schema);
 
@@ -62,6 +59,18 @@ async function handlePatch(req, res) {
     const _id = createObjectId(id);
     await updateOne('users', { _id }, { $set: modifiedUser });
     const updatedUser = await findOne('users', { _id });
+
+    if (modifiedUser.email) {
+        const salt = crypto.randomBytes(128).toString('base64');
+        const code = crypto
+            .pbkdf2Sync(modifiedUser.email, salt, 10, 32, 'sha256')
+            .toString('hex');
+        await sendVerificationMail(
+            updatedUser,
+            `${req.headers.origin}/verify/${code}`
+        );
+    }
+
     res.status(200).json(updatedUser);
 }
 

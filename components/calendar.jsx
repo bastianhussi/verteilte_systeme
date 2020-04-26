@@ -1,7 +1,8 @@
 import React from 'react';
-import Month from './calendar/month';
+import MonthController from './calendar/month';
 import Form from './calendar/form';
 import CalendarContext from './calendarContext';
+import UserContext from './userContext';
 import styles from './calendar.module.css';
 
 export default class Calendar extends React.Component {
@@ -9,8 +10,9 @@ export default class Calendar extends React.Component {
         super(props);
         this.state = {
             selectedDate: new Date(),
-            selectedView: <Month />,
+            currentView: <MonthController />,
             showForm: false,
+            message: '',
         };
 
         this.changeView = this.changeView.bind(this);
@@ -18,11 +20,11 @@ export default class Calendar extends React.Component {
         this.showForm = this.showForm.bind(this);
     }
 
-    static contextType = CalendarContext;
+    static contextType = UserContext;
 
     changeView(view) {
         this.setState({
-            selectedView: view,
+            currentView: view,
         });
     }
 
@@ -36,23 +38,25 @@ export default class Calendar extends React.Component {
 
     render() {
         return (
-            <CalendarContext.Provider
-                value={{
-                    selectedDate: this.state.selectedDate,
-                    changeDate: this.changeDate,
-                    changeView: this.changeView,
-                    showForm: this.showForm,
-                }}>
-                {this.state.showForm ? (
-                    <Form
-                        date={this.state.selectedDate}
-                        onClose={this.showForm}
-                    />
-                ) : (
-                    <></>
-                )}
-                {this.state.selectedView}
-            </CalendarContext.Provider>
+            <>
+                <CalendarContext.Provider
+                    value={{
+                        selectedDate: this.state.selectedDate,
+                        changeDate: this.changeDate,
+                        changeView: this.changeView,
+                        showForm: this.showForm,
+                    }}>
+                    {this.state.currentView}
+                    {this.state.showForm ? (
+                        <Form
+                            date={this.state.selectedDate}
+                            onClose={this.showForm}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                </CalendarContext.Provider>
+            </>
         );
     }
 }

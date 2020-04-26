@@ -1,8 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import styles from './email.module.css';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import Message from '../message';
+import styles from './email.module.css';
 
 export default class Email extends React.Component {
     constructor(props) {
@@ -44,17 +44,18 @@ export default class Email extends React.Component {
                 }
             );
             changeUser(res.data);
+            this.setState({ message: 'please check your inbox' });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
         this.setState({ email: '' });
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     render() {
         return (
-            <AppContext.Consumer>
+            <UserContext.Consumer>
                 {({ user }) => (
                     <>
                         <p>
@@ -75,7 +76,7 @@ export default class Email extends React.Component {
                         <Message value={this.state.message} />
                     </>
                 )}
-            </AppContext.Consumer>
+            </UserContext.Consumer>
         );
     }
 }

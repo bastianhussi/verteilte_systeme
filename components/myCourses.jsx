@@ -1,5 +1,5 @@
 import React from 'react';
-import AppContext from './appContext';
+import UserContext from './userContext';
 import axios from 'axios';
 import Message from './message';
 
@@ -7,73 +7,55 @@ export default class MyCourses extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true,
-            selectedCourse: '',
-            courses: [],
+            selectedCourse: undefined,
             message: '',
         };
 
+        this.getAvailableCourses = this.getAvailableCourses.bind(this);
         this.changeSelectedCourse = this.changeSelectedCourse.bind(this);
-        this.submitCourseForm = this.submitCourseForm.bind(this);
+        this.submitAddCourseForm = this.submitAddCourseForm.bind(this);
+        this.submitDeleteCourseForm = this.submitDeleteCourseForm.bind(this);
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
-    /**
-     * Fetches courses from the api. Unfortunately this method has to be used,
-     * because this is just a component and so cannot make use of getInitialProps.
-     */
     componentDidMount() {
-        const { user, apiUrl, token } = this.context;
-        axios
-            .get(`${apiUrl}/courses`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then((res) => {
-                // filters courses out that the user already selected.
-                const courses = res.data.filter((course) => {
-                    const result = user.courses.find(
-                        (userCourse) => userCourse._id === course._id
-                    );
-                    return result ? false : true;
-                });
-                this.setState({
-                    selectedCourse: courses.length > 0 ? courses[0]._id : '',
-                    courses,
-                });
-            })
-            .catch((err) => {
-                if (err.response.status !== 404) {
-                    this.setState({
-                        message: err.response.data,
-                    });
-                }
-            })
-            .finally(() => {
-                this.setState({ loading: false });
-            });
+        const availableCourses = this.getAvailableCourses();
+        this.setState({
+            selectedCourse: availableCourses[0]
+                ? availableCourses[0]._id
+                : undefined,
+        });
+    }
+
+    getAvailableCourses() {
+        const { courses, user } = this.context;
+        return courses.filter(
+            (course) =>
+                !user.courses.find(
+                    (userCourse) => userCourse._id === course._id
+                )
+        );
     }
 
     changeSelectedCourse(event) {
         this.setState({ selectedCourse: event.target.value });
     }
 
-    async submitCourseForm(event) {
+    async submitAddCourseForm(event) {
         event.preventDefault();
         this.setState({ message: '' });
 
-        const selectedCourse = this.state.courses.find(
-            (course) => course._id === this.state.selectedCourse
-        );
-        const { apiUrl, token, user, changeUser } = this.context;
+        const { apiUrl, token, user, courses, changeUser } = this.context;
+
         try {
-            const res = await axios.patch(
+            await axios.patch(
                 `${apiUrl}/users/${user._id}`,
                 {
-                    courses: [...user.courses, selectedCourse],
+                    courses: [
+                        ...user.courses.map((course) => (course = course._id)),
+                        this.state.selectedCourse,
+                    ],
                 },
                 {
                     headers: {
@@ -83,34 +65,43 @@ export default class MyCourses extends React.Component {
                 }
             );
 
-            // remove this course from the list of courses
-            const modifiedCourses = this.state.courses.filter(
-                (course) => course._id !== this.state.selectedCourse
+            const newCourse = courses.find(
+                (course) => course._id === this.state.selectedCourse
             );
-            this.setState({
-                selectedCourse:
-                    modifiedCourses.length > 0 ? modifiedCourses[0]._id : '',
-                courses: modifiedCourses,
-            });
 
-            // update the user
-            changeUser(res.data);
+            changeUser(
+                Object.assign(user, {
+                    courses: [...user.courses, newCourse],
+                })
+            );
+
+            const availableCourses = this.getAvailableCourses();
+            this.setState({
+                selectedCourse: availableCourses[0]
+                    ? availableCourses[0]._id
+                    : undefined,
+            });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
     }
 
-    async deleteCourse(id) {
-        const { user, token, apiUrl, changeUser } = this.context;
-        const deletedCourse = user.courses.find((course) => course._id === id);
-        const modifiedCourses = user.courses.filter(
-            (course) => course._id !== id
+    async submitDeleteCourseForm(id) {
+        this.setState({ message: '' });
+
+        const { apiUrl, token, user, changeUser, courses } = this.context;
+
+        const modifiedUserCourses = user.courses.filter(
+            (course) => course === id
         );
+
         try {
-            const res = await axios.patch(
+            await axios.patch(
                 `${apiUrl}/users/${user._id}`,
                 {
-                    courses: modifiedCourses,
+                    courses: modifiedUserCourses.map(
+                        (course) => (course = course._id)
+                    ),
                 },
                 {
                     headers: {
@@ -119,13 +110,11 @@ export default class MyCourses extends React.Component {
                     },
                 }
             );
-            this.setState({
-                courses: [...this.state.courses, deletedCourse],
-            });
-            this.setState({
-                selectedCourse: this.state.courses[0]._id,
-            });
-            changeUser(res.data);
+
+            changeUser(Object.assign(user, { courses: modifiedUserCourses }));
+
+            const availableCourses = this.getAvailableCourses();
+            this.setState({ selectedCourse: availableCourses[0]._id });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -135,53 +124,47 @@ export default class MyCourses extends React.Component {
         return (
             <>
                 <Message value={this.state.message} />
-                {this.state.loading ? (
-                    <p>Fetching Data</p>
-                ) : (
-                    <AppContext.Consumer>
-                        {({ user }) => (
+                <UserContext.Consumer>
+                    {({ user, courses }) => (
+                        <div>
+                            <form onSubmit={this.submitAddCourseForm}>
+                                <label>
+                                    Add a new course to your list:
+                                    <select
+                                        value={this.state.selectedCourse}
+                                        onChange={this.changeSelectedCourse}>
+                                        {this.getAvailableCourses().map(
+                                            ({ _id, name }) => (
+                                                <option value={_id} key={_id}>
+                                                    {name}
+                                                </option>
+                                            )
+                                        )}
+                                    </select>
+                                </label>
+                                <button type='submit'>Submit</button>
+                            </form>
                             <div>
-                                <form onSubmit={this.submitCourseForm}>
-                                    <label>
-                                        Add a new course to your list:
-                                        <select
-                                            value={this.state.selectedCourse}
-                                            onChange={
-                                                this.changeSelectedCourse
-                                            }>
-                                            {this.state.courses.map(
-                                                (course) => (
-                                                    <option
-                                                        value={course._id}
-                                                        key={course._id}>
-                                                        {course.name}
-                                                    </option>
-                                                )
-                                            )}
-                                        </select>
-                                    </label>
-                                    <button type='submit'>Submit</button>
-                                </form>
-                                <div>
-                                    <ul>
-                                        {user.courses.map(({ _id, name }) => (
-                                            <li key={_id}>
-                                                {name}
-                                                <span
-                                                    className='material-icons'
-                                                    onClick={() =>
-                                                        this.deleteCourse(_id)
-                                                    }>
-                                                    delete
-                                                </span>
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </div>
+                                <ul>
+                                    {user.courses.map(({ _id, name }) => (
+                                        <li key={_id}>
+                                            {name}
+                                            <span
+                                                className='material-icons'
+                                                onClick={() =>
+                                                    this.submitDeleteCourseForm(
+                                                        _id
+                                                    )
+                                                }>
+                                                delete
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                        )}
-                    </AppContext.Consumer>
-                )}
+                        </div>
+                    )}
+                </UserContext.Consumer>
             </>
         );
     }

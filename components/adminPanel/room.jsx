@@ -1,18 +1,24 @@
 import React from 'react';
+import axios from 'axios';
+import UserContext from '../userContext';
+import Message from '../message';
 
 export default class Room extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            name: '',
+            name: this.props.value.name,
             showEditing: false,
+            message: '',
         };
 
         this.changeName = this.changeName.bind(this);
         this.changeShowEditing = this.changeShowEditing.bind(this);
-        this.submitEditingForm = this.submitEditingForm.bind(this);
+        this.changeRoom = this.changeRoom.bind(this);
         this.deleteRoom = this.deleteRoom.bind(this);
     }
+
+    static contextType = UserContext;
 
     changeName(event) {
         this.setState({ name: event.target.value });
@@ -22,45 +28,87 @@ export default class Room extends React.Component {
         this.setState({ showEditing: !this.state.showEditing });
     }
 
-    async submitEditingForm(event) {
+    async changeRoom(event) {
         event.preventDefault();
-        await this.props.onChange(this.props.value._id, this.state.name);
-        this.setState({ name: '', showEditing: false });
+        const { apiUrl, token, rooms, changeRooms } = this.context;
+        try {
+            const res = await axios.patch(
+                `${apiUrl}/rooms/${this.props.value._id}`,
+                { name: this.state.name },
+                {
+                    headers: {
+                        'Content-Type': 'application/json; charset=utf-8',
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
+            );
+            const modifiedRooms = rooms;
+            const index = modifiedRooms.indexOf({
+                _id: this.props.value._id,
+            });
+            modifiedRooms[index] = res;
+            changeRooms(modifiedRooms);
+            this.setState({ showEditing: false });
+        } catch (err) {
+            this.setState({ message: err.response.data });
+        }
     }
 
     async deleteRoom() {
-        await this.props.onDelete(this.props.value._id);
+        const { apiUrl, token, rooms, changeRooms } = this.context;
+        try {
+            await axios.delete(`${apiUrl}/rooms/${this.props.value._id}`, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const modifiedRooms = rooms.filter(
+                (room) => room._id !== this.props.value._id
+            );
+            changeRooms(modifiedRooms);
+        } catch (err) {
+            this.setState({ message: err.response.data });
+        }
     }
 
     render() {
         return (
             <>
-                <div>
-                    <p>{this.props.value.name}</p>
-                    <span
-                        className='material-icons'
-                        onClick={this.changeShowEditing}>
-                        edit
-                    </span>
-                    <span className='material-icons' onClick={this.deleteRoom}>
-                        delete
-                    </span>
-                    {this.state.showEditing ? (
-                        <>
-                            <form onSubmit={this.submitEditingForm}>
-                                <input
-                                    type='text'
-                                    value={this.state.name}
-                                    onChange={this.changeName}
-                                    required
-                                />
-                                <button type='submit'>Save</button>
-                            </form>
-                        </>
-                    ) : (
-                        <></>
-                    )}
-                </div>
+                <Message value={this.state.message} />
+                {this.state.showEditing ? (
+                    <form onSubmit={this.changeRoom}>
+                        <input
+                            type='text'
+                            value={this.state.name}
+                            onChange={this.changeName}
+                            required
+                        />
+                        <br />
+                        <button type='submit'>Save</button>
+                        <button
+                            onClick={() =>
+                                this.setState({ showEditing: false })
+                            }>
+                            cancel
+                        </button>
+                    </form>
+                ) : (
+                    <div>
+                        <p>{this.state.name}</p>
+                        <span
+                            className='material-icons'
+                            onClick={this.changeShowEditing}>
+                            edit
+                        </span>
+                        <span
+                            className='material-icons'
+                            onClick={this.deleteRoom}>
+                            delete
+                        </span>
+                    </div>
+                )}
             </>
         );
     }

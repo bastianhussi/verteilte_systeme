@@ -34,7 +34,7 @@ async function handlePatch(req, res) {
 
     const schema = Joi.object({
         title: Joi.string().trim().min(3).max(30).optional(),
-        class: Joi.string().optional(),
+        course: Joi.string().optional(),
         room: Joi.string().optional(),
         start: Joi.date().optional(),
         end: Joi.date().optional(),

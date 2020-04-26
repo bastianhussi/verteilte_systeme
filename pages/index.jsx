@@ -1,49 +1,138 @@
 import React from 'react';
 import Head from 'next/head';
 import { auth } from '../utils/auth';
+import axios from 'axios';
+import LoadingScreen from '../components/loadingScreen';
 import Calendar from '../components/calendar';
 import Navbar from '../components/navbar';
-import AppContext from '../components/appContext';
-import Message from '../components/message';
+import UserContext from '../components/userContext';
 
 export default class Index extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            user: this.props.user,
+            loading: true,
             currentView: <Calendar />,
-            message: '',
+            user: this.props.user,
+            lectures: [],
+            courses: [],
+            rooms: [],
         };
 
         this.changeCurrentView = this.changeCurrentView.bind(this);
         this.changeUser = this.changeUser.bind(this);
-    }
-
-    changeCurrentView(newView) {
-        this.setState({ currentView: newView });
-    }
-
-    changeUser(newUser) {
-        this.setState({ user: newUser });
+        this.changeCourses = this.changeCourses.bind(this);
+        this.changeRooms = this.changeRooms.bind(this);
+        this.changeLectures = this.changeLectures.bind(this);
     }
 
     static async getInitialProps(ctx) {
-        try {
-            const protocol =
-                process.env.NODE_ENV === 'production' ? 'https' : 'http';
-            const apiUrl = process.browser
-                ? `${protocol}://${window.location.host}/api`
-                : `${protocol}://${ctx.req.headers.host}/api`;
-            const { user, token } = await auth(ctx, apiUrl);
-            return { user, token, apiUrl };
-        } catch (err) {}
+        const protocol =
+            process.env.NODE_ENV === 'production' ? 'https' : 'http';
+        const apiUrl = process.browser
+            ? `${protocol}://${window.location.host}/api`
+            : `${protocol}://${ctx.req.headers.host}/api`;
+
+        const { user, token } = await auth(ctx, apiUrl);
+        return { user, token, apiUrl };
     }
 
-    static contextType = AppContext;
+    componentDidMount() {
+        const { apiUrl, token } = this.props;
+        // fetching data asynchronously
+        Promise.all([
+            new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/courses`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
+            }),
+            new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/rooms`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
+            }),
+            new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/lectures`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
+            }),
+        ])
+            .then(([courses, rooms, lectures]) => {
+                const userCourses = this.state.user.courses.map((userCourse) =>
+                    courses.find((course) => course._id === userCourse)
+                );
+                this.setState({
+                    user: Object.assign(this.state.user, {
+                        courses: userCourses,
+                    }),
+                    courses,
+                    rooms,
+                    lectures,
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+                // TODO: show error page
+            })
+            .finally(() => {
+                this.setState({ loading: false });
+            });
+    }
+
+    changeCurrentView(currentView) {
+        this.setState({ currentView });
+    }
+
+    changeUser(user) {
+        this.setState({ user });
+    }
+
+    changeCourses(courses) {
+        this.setState({ courses });
+    }
+
+    changeRooms(rooms) {
+        this.setState({ rooms });
+    }
+
+    changeLectures(lectures) {
+        this.setState({ lectures });
+    }
 
     render() {
         const { token, apiUrl } = this.props;
-        const { user } = this.state;
+        const { user, lectures, rooms, courses } = this.state;
+
         return (
             <>
                 <Head>
@@ -52,21 +141,28 @@ export default class Index extends React.Component {
                         name='viewport'
                         content='width=device-width, initial-scale=1.0'
                     />
-                    <title>Overview</title>
+                    <title>{`Welcome ${user.name}`}</title>
                 </Head>
-                <AppContext.Provider
-                    value={{
-                        user,
-                        token,
-                        apiUrl,
-                        changeUser: this.changeUser,
-                    }}>
-                    <Navbar changeView={this.changeCurrentView} />
-                    <div>
-                        <Message value={this.state.message} />
+                {this.state.loading ? (
+                    <LoadingScreen />
+                ) : (
+                    <UserContext.Provider
+                        value={{
+                            user,
+                            changeUser: this.changeUser,
+                            token,
+                            apiUrl,
+                            lectures,
+                            changeLectures: this.changeLectures,
+                            courses,
+                            changeCourses: this.changeCourses,
+                            rooms,
+                            changeRooms: this.changeRooms,
+                        }}>
+                        <Navbar changeView={this.changeCurrentView} />
                         {this.state.currentView}
-                    </div>
-                </AppContext.Provider>
+                    </UserContext.Provider>
+                )}
             </>
         );
     }

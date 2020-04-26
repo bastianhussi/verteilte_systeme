@@ -97,8 +97,7 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
  * The update attribute specifies the update to be executed on the found document.
  * Even if multiple documents match the filter only the first will be updated.
  * Filtering should only be done by a unique attribute of the document.
- * If no documents were found a NotFoundError will be thrown and
- * if none are getting updated a DatabaseError will be thrown.
+ * If no documents were found a NotFoundError will be thrown.
  * @param {*} collection
  * @param {*} filter
  * @param {*} update
@@ -119,15 +118,31 @@ export async function updateOne(collection, filter, update) {
             }
         );
     }
+}
 
-    // if this really needed?
-    /* if (result.modifiedCount === 0) {
-    throw new DatabaseError(`could not modify ${JSON.stringify(filter)}`, {
-      collection,
-      filter,
-      update,
-    });
-  } */
+/**
+ * Updates all documents matching the filter.
+ * The update attribute specifies the update to be executed on the found documents.
+ * @param {*} collection
+ * @param {*} filter
+ * @param {*} update
+ */
+export async function updateMany(collection, filter, update) {
+    await checkConnection();
+    const result = await client
+        .db(dbName)
+        .collection(collection)
+        .updateMany(filter, update);
+    if (result.matchedCount === 0) {
+        throw new NotFoundError(
+            `no results searching for ${JSON.stringify(filter)}`,
+            {
+                collection,
+                filter,
+                update,
+            }
+        );
+    }
 }
 
 /**
