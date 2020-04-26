@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import styles from './deleteAccount.module.css';
 import { logout } from '../../utils/auth';
 import Message from '../message';
@@ -14,7 +14,7 @@ export default class DeleteAccount extends React.Component {
         };
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     async submitDeleteForm(event) {
         event.preventDefault();

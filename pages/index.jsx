@@ -2,78 +2,112 @@ import React from 'react';
 import Head from 'next/head';
 import { auth } from '../utils/auth';
 import axios from 'axios';
+import LoadingScreen from '../components/loadingScreen';
 import Calendar from '../components/calendar';
 import Navbar from '../components/navbar';
-import AppContext from '../components/appContext';
-import CalendarContext from '../components/calendarContext';
-import Message from '../components/message';
+import UserContext from '../components/userContext';
 
 export default class Index extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            loading: true,
             user: this.props.user,
+            lectures: [],
+            courses: [],
+            rooms: [],
             currentView: <Calendar />,
-            message: '',
         };
 
-        this.changeCurrentView = this.changeCurrentView.bind(this);
         this.changeUser = this.changeUser.bind(this);
+        this.changeCourses = this.changeCourses.bind(this);
+        this.changeCurrentView = this.changeCurrentView.bind(this);
+    }
+
+    static async getInitialProps(ctx) {
+        const protocol =
+            process.env.NODE_ENV === 'production' ? 'https' : 'http';
+        const apiUrl = process.browser
+            ? `${protocol}://${window.location.host}/api`
+            : `${protocol}://${ctx.req.headers.host}/api`;
+
+        const { user, token } = await auth(ctx, apiUrl);
+        return { user, token, apiUrl };
+    }
+
+    componentDidMount() {
+        const { apiUrl, token } = this.props;
+        Promise.race([
+            axios.get(`${apiUrl}/courses`, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            axios.get(`${apiUrl}/rooms`, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+            axios.get(`${apiUrl}/lectures`, {
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                    Authorization: `Bearer ${token}`,
+                },
+            }),
+        ])
+            .then(([courses, rooms, lectures]) => {
+
+                if(courses) {
+                    const userCourses = this.state.user.courses;
+                    const otherCourses = courses.data;
+                    otherCourses.forEach((course, index) => {
+                        const userIndex = userCourses.findIndex(
+                            (userCourse) => userCourse === course._id
+                        );
+                        if (userIndex) {
+                            userCourses[userIndex] = course;
+                            otherCourses.splice(index, 1);
+                        }
+                    });
+                    this.setState({
+                        user: Object.assign(this.state.user, {
+                            courses: userCourses,
+                        }),
+                        courses: otherCourses,
+                    });
+                }
+
+                if(rooms) {
+                    this.setState({ rooms: rooms.data});
+                }
+
+                if(lectures) {
+                    this.setState({ lectures: lectures.data });
+                }
+            })
+            .finally(() => {
+                this.setState({ loading: false });
+            });
+    }
+
+    changeUser(modifiedUser) {
+        this.setState({ user: modifiedUser });
+    }
+
+    changeCourses(modifiedCourses) {
+        this.setState({ courses: modifiedCourses });
     }
 
     changeCurrentView(newView) {
         this.setState({ currentView: newView });
     }
 
-    changeUser(newUser) {
-        this.setState({ user: newUser });
-    }
-
-    static async getInitialProps(ctx) {
-        try {
-            const protocol =
-                process.env.NODE_ENV === 'production' ? 'https' : 'http';
-            const apiUrl = process.browser
-                ? `${protocol}://${window.location.host}/api`
-                : `${protocol}://${ctx.req.headers.host}/api`;
-
-            const { user, token } = await auth(ctx, apiUrl);
-
-            // fetching courses from server.
-            try {
-                const res = await axios.get(`${apiUrl}/courses`, {
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8',
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-
-                const courses = res.data;
-
-                // replace the id in the courses array with the whole course object.
-                // this workaround is needed, because if the whole course would be stored
-                // in the documents of users, updating a course would require updating users as well.
-                user.courses.forEach((userCourse, index) => {
-                    const course = courses.find((c) => c._id === userCourse);
-                    if (course) {
-                        user.courses[index] = course;
-                    }
-                });
-            } catch (err) {
-                if (err.response.status !== 404) throw err;
-            }
-
-            return { user, token, apiUrl };
-        } catch (err) {
-            // TODO: show error page
-        }
-    }
-
-    static contextType = AppContext;
-
     render() {
         const { token, apiUrl } = this.props;
-        const { user } = this.state;
+        const { user, lectures, rooms, courses } = this.state;
+
         return (
             <>
                 <Head>
@@ -82,26 +116,26 @@ export default class Index extends React.Component {
                         name='viewport'
                         content='width=device-width, initial-scale=1.0'
                     />
-                    <title>Overview</title>
+                    <title>{`Welcome ${user.name}`}</title>
                 </Head>
-                <AppContext.Provider
-                    value={{
-                        user,
-                        token,
-                        apiUrl,
-                        changeUser: this.changeUser,
-                    }}>
-                    <Navbar changeView={this.changeCurrentView} />
-                    <Message value={this.state.message} />
-                    <CalendarContext.Provider value={{
-                        lectures: [],
-                        courses: [],
-                        rooms: [],
-                    }}></CalendarContext.Provider>
-                    <div>
+                {this.state.loading ? (
+                    <LoadingScreen />
+                ) : (
+                    <UserContext.Provider
+                        value={{
+                            user,
+                            changeUser: this.changeUser,
+                            token,
+                            apiUrl,
+                            lectures,
+                            courses,
+                            changeCourses: this.changeCourses,
+                            rooms,
+                        }}>
+                        <Navbar changeView={this.changeCurrentView} />
                         {this.state.currentView}
-                    </div>
-                </AppContext.Provider>
+                    </UserContext.Provider>
+                )}
             </>
         );
     }

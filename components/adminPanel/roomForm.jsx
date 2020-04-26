@@ -1,5 +1,5 @@
 import React from 'react';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import axios from 'axios';
 import Message from '../message';
 
@@ -15,7 +15,7 @@ export default class RoomForm extends React.Component {
         this.submitRoomForm = this.submitRoomForm.bind(this);
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     changeRoom(event) {
         this.setState({ room: event.target.value });

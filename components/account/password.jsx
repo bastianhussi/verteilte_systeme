@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from 'axios';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import Message from '../message';
 import styles from './email.module.css';
 
@@ -59,7 +59,7 @@ export default class Password extends React.Component {
         this.setState({ password: '' });
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     render() {
         return (

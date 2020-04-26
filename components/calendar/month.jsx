@@ -1,7 +1,8 @@
 import React from 'react';
 import CalendarContext from '../calendarContext';
-import Week from './week';
+import WeekController from './week';
 import styles from './month.module.css';
+import UserContext from '../userContext';
 
 Date.prototype.getMonthDays = function () {
     const date = new Date(this.getFullYear(), this.getMonth() + 1, 0);
@@ -21,7 +22,7 @@ Date.prototype.getDayName = function () {
     return weekDays[this.getDay()];
 };
 
-export default class Month extends React.Component {
+export default class MonthController extends React.Component {
     constructor(props) {
         super(props);
         this.previousMonth = this.previousMonth.bind(this);
@@ -67,65 +68,87 @@ export default class Month extends React.Component {
     }
 
     render() {
-        const selectedDate = this.context.selectedDate;
-
-        const header = [];
-        for (let day = 1; day <= 7; day++) {
-            const dayName = new Date(
-                selectedDate.getFullYear(),
-                selectedDate.getMonth(),
-                day
-            ).getDayName();
-            header.push(<div key={dayName}>{dayName}</div>);
-        }
-
-        const days = [];
-        for (let day = 1; day <= selectedDate.getMonthDays(); day++) {
-            days.push(
-                <Day
-                    key={day}
-                    date={
-                        new Date(
-                            selectedDate.getFullYear(),
-                            selectedDate.getMonth(),
-                            day
-                        )
-                    }
-                />
-            );
-        }
-
         return (
             <CalendarContext.Consumer>
-                {() => (
+                {({ selectedDate, changeDate }) => (
                     <>
                         <div className={styles.header}>
                             <span
-                                class='material-icons'
+                                className='material-icons'
                                 onClick={this.previousMonth}>
                                 arrow_back
                             </span>
 
                             {selectedDate.toDateString()}
                             <span
-                                class='material-icons'
+                                className='material-icons'
                                 onClick={this.nextMonth}>
                                 arrow_forward
                             </span>
-                            <button
-                                onClick={() =>
-                                    this.context.changeDate(new Date())
-                                }>
+                            <button onClick={() => changeDate(new Date())}>
                                 today
                             </button>
                         </div>
-                        <div className={styles.month}>
-                            {header}
-                            {days}
-                        </div>
+                        <UserContext.Consumer>
+                            {({ lectures }) => (
+                                <Month
+                                    date={selectedDate}
+                                    lectures={lectures}
+                                />
+                            )}
+                        </UserContext.Consumer>
                     </>
                 )}
             </CalendarContext.Consumer>
+        );
+    }
+}
+
+class Month extends React.Component {
+    constructor(props) {
+        super(props);
+    }
+
+    render() {
+        const selectedDate = this.props.date;
+
+        function getHeader() {
+            const header = [];
+            for (let day = 1; day <= 7; day++) {
+                const dayName = new Date(
+                    selectedDate.getFullYear(),
+                    selectedDate.getMonth(),
+                    day
+                ).getDayName();
+                header.push(<div key={dayName}>{dayName}</div>);
+            }
+            return header;
+        }
+
+        function getDays() {
+            const days = [];
+            for (let day = 1; day <= selectedDate.getMonthDays(); day++) {
+                days.push(
+                    <Day
+                        key={day}
+                        date={
+                            new Date(
+                                selectedDate.getFullYear(),
+                                selectedDate.getMonth(),
+                                day
+                            )
+                        }
+                    />
+                );
+            }
+            return days;
+        }
+
+        return (
+            <div className={styles.month}>
+                {getHeader()}
+                {getDays()}
+            </div>
         );
     }
 }
@@ -143,7 +166,7 @@ class Day extends React.Component {
                 className={styles.day}
                 onClick={() => {
                     this.context.changeDate(this.props.date);
-                    this.context.changeView(<Week />);
+                    this.context.changeView(<WeekController />);
                 }}>
                 {this.props.date.getDate()}
             </div>

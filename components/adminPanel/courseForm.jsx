@@ -1,5 +1,5 @@
 import React from 'react';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import axios from 'axios';
 import Message from '../message';
 
@@ -15,7 +15,7 @@ export default class CourseForm extends React.Component {
         this.submitCourseForm = this.submitCourseForm.bind(this);
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     changeCourse(event) {
         this.setState({ course: event.target.value });

@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import styles from './name.module.css';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import Message from '../message';
 
 export default class Name extends React.Component {
@@ -50,11 +50,11 @@ export default class Name extends React.Component {
         this.setState({ name: '' });
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     render() {
         return (
-            <AppContext.Consumer>
+            <UserContext.Consumer>
                 {({ user }) => (
                     <>
                         <p>
@@ -75,7 +75,7 @@ export default class Name extends React.Component {
                         <Message value={this.state.message} />
                     </>
                 )}
-            </AppContext.Consumer>
+            </UserContext.Consumer>
         );
     }
 }

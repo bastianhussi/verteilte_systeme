@@ -1,7 +1,7 @@
 import CourseForm from './adminPanel/courseForm';
 import RoomForm from './adminPanel/roomForm';
 import React from 'react';
-import AppContext from './appContext';
+import UserContext from './userContext';
 import axios from 'axios';
 import Course from './adminPanel/course';
 import Room from './adminPanel/room';
@@ -25,7 +25,7 @@ export default class AdminPanel extends React.Component {
         this.deleteRoom = this.deleteRoom.bind(this);
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     componentDidMount() {
         const { apiUrl, token } = this.context;

@@ -1,5 +1,5 @@
 import React from 'react';
-import AppContext from '../appContext';
+import UserContext from '../userContext';
 import Message from '../message';
 import axios from 'axios';
 import styles from './form.module.css';
@@ -26,7 +26,7 @@ export default class Form extends React.Component {
         this.submitLectureForm = this.submitLectureForm.bind(this);
     }
 
-    static contextType = AppContext;
+    static contextType = UserContext;
 
     componentDidMount() {
         const { apiUrl, token } = this.context;
