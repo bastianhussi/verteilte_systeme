@@ -10,7 +10,6 @@ export default class Form extends React.Component {
         this.state = {
             loading: true,
             rooms: [],
-            courses: [],
             title: '',
             selectedRoom: undefined,
             selectedCourse: undefined,
@@ -30,42 +29,34 @@ export default class Form extends React.Component {
     static contextType = AppContext;
 
     componentDidMount() {
-        const { apiUrl, token, user } = this.context;
-        Promise.all([
-            axios.get(`${apiUrl}/rooms`, {
+        const { apiUrl, token } = this.context;
+
+        axios
+            .get(`${apiUrl}/rooms`, {
                 headers: {
                     'Content-Type': 'application/json; charset=utf-8',
                     Authorization: `Bearer ${token}`,
                 },
-            }),
-            axios.get(`${apiUrl}/users/${user._id}`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
-            }),
-        ])
+            })
             .then((res) => {
                 const date = this.props.date;
                 const startTime = date.toTimeString().split(' ')[0];
                 // end time will be in one hour
                 date.setHours(date.getHours() + 1);
                 const endTime = date.toTimeString().split(' ')[0];
-                const rooms = res[0].data;
 
-                // the second response will be the whole user object. We only need the courses
-                const courses = res[1].data.courses;
+                const rooms = res.data;
                 this.setState({
                     rooms: rooms,
-                    courses: courses,
                     selectedRoom: rooms[0] ? rooms[0]._id : undefined,
-                    selectedCourse: courses[0] ? courses[0]._id : undefined,
+                    selectedCourse: this.context.user.courses[0]
+                        ? this.context.user.courses[0]._id
+                        : undefined,
                     start: startTime,
                     end: endTime,
                 });
             })
             .catch((err) => {
-                console.log(err);
                 this.setState({ message: err.response.data });
             })
             .finally(() => {
@@ -209,7 +200,7 @@ export default class Form extends React.Component {
                                     value={this.state.selectedCourse}
                                     onChange={this.changeSelectedCourse}
                                     required>
-                                    {this.state.courses.map((course) => (
+                                    {this.context.user.courses.map((course) => (
                                         <option
                                             key={course._id}
                                             value={course._id}>

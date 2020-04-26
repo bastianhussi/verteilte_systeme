@@ -64,17 +64,39 @@ export default class Week extends React.Component {
         }
 
         return (
-            <>
-                <div className={styles.header}>
-                    <button onClick={() => this.context.changeView(<Month />)}>
-                        back to month view
-                    </button>
-                    <button onClick={this.previousWeek}>previous</button>
-                    {this.context.selectedDate.toDateString()}
-                    <button onClick={this.nextWeek}>next</button>
-                </div>
-                <div className={styles.week}>{days}</div>
-            </>
+            <CalendarContext.Consumer>
+                {({ lectures }) => (
+                    <>
+                        <div className={styles.header}>
+                            <button
+                                onClick={() =>
+                                    this.context.changeView(<Month />)
+                                }>
+                                back to month view
+                            </button>
+                            <span
+                                class='material-icons'
+                                onClick={this.previousWeek}>
+                                arrow_back
+                            </span>
+
+                            {this.context.selectedDate.toDateString()}
+                            <span
+                                class='material-icons'
+                                onClick={this.nextWeek}>
+                                arrow_forward
+                            </span>
+                            <button
+                                onClick={() =>
+                                    this.context.changeDate(new Date())
+                                }>
+                                today
+                            </button>
+                        </div>
+                        <div className={styles.week}>{days}</div>
+                    </>
+                )}
+            </CalendarContext.Consumer>
         );
     }
 }

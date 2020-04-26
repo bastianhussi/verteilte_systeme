@@ -32,7 +32,6 @@ async function handlePost(req, res) {
     if (!(await bcrypt.compare(password, user.password))) {
         throw new UnauthorizedError('you entered a wrong password', {
             reqBody: req.body,
-            plain: password,
             encrypted: user.password,
         });
     }

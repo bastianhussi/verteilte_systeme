@@ -96,17 +96,36 @@ export default class Month extends React.Component {
         }
 
         return (
-            <>
-                <div className={styles.header}>
-                    <button onClick={this.previousMonth}>previous</button>
-                    {selectedDate.toDateString()}
-                    <button onClick={this.nextMonth}>next</button>
-                </div>
-                <div className={styles.month}>
-                    {header}
-                    {days}
-                </div>
-            </>
+            <CalendarContext.Consumer>
+                {() => (
+                    <>
+                        <div className={styles.header}>
+                            <span
+                                class='material-icons'
+                                onClick={this.previousMonth}>
+                                arrow_back
+                            </span>
+
+                            {selectedDate.toDateString()}
+                            <span
+                                class='material-icons'
+                                onClick={this.nextMonth}>
+                                arrow_forward
+                            </span>
+                            <button
+                                onClick={() =>
+                                    this.context.changeDate(new Date())
+                                }>
+                                today
+                            </button>
+                        </div>
+                        <div className={styles.month}>
+                            {header}
+                            {days}
+                        </div>
+                    </>
+                )}
+            </CalendarContext.Consumer>
         );
     }
 }

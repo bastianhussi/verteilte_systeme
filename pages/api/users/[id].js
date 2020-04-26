@@ -43,12 +43,7 @@ async function handlePatch(req, res) {
         email: Joi.string().email().trim().optional(),
         name: Joi.string().trim().min(3).max(50).optional(),
         password: Joi.string().min(3).max(50).optional(),
-        courses: Joi.array()
-            .items({
-                _id: Joi.string().required(),
-                name: Joi.string().min(3).max(30).required(),
-            })
-            .unique(),
+        courses: Joi.array().items(Joi.string().required()).unique(),
     });
     const modifiedUser = await validateData(req.body, schema);
 

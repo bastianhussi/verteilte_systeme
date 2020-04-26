@@ -65,15 +65,15 @@ export default class MyCourses extends React.Component {
         event.preventDefault();
         this.setState({ message: '' });
 
-        const selectedCourse = this.state.courses.find(
-            (course) => course._id === this.state.selectedCourse
-        );
         const { apiUrl, token, user, changeUser } = this.context;
+
+        const userCourses = user.courses.map((course) => (course = course._id));
+
         try {
-            const res = await axios.patch(
+            await axios.patch(
                 `${apiUrl}/users/${user._id}`,
                 {
-                    courses: [...user.courses, selectedCourse],
+                    courses: [...userCourses, this.state.selectedCourse],
                 },
                 {
                     headers: {
@@ -83,18 +83,27 @@ export default class MyCourses extends React.Component {
                 }
             );
 
+            const newCourse = this.state.courses.find(
+                (course) => course._id === this.state.selectedCourse
+            );
+
             // remove this course from the list of courses
             const modifiedCourses = this.state.courses.filter(
                 (course) => course._id !== this.state.selectedCourse
             );
+
             this.setState({
                 selectedCourse:
-                    modifiedCourses.length > 0 ? modifiedCourses[0]._id : '',
+                    modifiedCourses.length > 0
+                        ? modifiedCourses[0]._id
+                        : undefined,
                 courses: modifiedCourses,
             });
 
+            user.courses.push(newCourse);
+
             // update the user
-            changeUser(res.data);
+            changeUser(user);
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -102,15 +111,20 @@ export default class MyCourses extends React.Component {
 
     async deleteCourse(id) {
         const { user, token, apiUrl, changeUser } = this.context;
+
+        // TODO: improve code performance
         const deletedCourse = user.courses.find((course) => course._id === id);
-        const modifiedCourses = user.courses.filter(
-            (course) => course._id !== id
-        );
+
+        // remove this course from the list of courses and unnecessary data
+        const modifiedUserCourses = user.courses
+            .filter((course) => course._id !== id)
+            .map((course) => (course = course._id));
+
         try {
-            const res = await axios.patch(
+            await axios.patch(
                 `${apiUrl}/users/${user._id}`,
                 {
-                    courses: modifiedCourses,
+                    courses: modifiedUserCourses,
                 },
                 {
                     headers: {
@@ -125,7 +139,9 @@ export default class MyCourses extends React.Component {
             this.setState({
                 selectedCourse: this.state.courses[0]._id,
             });
-            changeUser(res.data);
+
+            user.courses.filter((course) => course._id !== id);
+            changeUser(user);
         } catch (err) {
             this.setState({ message: err.response.data });
         }
