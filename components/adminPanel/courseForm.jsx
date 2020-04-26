@@ -39,7 +39,7 @@ export default class CourseForm extends React.Component {
                 }
             );
 
-            changeCourses([courses, ...res.data]);
+            changeCourses([...courses, res.data]);
             this.setState({ course: '' });
         } catch (err) {
             this.setState({ message: err.response.data });

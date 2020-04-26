@@ -1,8 +1,8 @@
 import React from 'react';
 import axios from 'axios';
-import styles from './email.module.css';
 import UserContext from '../userContext';
 import Message from '../message';
+import styles from './email.module.css';
 
 export default class Email extends React.Component {
     constructor(props) {
@@ -44,6 +44,7 @@ export default class Email extends React.Component {
                 }
             );
             changeUser(res.data);
+            this.setState({ message: 'please check your inbox' });
         } catch (err) {
             this.setState({ message: err.response.data });
         }

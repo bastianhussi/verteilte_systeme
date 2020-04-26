@@ -39,7 +39,7 @@ export default class RoomForm extends React.Component {
                 }
             );
 
-            changeRooms([rooms, ...res.data]);
+            changeRooms([...rooms, res.data]);
             this.setState({ room: '' });
         } catch (err) {
             this.setState({ message: err.response.data });

@@ -20,9 +20,11 @@ export default class MyCourses extends React.Component {
     static contextType = UserContext;
 
     componentDidMount() {
-        const { courses } = this.context;
+        const availableCourses = this.getAvailableCourses();
         this.setState({
-            selectedCourse: courses[0] ? courses[0]._id : undefined,
+            selectedCourse: availableCourses[0]
+                ? availableCourses[0]._id
+                : undefined,
         });
     }
 

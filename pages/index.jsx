@@ -39,54 +39,70 @@ export default class Index extends React.Component {
 
     componentDidMount() {
         const { apiUrl, token } = this.props;
-        Promise.race([
-            axios.get(`${apiUrl}/courses`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
+        // fetching data asynchronously
+        Promise.all([
+            new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/courses`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
             }),
-            axios.get(`${apiUrl}/rooms`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
+            new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/rooms`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
             }),
-            axios.get(`${apiUrl}/lectures`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
+            new Promise((resolve, reject) => {
+                axios
+                    .get(`${apiUrl}/lectures`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
             }),
         ])
             .then(([courses, rooms, lectures]) => {
-                if (courses) {
-                    const userCourses = this.state.user.courses;
-                    const otherCourses = courses.data;
-                    otherCourses.forEach((course, index) => {
-                        const userIndex = userCourses.findIndex(
-                            (userCourse) => userCourse === course._id
-                        );
-                        if (userIndex) {
-                            userCourses[userIndex] = course;
-                            otherCourses.splice(index, 1);
-                        }
-                    });
-                    this.setState({
-                        user: Object.assign(this.state.user, {
-                            courses: userCourses,
-                        }),
-                        courses: otherCourses,
-                    });
-                }
-
-                if (rooms) {
-                    this.setState({ rooms: rooms.data });
-                }
-
-                if (lectures) {
-                    this.setState({ lectures: lectures.data });
-                }
+                const userCourses = this.state.user.courses.map((userCourse) =>
+                    courses.find((course) => course._id === userCourse)
+                );
+                this.setState({
+                    user: Object.assign(this.state.user, {
+                        courses: userCourses,
+                    }),
+                    courses,
+                    rooms,
+                    lectures,
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+                // TODO: show error page
             })
             .finally(() => {
                 this.setState({ loading: false });
@@ -137,9 +153,11 @@ export default class Index extends React.Component {
                             token,
                             apiUrl,
                             lectures,
+                            changeLectures: this.changeLectures,
                             courses,
                             changeCourses: this.changeCourses,
                             rooms,
+                            changeRooms: this.changeRooms,
                         }}>
                         <Navbar changeView={this.changeCurrentView} />
                         {this.state.currentView}
