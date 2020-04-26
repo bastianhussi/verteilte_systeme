@@ -12,7 +12,7 @@ export default class RoomForm extends React.Component {
         };
 
         this.changeRoom = this.changeRoom.bind(this);
-        this.submitRoomForm = this.submitRoomForm.bind(this);
+        this.createRoom = this.createRoom.bind(this);
     }
 
     static contextType = UserContext;
@@ -21,10 +21,10 @@ export default class RoomForm extends React.Component {
         this.setState({ room: event.target.value });
     }
 
-    async submitRoomForm(event) {
+    async createRoom(event) {
         event.preventDefault();
         this.setState({ message: '' });
-        const { token, apiUrl } = this.context;
+        const { token, apiUrl, rooms, changeRooms } = this.context;
         try {
             const res = await axios.post(
                 `${apiUrl}/rooms`,
@@ -38,8 +38,9 @@ export default class RoomForm extends React.Component {
                     },
                 }
             );
+
+            changeRooms([rooms, ...res.data]);
             this.setState({ room: '' });
-            this.props.onSubmit(res.data);
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -50,7 +51,7 @@ export default class RoomForm extends React.Component {
             <>
                 <div>
                     <Message value={this.state.message} />
-                    <form onSubmit={this.submitRoomForm}>
+                    <form onSubmit={this.createRoom}>
                         <label>
                             Room:
                             <br />

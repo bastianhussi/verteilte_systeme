@@ -11,6 +11,7 @@ export default class MyCourses extends React.Component {
             message: '',
         };
 
+        this.getAvailableCourses = this.getAvailableCourses.bind(this);
         this.changeSelectedCourse = this.changeSelectedCourse.bind(this);
         this.submitAddCourseForm = this.submitAddCourseForm.bind(this);
         this.submitDeleteCourseForm = this.submitDeleteCourseForm.bind(this);
@@ -25,6 +26,16 @@ export default class MyCourses extends React.Component {
         });
     }
 
+    getAvailableCourses() {
+        const { courses, user } = this.context;
+        return courses.filter(
+            (course) =>
+                !user.courses.find(
+                    (userCourse) => userCourse._id === course._id
+                )
+        );
+    }
+
     changeSelectedCourse(event) {
         this.setState({ selectedCourse: event.target.value });
     }
@@ -33,14 +44,7 @@ export default class MyCourses extends React.Component {
         event.preventDefault();
         this.setState({ message: '' });
 
-        const {
-            apiUrl,
-            token,
-            user,
-            courses,
-            changeUser,
-            changeCourses,
-        } = this.context;
+        const { apiUrl, token, user, courses, changeUser } = this.context;
 
         try {
             await axios.patch(
@@ -63,21 +67,16 @@ export default class MyCourses extends React.Component {
                 (course) => course._id === this.state.selectedCourse
             );
 
-            // TODO: improve performance
-            const modifiedCourses = courses.filter(
-                (course) => course._id === this.state.selectedCourse
-            );
-
             changeUser(
                 Object.assign(user, {
                     courses: [...user.courses, newCourse],
                 })
             );
-            changeCourses(modifiedCourses);
 
+            const availableCourses = this.getAvailableCourses();
             this.setState({
-                selectedCourse: modifiedCourses[0]
-                    ? modifiedCourses[0]._id
+                selectedCourse: availableCourses[0]
+                    ? availableCourses[0]._id
                     : undefined,
             });
         } catch (err) {
@@ -85,20 +84,13 @@ export default class MyCourses extends React.Component {
         }
     }
 
-    async submitDeleteCourseForm(deletedCourse) {
+    async submitDeleteCourseForm(id) {
         this.setState({ message: '' });
 
-        const {
-            apiUrl,
-            token,
-            user,
-            changeUser,
-            courses,
-            changeCourses,
-        } = this.context;
+        const { apiUrl, token, user, changeUser, courses } = this.context;
 
         const modifiedUserCourses = user.courses.filter(
-            (course) => course === deletedCourse._id
+            (course) => course === id
         );
 
         try {
@@ -118,9 +110,9 @@ export default class MyCourses extends React.Component {
             );
 
             changeUser(Object.assign(user, { courses: modifiedUserCourses }));
-            changeCourses([...courses, deletedCourse]);
 
-            this.setState({ selectedCourse: this.context.courses[0]._id });
+            const availableCourses = this.getAvailableCourses();
+            this.setState({ selectedCourse: availableCourses[0]._id });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -139,25 +131,27 @@ export default class MyCourses extends React.Component {
                                     <select
                                         value={this.state.selectedCourse}
                                         onChange={this.changeSelectedCourse}>
-                                        {courses.map(({ _id, name }) => (
-                                            <option value={_id} key={_id}>
-                                                {name}
-                                            </option>
-                                        ))}
+                                        {this.getAvailableCourses().map(
+                                            ({ _id, name }) => (
+                                                <option value={_id} key={_id}>
+                                                    {name}
+                                                </option>
+                                            )
+                                        )}
                                     </select>
                                 </label>
                                 <button type='submit'>Submit</button>
                             </form>
                             <div>
                                 <ul>
-                                    {user.courses.map((course) => (
-                                        <li key={course._id}>
-                                            {course.name}
+                                    {user.courses.map(({ _id, name }) => (
+                                        <li key={_id}>
+                                            {name}
                                             <span
                                                 className='material-icons'
                                                 onClick={() =>
                                                     this.submitDeleteCourseForm(
-                                                        course
+                                                        _id
                                                     )
                                                 }>
                                                 delete

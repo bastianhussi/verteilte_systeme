@@ -12,7 +12,7 @@ export default class CourseForm extends React.Component {
         };
 
         this.changeCourse = this.changeCourse.bind(this);
-        this.submitCourseForm = this.submitCourseForm.bind(this);
+        this.createCourse = this.createCourse.bind(this);
     }
 
     static contextType = UserContext;
@@ -21,10 +21,10 @@ export default class CourseForm extends React.Component {
         this.setState({ course: event.target.value });
     }
 
-    async submitCourseForm(event) {
+    async createCourse(event) {
         event.preventDefault();
         this.setState({ message: '' });
-        const { token, apiUrl } = this.context;
+        const { token, apiUrl, courses, changeCourses } = this.context;
         try {
             const res = await axios.post(
                 `${apiUrl}/courses`,
@@ -38,8 +38,9 @@ export default class CourseForm extends React.Component {
                     },
                 }
             );
+
+            changeCourses([courses, ...res.data]);
             this.setState({ course: '' });
-            this.props.onSubmit(res.data);
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -47,24 +48,22 @@ export default class CourseForm extends React.Component {
 
     render() {
         return (
-            <>
-                <div>
-                    <Message value={this.state.message} />
-                    <form onSubmit={this.submitCourseForm}>
-                        <label>
-                            Course:
-                            <br />
-                            <input
-                                type='text'
-                                value={this.state.course}
-                                onChange={this.changeCourse}
-                                required
-                            />
-                        </label>
-                        <button type='submit'>Create</button>
-                    </form>
-                </div>
-            </>
+            <div>
+                <Message value={this.state.message} />
+                <form onSubmit={this.createCourse}>
+                    <label>
+                        Course:
+                        <br />
+                        <input
+                            type='text'
+                            value={this.state.course}
+                            onChange={this.changeCourse}
+                            required
+                        />
+                    </label>
+                    <button type='submit'>Create</button>
+                </form>
+            </div>
         );
     }
 }

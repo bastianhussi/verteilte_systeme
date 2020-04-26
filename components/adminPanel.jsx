@@ -11,62 +11,16 @@ export default class AdminPanel extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            rooms: [],
-            courses: [],
-            loading: true,
             message: '',
         };
 
-        this.createCourse = this.createCourse.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
         this.deleteCourse = this.deleteCourse.bind(this);
-        this.createRoom = this.createRoom.bind(this);
         this.changeRoom = this.changeRoom.bind(this);
         this.deleteRoom = this.deleteRoom.bind(this);
     }
 
     static contextType = UserContext;
-
-    componentDidMount() {
-        const { apiUrl, token } = this.context;
-
-        Promise.all([
-            axios.get(`${apiUrl}/rooms`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
-            }),
-            axios.get(`${apiUrl}/courses`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
-            }),
-        ])
-            .then((res) => {
-                this.setState({
-                    rooms: res[0].data,
-                    courses: res[1].data,
-                });
-            })
-            .catch((err) => {
-                if (err.response.status !== 404) {
-                    this.setState({ message: err.response.data });
-                } else {
-                    this.setState({ message: 'No data found!' });
-                }
-            })
-            .finally(() => {
-                this.setState({ loading: false });
-            });
-    }
-
-    createCourse(course) {
-        const updatedCourses = this.state.courses;
-        updatedCourses.push(course);
-        this.setState({ courses: updatedCourses });
-    }
 
     async changeCourse(id, name) {
         const { apiUrl, token } = this.context;
@@ -118,12 +72,6 @@ export default class AdminPanel extends React.Component {
         }
     }
 
-    createRoom(room) {
-        const updatedRooms = this.state.rooms;
-        updatedRooms.push(room);
-        this.setState({ rooms: updatedRooms });
-    }
-
     async changeRoom(id, name) {
         const { apiUrl, token } = this.context;
 
@@ -170,53 +118,51 @@ export default class AdminPanel extends React.Component {
             delete newRooms[roomId];
             this.setState({ rooms: newRooms });
         } catch (err) {
-            console.log(err);
-
             this.setState({ message: err.response.data });
         }
     }
 
     render() {
-        const rooms = this.state.rooms.map((room) => (
-            <Room
-                key={room._id}
-                value={room}
-                onChange={this.changeRoom}
-                onDelete={this.deleteRoom}
-            />
-        ));
-
-        const courses = this.state.courses.map((course) => (
-            <Course
-                key={course._id}
-                value={course}
-                onChange={this.changeCourse}
-                onDelete={this.deleteCourse}
-            />
-        ));
-
         return (
-            <>
-                {this.state.loading ? (
-                    <p>Fetching data...</p>
-                ) : (
-                    <div>
+            <UserContext.Consumer>
+                {({ rooms, courses }) => (
+                    <>
+                        <Message value={this.state.message} />
                         <div>
-                            <RoomForm onSubmit={this.createRoom} />
+                            <div>
+                                <RoomForm />
+                            </div>
+                            <div>
+                                <CourseForm />
+                            </div>
+                            <div>
+                                rooms:
+                                <ul>
+                                    {rooms.map((room) => (
+                                        <Room
+                                            key={room._id}
+                                            value={room}
+                                            onChange={this.changeRoom}
+                                            onDelete={this.deleteRoom}
+                                        />
+                                    ))}
+                                </ul>
+                                courses:
+                                <ul>
+                                    {courses.map((course) => (
+                                        <Course
+                                            key={course._id}
+                                            value={course}
+                                            onChange={this.changeCourse}
+                                            onDelete={this.deleteCourse}
+                                        />
+                                    ))}
+                                </ul>
+                            </div>
                         </div>
-                        <div>
-                            <CourseForm onSubmit={this.createCourse} />
-                        </div>
-                        <div>
-                            rooms:
-                            <ul>{rooms}</ul>
-                            courses:
-                            <ul>{courses}</ul>
-                        </div>
-                    </div>
+                    </>
                 )}
-                <Message value={this.state.message} />
-            </>
+            </UserContext.Consumer>
         );
     }
 }

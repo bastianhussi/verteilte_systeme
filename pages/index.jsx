@@ -12,16 +12,18 @@ export default class Index extends React.Component {
         super(props);
         this.state = {
             loading: true,
+            currentView: <Calendar />,
             user: this.props.user,
             lectures: [],
             courses: [],
             rooms: [],
-            currentView: <Calendar />,
         };
 
+        this.changeCurrentView = this.changeCurrentView.bind(this);
         this.changeUser = this.changeUser.bind(this);
         this.changeCourses = this.changeCourses.bind(this);
-        this.changeCurrentView = this.changeCurrentView.bind(this);
+        this.changeRooms = this.changeRooms.bind(this);
+        this.changeLectures = this.changeLectures.bind(this);
     }
 
     static async getInitialProps(ctx) {
@@ -58,8 +60,7 @@ export default class Index extends React.Component {
             }),
         ])
             .then(([courses, rooms, lectures]) => {
-
-                if(courses) {
+                if (courses) {
                     const userCourses = this.state.user.courses;
                     const otherCourses = courses.data;
                     otherCourses.forEach((course, index) => {
@@ -79,11 +80,11 @@ export default class Index extends React.Component {
                     });
                 }
 
-                if(rooms) {
-                    this.setState({ rooms: rooms.data});
+                if (rooms) {
+                    this.setState({ rooms: rooms.data });
                 }
 
-                if(lectures) {
+                if (lectures) {
                     this.setState({ lectures: lectures.data });
                 }
             })
@@ -92,16 +93,24 @@ export default class Index extends React.Component {
             });
     }
 
-    changeUser(modifiedUser) {
-        this.setState({ user: modifiedUser });
+    changeCurrentView(currentView) {
+        this.setState({ currentView });
     }
 
-    changeCourses(modifiedCourses) {
-        this.setState({ courses: modifiedCourses });
+    changeUser(user) {
+        this.setState({ user });
     }
 
-    changeCurrentView(newView) {
-        this.setState({ currentView: newView });
+    changeCourses(courses) {
+        this.setState({ courses });
+    }
+
+    changeRooms(rooms) {
+        this.setState({ rooms });
+    }
+
+    changeLectures(lectures) {
+        this.setState({ lectures });
     }
 
     render() {
