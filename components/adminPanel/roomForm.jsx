@@ -7,18 +7,18 @@ export default class RoomForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            room: '',
+            name: '',
             message: '',
         };
 
-        this.changeRoom = this.changeRoom.bind(this);
+        this.changeName = this.changeName.bind(this);
         this.createRoom = this.createRoom.bind(this);
     }
 
     static contextType = UserContext;
 
-    changeRoom(event) {
-        this.setState({ room: event.target.value });
+    changeName(event) {
+        this.setState({ name: event.target.value });
     }
 
     async createRoom(event) {
@@ -29,7 +29,7 @@ export default class RoomForm extends React.Component {
             const res = await axios.post(
                 `${apiUrl}/rooms`,
                 {
-                    name: this.state.room,
+                    name: this.state.name,
                 },
                 {
                     headers: {
@@ -40,7 +40,7 @@ export default class RoomForm extends React.Component {
             );
 
             changeRooms([...rooms, res.data]);
-            this.setState({ room: '' });
+            this.setState({ name: '' });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -57,8 +57,8 @@ export default class RoomForm extends React.Component {
                             <br />
                             <input
                                 type='text'
-                                value={this.state.room}
-                                onChange={this.changeRoom}
+                                value={this.state.name}
+                                onChange={this.changeName}
                                 required
                             />
                         </label>

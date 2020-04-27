@@ -7,18 +7,18 @@ export default class CourseForm extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            course: '',
+            name: '',
             message: '',
         };
 
-        this.changeCourse = this.changeCourse.bind(this);
+        this.changeName = this.changeName.bind(this);
         this.createCourse = this.createCourse.bind(this);
     }
 
     static contextType = UserContext;
 
-    changeCourse(event) {
-        this.setState({ course: event.target.value });
+    changeName(event) {
+        this.setState({ name: event.target.value });
     }
 
     async createCourse(event) {
@@ -29,7 +29,7 @@ export default class CourseForm extends React.Component {
             const res = await axios.post(
                 `${apiUrl}/courses`,
                 {
-                    name: this.state.course,
+                    name: this.state.name,
                 },
                 {
                     headers: {
@@ -56,8 +56,8 @@ export default class CourseForm extends React.Component {
                         <br />
                         <input
                             type='text'
-                            value={this.state.course}
-                            onChange={this.changeCourse}
+                            value={this.state.name}
+                            onChange={this.changeName}
                             required
                         />
                     </label>

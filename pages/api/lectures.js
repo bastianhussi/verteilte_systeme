@@ -24,8 +24,8 @@ async function handleGet(req, res) {
         title: Joi.string().trim().min(3).max(30).optional(),
         course: Joi.string().optional(),
         room: Joi.string().optional(),
-        start: Joi.date().optional(),
-        end: Joi.date().optional(),
+        start: Joi.date().iso().optional(),
+        end: Joi.date().iso().greater(Joi.ref('start')).optional(),
         limit: Joi.number().integer().min(1).max(100).optional().default(50),
     });
     let { limit, ...query } = await validateData(req.query, schema);
@@ -63,8 +63,8 @@ async function handlePost(req, res) {
         title: Joi.string().trim().min(3).max(30).required(),
         course: Joi.string().required(),
         room: Joi.string().required(),
-        start: Joi.date().required(),
-        end: Joi.date().required(),
+        start: Joi.date().iso().required(),
+        end: Joi.date().iso().greater(Joi.ref('start')).required(),
     });
 
     const doc = await validateData(req.body, schema);

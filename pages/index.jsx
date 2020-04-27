@@ -14,15 +14,17 @@ export default class Index extends React.Component {
             loading: true,
             currentView: <Calendar />,
             user: this.props.user,
-            lectures: [],
             courses: [],
             rooms: [],
+            semesters: [],
+            lectures: [],
         };
 
         this.changeCurrentView = this.changeCurrentView.bind(this);
         this.changeUser = this.changeUser.bind(this);
         this.changeCourses = this.changeCourses.bind(this);
         this.changeRooms = this.changeRooms.bind(this);
+        this.changeSemesters = this.changeSemesters.bind(this);
         this.changeLectures = this.changeLectures.bind(this);
     }
 
@@ -73,6 +75,21 @@ export default class Index extends React.Component {
             }),
             new Promise((resolve, reject) => {
                 axios
+                    .get(`${apiUrl}/semesters`, {
+                        headers: {
+                            'Content-Type': 'application/json; charset=utf-8',
+                            Authorization: `Bearer ${token}`,
+                        },
+                    })
+                    .then((res) => {
+                        resolve(res.data);
+                    })
+                    .catch((err) => {
+                        err.response.status === 404 ? resolve([]) : reject(err);
+                    });
+            }),
+            new Promise((resolve, reject) => {
+                axios
                     .get(`${apiUrl}/lectures`, {
                         headers: {
                             'Content-Type': 'application/json; charset=utf-8',
@@ -87,16 +104,11 @@ export default class Index extends React.Component {
                     });
             }),
         ])
-            .then(([courses, rooms, lectures]) => {
-                const userCourses = this.state.user.courses.map((userCourse) =>
-                    courses.find((course) => course._id === userCourse)
-                );
+            .then(([courses, rooms, semesters, lectures]) => {
                 this.setState({
-                    user: Object.assign(this.state.user, {
-                        courses: userCourses,
-                    }),
                     courses,
                     rooms,
+                    semesters,
                     lectures,
                 });
             })
@@ -125,14 +137,15 @@ export default class Index extends React.Component {
         this.setState({ rooms });
     }
 
+    changeSemesters(semesters) {
+        this.setState({ semesters });
+    }
+
     changeLectures(lectures) {
         this.setState({ lectures });
     }
 
     render() {
-        const { token, apiUrl } = this.props;
-        const { user, lectures, rooms, courses } = this.state;
-
         return (
             <>
                 <Head>
@@ -141,23 +154,25 @@ export default class Index extends React.Component {
                         name='viewport'
                         content='width=device-width, initial-scale=1.0'
                     />
-                    <title>{`Welcome ${user.name}`}</title>
+                    <title>{`Welcome ${this.state.user.name}`}</title>
                 </Head>
                 {this.state.loading ? (
                     <LoadingScreen />
                 ) : (
                     <UserContext.Provider
                         value={{
-                            user,
+                            token: this.props.token,
+                            apiUrl: this.props.apiUrl,
+                            user: this.state.user,
                             changeUser: this.changeUser,
-                            token,
-                            apiUrl,
-                            lectures,
-                            changeLectures: this.changeLectures,
-                            courses,
+                            courses: this.state.courses,
                             changeCourses: this.changeCourses,
-                            rooms,
+                            rooms: this.state.rooms,
                             changeRooms: this.changeRooms,
+                            semesters: this.state.semesters,
+                            changeSemesters: this.changeSemesters,
+                            lectures: this.state.lectures,
+                            changeLectures: this.changeLectures,
                         }}>
                         <Navbar changeView={this.changeCurrentView} />
                         {this.state.currentView}

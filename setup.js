@@ -60,11 +60,14 @@ async function setup() {
         createCollectionIfNotExists('rooms'),
         createCollectionIfNotExists('courses'),
         createCollectionIfNotExists('lectures'),
+        createCollectionIfNotExists('semesters'),
     ]);
     await Promise.all([
         createUniqueIndexIfNotExists('users', 'email', 'users_email'),
         createUniqueIndexIfNotExists('courses', 'name', 'courses_name'),
         createUniqueIndexIfNotExists('rooms', 'name', 'rooms_name'),
+        createUniqueIndexIfNotExists('semesters', 'start', 'semesters_start'),
+        createUniqueIndexIfNotExists('semesters', 'end', 'semesters_end'),
     ]);
     await client.close();
 }

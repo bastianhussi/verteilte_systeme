@@ -46,7 +46,7 @@ export default class Course extends React.Component {
             const index = modifiedCourses.indexOf({
                 _id: this.props.value._id,
             });
-            modifiedCourses[index] = res;
+            modifiedCourses[index] = res.data;
             changeCourses(modifiedCourses);
             this.setState({ showEditing: false });
         } catch (err) {

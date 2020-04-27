@@ -68,6 +68,8 @@ export default class Form extends React.Component {
         const parsedDate = new Date(this.props.date);
         parsedDate.setHours(hours);
         parsedDate.setMinutes(minutes);
+        parsedDate.setSeconds(0);
+        parsedDate.setMilliseconds(0);
         return parsedDate;
     }
 
