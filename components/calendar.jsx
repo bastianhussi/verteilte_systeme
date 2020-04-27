@@ -1,6 +1,6 @@
 import React from 'react';
 import MonthController from './calendar/month';
-import Form from './calendar/form';
+import LectureDialog from './calendar/lectureDialog';
 import CalendarContext from './calendarContext';
 import UserContext from './userContext';
 import styles from './calendar.module.css';
@@ -10,12 +10,14 @@ export default class Calendar extends React.Component {
         super(props);
         this.state = {
             selectedDate: new Date(),
+            selectedLecture: undefined,
             currentView: <MonthController />,
             showForm: false,
             message: '',
         };
 
         this.changeView = this.changeView.bind(this);
+        this.changeLecture = this.changeLecture.bind(this);
         this.changeDate = this.changeDate.bind(this);
         this.showForm = this.showForm.bind(this);
     }
@@ -28,6 +30,10 @@ export default class Calendar extends React.Component {
         });
     }
 
+    changeLecture(lecture) {
+        this.setState({ selectedLecture: lecture });
+    }
+
     changeDate(newDate) {
         this.setState({ selectedDate: newDate });
     }
@@ -38,26 +44,18 @@ export default class Calendar extends React.Component {
 
     render() {
         return (
-            <>
-                <CalendarContext.Provider
-                    value={{
-                        selectedDate: this.state.selectedDate,
-                        changeDate: this.changeDate,
-                        changeView: this.changeView,
-                        showForm: this.showForm,
-                    }}>
-                    {this.state.currentView}
-                </CalendarContext.Provider>
-                {this.state.showForm ? (
-                    <Form
-                        calendarContext
-                        date={this.state.selectedDate}
-                        onClose={this.showForm}
-                    />
-                ) : (
-                    <></>
-                )}
-            </>
+            <CalendarContext.Provider
+                value={{
+                    selectedDate: this.state.selectedDate,
+                    changeDate: this.changeDate,
+                    selectedLecture: this.state.selectedLecture,
+                    changeLecture: this.changeLecture,
+                    changeView: this.changeView,
+                    showForm: this.showForm,
+                }}>
+                {this.state.currentView}
+                {this.state.showForm ? <LectureDialog /> : <></>}
+            </CalendarContext.Provider>
         );
     }
 }

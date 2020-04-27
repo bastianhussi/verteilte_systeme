@@ -92,10 +92,9 @@ class Week extends React.Component {
 
         const lectures = this.props.lectures.filter(
             (lecture) =>
-                new Date(lecture.start).getMonth() ===
-                    selectedDate.getMonth() &&
                 new Date(lecture.start).getFullYear() ===
-                    selectedDate.getFullYear()
+                    selectedDate.getFullYear() &&
+                new Date(lecture.start).getMonth() === selectedDate.getMonth()
         );
 
         function getDayLectures(day) {
@@ -184,6 +183,7 @@ class Hour extends React.Component {
                 <div
                     className={styles.hour}
                     onClick={() => {
+                        this.context.changeLecture(this.props.lecture);
                         this.context.changeDate(this.props.date);
                         this.context.showForm();
                     }}>
