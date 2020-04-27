@@ -1,13 +1,18 @@
 import React from 'react';
 
 const UserContext = React.createContext({
-    user: undefined,
-    changeUser: () => {},
     token: undefined,
     apiUrl: undefined,
-    lectures: [],
+    user: undefined,
+    changeUser: () => {},
     courses: [],
+    changeCourses: () => {},
     rooms: [],
+    changeRooms: () => {},
+    semesters: [],
+    changeSemesters: () => {},
+    lectures: [],
+    changeLectures: () => {},
 });
 UserContext.displayName = 'UserContext';
 

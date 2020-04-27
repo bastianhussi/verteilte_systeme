@@ -46,7 +46,7 @@ export default class Room extends React.Component {
             const index = modifiedRooms.indexOf({
                 _id: this.props.value._id,
             });
-            modifiedRooms[index] = res;
+            modifiedRooms[index] = res.data;
             changeRooms(modifiedRooms);
             this.setState({ showEditing: false });
         } catch (err) {

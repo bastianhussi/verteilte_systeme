@@ -9,57 +9,52 @@ import {
 } from '../../../utils/middleware';
 import { NotFoundError } from '../../../utils/errors';
 
-/**
- * Returns a room if one is found in the database.
- * Requires a authorization header.
- * @param {object} req - The incoming request.
- * @param {object} res - The outgoing response.
- */
 async function handleGet(req, res) {
     auth(req);
     const { id } = req.query;
-    const room = await findOne('rooms', { _id: createObjectId(id) });
-    res.status(200).json(room);
+    const semester = await findOne('semesters', { _id: createObjectId(id) });
+    res.status(200).json(semester);
 }
 
-/**
- *
- * @param {object} req - The incoming request.
- * @param {object} res - The outgoing response.
- */
 async function handlePatch(req, res) {
     await authAdmin(req);
 
     const schema = Joi.object({
-        name: Joi.string().trim().min(3).max(30).optional(),
+        name: Joi.string().min(3).max(30).optional(),
+        start: Joi.date().iso().optional(),
+        end: Joi.date().iso().greater(Joi.ref('start')).optional(),
     });
-    const room = await validateData(req.body, schema);
+    const semester = await validateData(req.body, schema);
 
     const _id = createObjectId(req.query.id);
-    await updateOne('rooms', { _id }, { $set: room });
-    const updatedRoom = await findOne('rooms', { _id });
-    res.status(200).json(updatedRoom);
+    await updateOne('semesters', { _id }, { $set: semester });
+    const updatedSemester = await findOne('semesters', { _id });
+    res.status(200).json(updatedSemester);
 }
 
 async function handleDelete(req, res) {
     await authAdmin(req);
 
     const _id = createObjectId(req.query.id);
+    const deletedSemester = await findOne('rooms', { _id });
 
     try {
-        const lecture = await findOne('lectures', { room: _id });
+        const lecture = await findOne('lectures', {
+            $and: [
+                { start: { $gt: deletedSemester.start } },
+                { end: { $lt: deletedSemester.end } },
+            ],
+        });
         throw new BadRequestError(
-            'there are lectures using this room',
+            'there are lectures in this semester',
             lecture
         );
     } catch (err) {
         if (!err instanceof NotFoundError) throw err;
     }
 
-    const deletedRoom = await findOne('rooms', { _id });
     await deleteOne('rooms', { _id });
-
-    res.status(200).json(deletedRoom);
+    res.status(200).json(deletedSemester);
 }
 
 /**
