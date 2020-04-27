@@ -4,6 +4,7 @@ import CalendarContext from '../calendarContext';
 import Message from '../message';
 import axios from 'axios';
 import styles from './form.module.css';
+import Semester from '../adminPanel/semester';
 
 export default class Form extends React.Component {
     constructor(props) {
@@ -12,6 +13,7 @@ export default class Form extends React.Component {
             title: '',
             start: '08:00:00',
             end: '09:00:00',
+            semester: undefined,
             course: undefined,
             room: undefined,
             message: '',
@@ -20,6 +22,7 @@ export default class Form extends React.Component {
         this.changeTitle = this.changeTitle.bind(this);
         this.changeStart = this.changeStart.bind(this);
         this.changeEnd = this.changeEnd.bind(this);
+        this.changeSemester = this.changeSemester.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
         this.changeRoom = this.changeRoom.bind(this);
         this.getDateFromTimeString = this.getDateFromTimeString.bind(this);
@@ -31,13 +34,21 @@ export default class Form extends React.Component {
 
     componentDidMount() {
         const { date } = this.props;
-        const { courses, rooms } = this.context;
+        const { courses, rooms, semesters } = this.context;
         const start = new Date(date);
         const end = new Date(date);
         end.setHours(end.getHours() + 1);
         this.setState({
             start: this.getTimeStringFromDate(start),
             end: this.getTimeStringFromDate(end),
+            semester: semesters[0]
+                ? semesters.filter(
+                      (semester) =>
+                          new Date(semester.start).getTime() <=
+                              date.getTime() &&
+                          new Date(semester.end).getTime() >= date.getTime()
+                  )[0]._id
+                : undefined,
             course: courses[0] ? courses[0]._id : undefined,
             room: rooms[0] ? rooms[0]._id : undefined,
         });
@@ -61,6 +72,10 @@ export default class Form extends React.Component {
 
     changeEnd(event) {
         this.setState({ end: event.target.value });
+    }
+
+    changeSemester(event) {
+        this.setState({ semester: event.target.value });
     }
 
     getDateFromTimeString(time) {
@@ -92,6 +107,7 @@ export default class Form extends React.Component {
                     room: this.state.room,
                     start: this.getDateFromTimeString(this.state.start),
                     end: this.getDateFromTimeString(this.state.end),
+                    semester: this.state.semester,
                 },
                 {
                     headers: {
@@ -103,7 +119,6 @@ export default class Form extends React.Component {
             changeLectures([...lectures, res.data]);
             this.props.onClose();
         } catch (err) {
-            console.log(err);
             this.setState({ message: err.response.data });
         }
     }
@@ -156,8 +171,36 @@ export default class Form extends React.Component {
                             />
                         </label>
                         <UserContext.Consumer>
-                            {({ courses, rooms }) => (
+                            {({ courses, rooms, semesters }) => (
                                 <>
+                                    <label>
+                                        Semester:
+                                        <br />
+                                        <select
+                                            value={this.state.semester}
+                                            onChange={this.changeSemester}
+                                            required>
+                                            {semesters
+                                                .filter(
+                                                    (semester) =>
+                                                        new Date(
+                                                            semester.start
+                                                        ).getTime() <=
+                                                            this.props.date.getTime() &&
+                                                        new Date(
+                                                            semester.end
+                                                        ).getTime() >=
+                                                            this.props.date.getTime()
+                                                )
+                                                .map((semester) => (
+                                                    <option
+                                                        key={Semester._id}
+                                                        value={semester._id}>
+                                                        {semester.name}
+                                                    </option>
+                                                ))}
+                                        </select>
+                                    </label>
                                     <label>
                                         Course:
                                         <br />

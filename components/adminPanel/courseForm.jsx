@@ -1,5 +1,6 @@
 import React from 'react';
 import UserContext from '../userContext';
+import Course from './course';
 import axios from 'axios';
 import Message from '../message';
 
@@ -48,22 +49,37 @@ export default class CourseForm extends React.Component {
 
     render() {
         return (
-            <div>
-                <Message value={this.state.message} />
-                <form onSubmit={this.createCourse}>
-                    <label>
-                        Course:
-                        <br />
-                        <input
-                            type='text'
-                            value={this.state.name}
-                            onChange={this.changeName}
-                            required
-                        />
-                    </label>
-                    <button type='submit'>Create</button>
-                </form>
-            </div>
+            <>
+                <div>
+                    <Message value={this.state.message} />
+                    <form onSubmit={this.createCourse}>
+                        <label>
+                            Course:
+                            <br />
+                            <input
+                                type='text'
+                                value={this.state.name}
+                                onChange={this.changeName}
+                                required
+                            />
+                        </label>
+                        <button type='submit'>Create</button>
+                    </form>
+                </div>
+                <UserContext.Consumer>
+                    {({ courses }) =>
+                        courses.length === 0 ? (
+                            <div>No courses yet</div>
+                        ) : (
+                            <div>
+                                {courses.map((course) => (
+                                    <Course key={course._id} value={course} />
+                                ))}
+                            </div>
+                        )
+                    }
+                </UserContext.Consumer>
+            </>
         );
     }
 }

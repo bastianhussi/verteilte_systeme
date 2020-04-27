@@ -2,6 +2,7 @@ import React from 'react';
 import UserContext from '../userContext';
 import axios from 'axios';
 import Message from '../message';
+import Semester from './semester';
 
 export default class SemesterForm extends React.Component {
     constructor(props) {
@@ -105,13 +106,29 @@ export default class SemesterForm extends React.Component {
                         <button type='submit'>Create</button>
                     </form>
                 </div>
+                <UserContext.Consumer>
+                    {({ semesters }) =>
+                        semesters.length === 0 ? (
+                            <div>No courses yet</div>
+                        ) : (
+                            <div>
+                                {semesters.map((semester) => (
+                                    <Semester
+                                        key={semester._id}
+                                        value={semester}
+                                    />
+                                ))}
+                            </div>
+                        )
+                    }
+                </UserContext.Consumer>
             </>
         );
     }
 }
 
 function getTimeStringFromDate(date) {
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`
+    return date.toISOString().split('T')[0];
 }
 
 function getDateFromTimeString(time) {
