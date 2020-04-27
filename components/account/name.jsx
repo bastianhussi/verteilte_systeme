@@ -1,23 +1,33 @@
 import React from 'react';
 import axios from 'axios';
-import styles from './name.module.css';
 import UserContext from '../userContext';
 import Message from '../message';
+import styles from './name.module.css';
 
 export default class Name extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: '',
             name: '',
+            showEditing: false,
+            message: '',
         };
 
         this.changeName = this.changeName.bind(this);
+        this.changeShowEditing = this.changeShowEditing.bind(this);
         this.submitNameForm = this.submitNameForm.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({ name: this.context.user.name });
     }
 
     changeName(event) {
         this.setState({ name: event.target.value });
+    }
+
+    changeShowEditing() {
+        this.setState({ showEditing: !this.state.showEditing });
     }
 
     async submitNameForm(event) {
@@ -47,7 +57,6 @@ export default class Name extends React.Component {
         } catch (err) {
             this.setState({ message: err.response.data });
         }
-        this.setState({ name: '' });
     }
 
     static contextType = UserContext;
@@ -57,22 +66,38 @@ export default class Name extends React.Component {
             <UserContext.Consumer>
                 {({ user }) => (
                     <>
-                        <p>
-                            Current name: <strong>{user.name}</strong>
-                        </p>
-                        <form onSubmit={this.submitNameForm}>
-                            <label>
-                                New name:
-                                <input
-                                    type='text'
-                                    value={this.state.name}
-                                    onChange={this.changeName}
-                                    required
-                                />
-                            </label>
-                            <button type='submit'>Change</button>
-                        </form>
                         <Message value={this.state.message} />
+                        {this.state.showEditing ? (
+                            <form onSubmit={this.submitNameForm}>
+                                <label>
+                                    New name:
+                                    <input
+                                        type='text'
+                                        value={this.state.name}
+                                        onChange={this.changeName}
+                                        required
+                                    />
+                                </label>
+                                <button type='submit'>Change</button>
+                                <button
+                                    onClick={() =>
+                                        this.setState({ showEditing: false })
+                                    }>
+                                    cancel
+                                </button>
+                            </form>
+                        ) : (
+                            <div>
+                                <span>
+                                    Current name: <strong>{user.name}</strong>
+                                </span>
+                                <span
+                                    className='material-icons'
+                                    onClick={this.changeShowEditing}>
+                                    edit
+                                </span>
+                            </div>
+                        )}
                     </>
                 )}
             </UserContext.Consumer>

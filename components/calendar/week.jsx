@@ -50,13 +50,13 @@ export default class WeekController extends React.Component {
                                 back to month view
                             </button>
                             <span
-                                class='material-icons'
+                                className='material-icons'
                                 onClick={this.previousWeek}>
                                 arrow_back
                             </span>
                             {selectedDate.toDateString()}
                             <span
-                                class='material-icons'
+                                className='material-icons'
                                 onClick={this.nextWeek}>
                                 arrow_forward
                             </span>
@@ -66,7 +66,10 @@ export default class WeekController extends React.Component {
                         </div>
                         <UserContext.Consumer>
                             {({ lectures }) => (
-                                <Week date={selectedDate} lectures={lectures} />
+                                <Week
+                                    date={selectedDate}
+                                    lectures={lectures ? lectures : []}
+                                />
                             )}
                         </UserContext.Consumer>
                     </>
@@ -81,25 +84,23 @@ class Week extends React.Component {
         super(props);
     }
 
+    static contextType = CalendarContext;
+
     render() {
         const { date } = this.props;
-        /*let lectures;
-        if (this.props.lectures) {
-            lectures = this.props.lectures.filter(
-                (lecture) =>
-                    lecture.start.getMonth() ===
-                        this.context.selectedDate.getMonth() &&
-                    lecture.start.getFullYear() ===
-                        this.context.selectedDate.getFullYear()
-            );
-        } else {
-            lectures = [];
-        } */
-        const lectures = [];
+        const { selectedDate } = this.context;
 
-        function getLectures(day) {
+        const lectures = this.props.lectures.filter(
+            (lecture) =>
+                new Date(lecture.start).getMonth() ===
+                    selectedDate.getMonth() &&
+                new Date(lecture.start).getFullYear() ===
+                    selectedDate.getFullYear()
+        );
+
+        function getDayLectures(day) {
             return lectures.filter(
-                ({ start }) => start.getDate() === day.getDate()
+                (lecture) => new Date(lecture.start).getDate() === day.getDate()
             );
         }
 
@@ -113,7 +114,7 @@ class Week extends React.Component {
                     <Day
                         key={day}
                         date={dayDate}
-                        lectures={getLectures(dayDate)}
+                        lectures={getDayLectures(dayDate)}
                     />
                 );
             }
@@ -129,18 +130,14 @@ class Day extends React.Component {
         super(props);
     }
 
-    static contextType = CalendarContext;
-
     render() {
-        const { lectures } = this.props;
+        const { lectures, date } = this.props;
 
-        const { date } = this.props;
-
-        function getLecture(hour) {
+        function getHourLecture(hour) {
             return lectures.find(
                 (lecture) =>
-                    lecture.start.getHours() <= hour &&
-                    lecture.end.getHours() >= hour
+                    new Date(lecture.start).getHours() <= hour.getHours() &&
+                    new Date(lecture.end).getHours() >= hour.getHours()
             );
         }
 
@@ -154,7 +151,7 @@ class Day extends React.Component {
                     <Hour
                         key={hour}
                         date={hourDate}
-                        lecture={getLecture(hourDate)}
+                        lecture={getHourLecture(hourDate)}
                     />
                 );
             }
@@ -188,7 +185,7 @@ class Hour extends React.Component {
                     className={styles.hour}
                     onClick={() => {
                         this.context.changeDate(this.props.date);
-                        this.context.showForm(this.props.lecture);
+                        this.context.showForm();
                     }}>
                     <div className={this.props.lecture ? styles.lecture : ''}>
                         {this.props.date.getHours()}

@@ -47,15 +47,16 @@ export default class Calendar extends React.Component {
                         showForm: this.showForm,
                     }}>
                     {this.state.currentView}
-                    {this.state.showForm ? (
-                        <Form
-                            date={this.state.selectedDate}
-                            onClose={this.showForm}
-                        />
-                    ) : (
-                        <></>
-                    )}
                 </CalendarContext.Provider>
+                {this.state.showForm ? (
+                    <Form
+                        calendarContext
+                        date={this.state.selectedDate}
+                        onClose={this.showForm}
+                    />
+                ) : (
+                    <></>
+                )}
             </>
         );
     }

@@ -96,7 +96,7 @@ export default class Room extends React.Component {
                     </form>
                 ) : (
                     <div>
-                        <p>{this.state.name}</p>
+                        <span>{this.state.name}</span>
                         <span
                             className='material-icons'
                             onClick={this.changeShowEditing}>
