@@ -2,7 +2,6 @@ import React from 'react';
 import UserContext from './userContext';
 import Calendar from './calendar';
 import UpNext from './upNext';
-import MyCourses from './myCourses';
 import AdminPanel from './adminPanel';
 import Account from './account';
 import { logout } from '../utils/auth';
@@ -30,9 +29,6 @@ export default class Navbar extends React.Component {
                         ) : (
                             <></>
                         )}
-                        <a onClick={() => changeView(<MyCourses />)}>
-                            My Courses
-                        </a>
                         <div
                             className={styles.dropdown}
                             style={{ float: 'right' }}>

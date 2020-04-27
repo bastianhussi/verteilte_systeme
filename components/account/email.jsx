@@ -8,16 +8,26 @@ export default class Email extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: '',
             email: '',
+            showEditing: false,
+            message: '',
         };
 
         this.changeEmail = this.changeEmail.bind(this);
+        this.changeShowEditing = this.changeShowEditing.bind(this);
         this.submitEmailForm = this.submitEmailForm.bind(this);
+    }
+
+    componentDidMount() {
+        this.setState({ email: this.context.user.email });
     }
 
     changeEmail(event) {
         this.setState({ email: event.target.value });
+    }
+
+    changeShowEditing() {
+        this.setState({ showEditing: !this.state.showEditing });
     }
 
     async submitEmailForm(event) {
@@ -29,6 +39,7 @@ export default class Email extends React.Component {
             this.setState({ message: 'Please choose a new email!', email: '' });
             return;
         }
+
         this.setState({ message: '' });
         try {
             const res = await axios.patch(
@@ -44,11 +55,13 @@ export default class Email extends React.Component {
                 }
             );
             changeUser(res.data);
-            this.setState({ message: 'please check your inbox' });
+            this.setState({
+                showEditing: false,
+                message: 'please check your inbox',
+            });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
-        this.setState({ email: '' });
     }
 
     static contextType = UserContext;
@@ -58,22 +71,38 @@ export default class Email extends React.Component {
             <UserContext.Consumer>
                 {({ user }) => (
                     <>
-                        <p>
-                            Current email: <strong>{user.email}</strong>
-                        </p>
-                        <form onSubmit={this.submitEmailForm}>
-                            <label>
-                                New email:
-                                <input
-                                    type='email'
-                                    value={this.state.email}
-                                    onChange={this.changeEmail}
-                                    required
-                                />
-                            </label>
-                            <button type='submit'>Change</button>
-                        </form>
                         <Message value={this.state.message} />
+                        {this.state.showEditing ? (
+                            <form onSubmit={this.submitEmailForm}>
+                                <label>
+                                    New email:
+                                    <input
+                                        type='email'
+                                        value={this.state.email}
+                                        onChange={this.changeEmail}
+                                        required
+                                    />
+                                </label>
+                                <button type='submit'>Change</button>
+                                <button
+                                    onClick={() =>
+                                        this.setState({ showEditing: false })
+                                    }>
+                                    cancel
+                                </button>
+                            </form>
+                        ) : (
+                            <div>
+                                <span>
+                                    Current email: <strong>{user.email}</strong>
+                                </span>
+                                <span
+                                    className='material-icons'
+                                    onClick={this.changeShowEditing}>
+                                    edit
+                                </span>
+                            </div>
+                        )}
                     </>
                 )}
             </UserContext.Consumer>

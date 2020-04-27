@@ -45,7 +45,6 @@ async function handlePatch(req, res) {
         email: Joi.string().email().trim().optional(),
         name: Joi.string().trim().min(3).max(50).optional(),
         password: Joi.string().min(3).max(50).optional(),
-        courses: Joi.array().items(Joi.string().required()).unique(),
     });
     const modifiedUser = await validateData(req.body, schema);
 
@@ -65,10 +64,17 @@ async function handlePatch(req, res) {
         const code = crypto
             .pbkdf2Sync(modifiedUser.email, salt, 10, 32, 'sha256')
             .toString('hex');
-        await sendVerificationMail(
-            updatedUser,
-            `${req.headers.origin}/verify/${code}`
-        );
+        await Promise.all([
+            updateOne(
+                'users',
+                { _id },
+                { $set: Object.assign(modifiedUser, { code }) }
+            ),
+            sendVerificationMail(
+                updatedUser,
+                `${req.headers.origin}/verify/${code}`
+            ),
+        ]);
     }
 
     res.status(200).json(updatedUser);

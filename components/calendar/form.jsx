@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import UserContext from '../userContext';
+import CalendarContext from '../calendarContext';
 import Message from '../message';
 import axios from 'axios';
 import styles from './form.module.css';
@@ -8,71 +9,49 @@ export default class Form extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            loading: true,
-            rooms: [],
             title: '',
-            selectedRoom: undefined,
-            selectedCourse: undefined,
-            start: undefined,
-            end: undefined,
+            start: '08:00:00',
+            end: '09:00:00',
+            course: undefined,
+            room: undefined,
             message: '',
         };
 
         this.changeTitle = this.changeTitle.bind(this);
-        this.changeSelectedRoom = this.changeSelectedRoom.bind(this);
-        this.changeSelectedCourse = this.changeSelectedCourse.bind(this);
         this.changeStart = this.changeStart.bind(this);
         this.changeEnd = this.changeEnd.bind(this);
+        this.changeCourse = this.changeCourse.bind(this);
+        this.changeRoom = this.changeRoom.bind(this);
+        this.getDateFromTimeString = this.getDateFromTimeString.bind(this);
+        this.getTimeStringFromDate = this.getTimeStringFromDate.bind(this);
         this.submitLectureForm = this.submitLectureForm.bind(this);
     }
 
     static contextType = UserContext;
 
     componentDidMount() {
-        const { apiUrl, token } = this.context;
-
-        axios
-            .get(`${apiUrl}/rooms`, {
-                headers: {
-                    'Content-Type': 'application/json; charset=utf-8',
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-            .then((res) => {
-                const date = this.props.date;
-                const startTime = date.toTimeString().split(' ')[0];
-                // end time will be in one hour
-                date.setHours(date.getHours() + 1);
-                const endTime = date.toTimeString().split(' ')[0];
-
-                const rooms = res.data;
-                this.setState({
-                    rooms: rooms,
-                    selectedRoom: rooms[0] ? rooms[0]._id : undefined,
-                    selectedCourse: this.context.user.courses[0]
-                        ? this.context.user.courses[0]._id
-                        : undefined,
-                    start: startTime,
-                    end: endTime,
-                });
-            })
-            .catch((err) => {
-                this.setState({ message: err.response.data });
-            })
-            .finally(() => {
-                this.setState({ loading: false });
-            });
+        const { date } = this.props;
+        const { courses, rooms } = this.context;
+        const start = new Date(date);
+        const end = new Date(date);
+        end.setHours(end.getHours() + 1);
+        this.setState({
+            start: this.getTimeStringFromDate(start),
+            end: this.getTimeStringFromDate(end),
+            course: courses[0] ? courses[0]._id : undefined,
+            room: rooms[0] ? rooms[0]._id : undefined,
+        });
     }
 
     changeTitle(event) {
         this.setState({ title: event.target.value });
     }
 
-    changeSelectedRoom(event) {
+    changeRoom(event) {
         this.setState({ selectedRoom: event.target.value });
     }
 
-    changeSelectedCourse(event) {
+    changeCourse(event) {
         this.setState({ selectedCourse: event.target.value });
     }
 
@@ -84,37 +63,33 @@ export default class Form extends React.Component {
         this.setState({ end: event.target.value });
     }
 
+    getDateFromTimeString(time) {
+        const [hours, minutes] = time.split(':');
+        const parsedDate = new Date(this.props.date);
+        parsedDate.setHours(hours);
+        parsedDate.setMinutes(minutes);
+        return parsedDate;
+    }
+
+    getTimeStringFromDate(date) {
+        const [hours, minutes] = date.toTimeString().split(' ')[0].split(':');
+        return `${hours}:${minutes}`;
+    }
+
     async submitLectureForm(event) {
         event.preventDefault();
         this.setState({ message: '' });
-        const { apiUrl, token } = this.context;
-        const date = this.props.date;
-
-        /**
-         * Parses a time string into a javascript date object.
-         * The day, month and year will be the same as the day selected by the user.
-         * @param {string} time - A time string (hh:mm:ss)
-         */
-        function getDateFromTimeString(time) {
-            const [hours, minutes, seconds] = time.split(':');
-            // date has to be declared above, because this function cannot
-            // access the 'this' keyword
-            const parsedDate = new Date(date);
-            parsedDate.setHours(hours);
-            parsedDate.setMinutes(minutes);
-            parsedDate.setSeconds(seconds);
-            return parsedDate;
-        }
+        const { apiUrl, token, lectures, changeLectures } = this.context;
 
         try {
-            await axios.post(
+            const res = await axios.post(
                 `${apiUrl}/lectures`,
                 {
                     title: this.state.title,
-                    course: this.state.selectedCourse,
-                    room: this.state.selectedRoom,
-                    start: getDateFromTimeString(this.state.start),
-                    end: getDateFromTimeString(this.state.end),
+                    course: this.state.course,
+                    room: this.state.room,
+                    start: this.getDateFromTimeString(this.state.start),
+                    end: this.getDateFromTimeString(this.state.end),
                 },
                 {
                     headers: {
@@ -123,8 +98,10 @@ export default class Form extends React.Component {
                     },
                 }
             );
+            changeLectures([...lectures, res.data]);
             this.props.onClose();
         } catch (err) {
+            console.log(err);
             this.setState({ message: err.response.data });
         }
     }
@@ -139,79 +116,84 @@ export default class Form extends React.Component {
                 </span>
                 <div>
                     <Message value={this.state.message} />
-                    {this.state.loading ? (
-                        <p>fetching data</p>
-                    ) : (
-                        <form
-                            className={styles.lectureForm}
-                            onSubmit={this.submitLectureForm}>
-                            <label>
-                                Title:
-                                <br />
-                                <input
-                                    type='text'
-                                    value={this.state.title}
-                                    onChange={this.changeTitle}
-                                    required
-                                />
-                            </label>
-                            <label>
-                                Start:
-                                <br />
-                                <input
-                                    type='time'
-                                    min={'08:00:00'}
-                                    max={'18:00:00'}
-                                    value={this.state.start}
-                                    onChange={this.changeStart}
-                                    required
-                                />
-                            </label>
-                            <label>
-                                End:
-                                <br />
-                                <input
-                                    type='time'
-                                    min={'08:00:00'}
-                                    max={'18:00:00'}
-                                    value={this.state.end}
-                                    onChange={this.changeEnd}
-                                    required
-                                />
-                            </label>
-                            <label>
-                                Room:
-                                <br />
-                                <select
-                                    value={this.state.selectedRoom}
-                                    onChange={this.changeSelectedRoom}
-                                    required>
-                                    {this.state.rooms.map((room) => (
-                                        <option key={room._id} value={room._id}>
-                                            {room.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <label>
-                                Course:
-                                <br />
-                                <select
-                                    value={this.state.selectedCourse}
-                                    onChange={this.changeSelectedCourse}
-                                    required>
-                                    {this.context.user.courses.map((course) => (
-                                        <option
-                                            key={course._id}
-                                            value={course._id}>
-                                            {course.name}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                            <button type='submit'>Create</button>
-                        </form>
-                    )}
+                    <form
+                        className={styles.lectureForm}
+                        onSubmit={this.submitLectureForm}>
+                        <label>
+                            Title:
+                            <br />
+                            <input
+                                type='text'
+                                value={this.state.title}
+                                onChange={this.changeTitle}
+                                required
+                            />
+                        </label>
+                        <label>
+                            Start:
+                            <br />
+                            <input
+                                type='time'
+                                min={'08:00'}
+                                max={'18:00'}
+                                value={this.state.start}
+                                onChange={this.changeStart}
+                                required
+                            />
+                        </label>
+                        <label>
+                            End:
+                            <br />
+                            <input
+                                type='time'
+                                min={'08:00'}
+                                max={'18:00'}
+                                value={this.state.end}
+                                onChange={this.changeEnd}
+                                required
+                            />
+                        </label>
+                        <UserContext.Consumer>
+                            {({ courses, rooms }) => (
+                                <>
+                                    <label>
+                                        Course:
+                                        <br />
+                                        <select
+                                            value={this.state.course}
+                                            onChange={this.changeCourse}
+                                            required>
+                                            {courses.map((course) => (
+                                                <option
+                                                    key={course._id}
+                                                    value={course._id}>
+                                                    {course.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <label>
+                                        Room:
+                                        <br />
+                                        <select
+                                            value={this.state.room}
+                                            onChange={this.changeRoom}
+                                            required>
+                                            {rooms.map((room) => (
+                                                <option
+                                                    key={room._id}
+                                                    value={room._id}>
+                                                    {room.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </>
+                            )}
+                        </UserContext.Consumer>
+                        <button type='submit'>Create</button>
+                        <button onClick={this.props.onClose}>Cancel</button>
+                    </form>
                 </div>
             </div>
         );

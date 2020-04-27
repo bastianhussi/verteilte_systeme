@@ -16,7 +16,6 @@ async function createAdminIfNotExits() {
         email: process.env.ADMIN_EMAIL,
         name: process.env.ADMIN_NAME || 'root',
         password: process.env.ADMIN_PASSWORD,
-        courses: [],
         admin: true,
     };
     if (

@@ -27,13 +27,14 @@ async function handlePost(req, res) {
         .pbkdf2Sync(newUser.email, salt, 10, 32, 'sha256')
         .toString('hex');
 
-    await insertOne('users', {
-        code,
-        ...newUser,
-        password: hashedPassword,
-        courses: [],
-    });
-    await sendVerificationMail(newUser, `${req.headers.origin}/verify/${code}`);
+    await Promise.all([
+        insertOne('users', {
+            code,
+            ...newUser,
+            password: hashedPassword,
+        }),
+        sendVerificationMail(newUser, `${req.headers.origin}/verify/${code}`),
+    ]);
 
     res.status(201).end();
 }
