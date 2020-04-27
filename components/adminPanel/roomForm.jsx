@@ -1,5 +1,6 @@
 import React from 'react';
 import UserContext from '../userContext';
+import Room from './room';
 import axios from 'axios';
 import Message from '../message';
 
@@ -65,6 +66,19 @@ export default class RoomForm extends React.Component {
                         <button type='submit'>Create</button>
                     </form>
                 </div>
+                <UserContext.Consumer>
+                    {({ rooms }) =>
+                        rooms.length === 0 ? (
+                            <div>No rooms yet</div>
+                        ) : (
+                            <div>
+                                {rooms.map((room) => (
+                                    <Room key={room._id} value={room} />
+                                ))}
+                            </div>
+                        )
+                    }
+                </UserContext.Consumer>
             </>
         );
     }

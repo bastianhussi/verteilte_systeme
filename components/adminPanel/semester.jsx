@@ -8,8 +8,8 @@ export default class Semester extends React.Component {
         super(props);
         this.state = {
             name: this.props.value.name,
-            start: this.props.value.start,
-            end: this.props.value.end,
+            start: getTimeStringFromDate(new Date(this.props.value.start)),
+            end: getTimeStringFromDate(new Date(this.props.value.end)),
             showEditing: false,
             message: '',
         };
@@ -18,7 +18,7 @@ export default class Semester extends React.Component {
         this.changeStart = this.changeStart.bind(this);
         this.changeEnd = this.changeEnd.bind(this);
         this.changeShowEditing = this.changeShowEditing.bind(this);
-        this.changeSemester = this.changeSemster.bind(this);
+        this.changeSemster = this.changeSemster.bind(this);
         this.deleteSemester = this.deleteSemester.bind(this);
     }
 
@@ -43,9 +43,11 @@ export default class Semester extends React.Component {
     async changeSemster(event) {
         event.preventDefault();
         const { apiUrl, token, semesters, changeSemesters } = this.context;
+        const { value } = this.props;
+
         try {
             const res = await axios.patch(
-                `${apiUrl}/semesters/${this.props.value._id}`,
+                `${apiUrl}/semesters/${value._id}`,
                 {
                     name: this.state.name,
                     start: this.state.start,
@@ -58,11 +60,13 @@ export default class Semester extends React.Component {
                     },
                 }
             );
+
             const modifiedSemesters = semesters;
             const index = modifiedSemesters.indexOf({
-                _id: this.props.value._id,
+                _id: value._id,
             });
             modifiedSemesters[index] = res.data;
+
             changeSemesters(modifiedSemesters);
             this.setState({ showEditing: false });
         } catch (err) {
@@ -159,4 +163,8 @@ export default class Semester extends React.Component {
             </>
         );
     }
+}
+
+function getTimeStringFromDate(date) {
+    return date.toISOString().split('T')[0];
 }

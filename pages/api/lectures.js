@@ -65,14 +65,28 @@ async function handlePost(req, res) {
         room: Joi.string().required(),
         start: Joi.date().iso().required(),
         end: Joi.date().iso().greater(Joi.ref('start')).required(),
+        semester: Joi.string().required(),
     });
 
     const doc = await validateData(req.body, schema);
     const user = await findOne('users', { _id: createObjectId(token._id) });
-    await Promise.all([
+    const result = await Promise.all([
+        findOne('semesters', { _id: createObjectId(doc.semester) }),
         findOne('courses', { _id: createObjectId(doc.course) }),
         findOne('rooms', { _id: createObjectId(doc.room) }),
     ]);
+
+    const semester = result[0];
+
+    if (
+        new Date(semester.start).getTime() >= doc.start.getTime() ||
+        new Date(semester.end).getTime() <= doc.end.getTime()
+    ) {
+        throw new BadRequestError(
+            `lecture is not in the range of ${semester.name}`,
+            { doc, semester }
+        );
+    }
 
     // check, if other lectures exist and if so check for conflicts.
     try {
