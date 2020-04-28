@@ -2,18 +2,15 @@ import React from 'react';
 import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
-
-function getTimeStringFromDate(date) {
-    return date.toISOString().split('T')[0];
-}
+import { getYYYYMMDDFromDate, getDateFromYYYMMDD } from '../../utils/date';
 
 export default class Semester extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             name: this.props.value.name,
-            start: getTimeStringFromDate(new Date(this.props.value.start)),
-            end: getTimeStringFromDate(new Date(this.props.value.end)),
+            start: getYYYYMMDDFromDate(new Date(this.props.value.start)),
+            end: getYYYYMMDDFromDate(new Date(this.props.value.end)),
             showEditing: false,
             message: '',
         };
@@ -54,8 +51,8 @@ export default class Semester extends React.Component {
                 `${apiUrl}/semesters/${value._id}`,
                 {
                     name: this.state.name,
-                    start: this.state.start,
-                    end: this.state.end,
+                    start: getDateFromYYYMMDD(this.state.start),
+                    end: getDateFromYYYMMDD(this.state.end),
                 },
                 {
                     headers: {

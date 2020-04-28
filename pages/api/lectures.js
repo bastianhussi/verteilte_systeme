@@ -61,11 +61,11 @@ async function handlePost(req, res) {
 
     const schema = Joi.object({
         title: Joi.string().trim().min(3).max(30).required(),
+        semester: Joi.string().required(),
         course: Joi.string().required(),
         room: Joi.string().required(),
         start: Joi.date().iso().required(),
         end: Joi.date().iso().greater(Joi.ref('start')).required(),
-        semester: Joi.string().required(),
     });
 
     const doc = await validateData(req.body, schema);

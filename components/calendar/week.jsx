@@ -151,7 +151,7 @@ class Day extends React.Component {
 
         function getHours() {
             const hours = [];
-            for (let hour = 8; hour < 18; hour++) {
+            for (let hour = 8; hour <= 18; hour++) {
                 const hourDate = new Date(date);
                 hourDate.setHours(hour);
 

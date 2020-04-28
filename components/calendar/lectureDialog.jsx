@@ -7,7 +7,12 @@ import styles from './lectureDialog.module.css';
 export default function LectureDialog() {
     return (
         <CalendarContext.Consumer>
-            {({ selectedDate, showForm, selectedLecture }) => (
+            {({
+                selectedDate,
+                showForm,
+                selectedLecture,
+                selectedSemester,
+            }) => (
                 <div className={styles.lightbox}>
                     <span
                         className={`material-icons ${styles.closeButton}`}
@@ -16,11 +21,19 @@ export default function LectureDialog() {
                     </span>
                     {selectedLecture ? (
                         <EditLecture
-                            calendarContext={{ selectedLecture, showForm }}
+                            calendarContext={{
+                                selectedLecture,
+                                selectedSemester,
+                                showForm,
+                            }}
                         />
                     ) : (
                         <CreateLecture
-                            calendarContext={{ selectedDate, showForm }}
+                            calendarContext={{
+                                selectedDate,
+                                selectedSemester,
+                                showForm,
+                            }}
                         />
                     )}
                 </div>
