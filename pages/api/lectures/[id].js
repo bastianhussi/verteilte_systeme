@@ -42,10 +42,22 @@ async function handlePatch(req, res) {
 
     const modifiedLecture = await validateData(req.body, schema);
 
-    const _id = createObjectId(req.query);
-    const { user } = await findOne('lectures', { _id });
+    const _id = createObjectId(req.query.id);
+    const lecture = await findOne('lectures', { _id });
+    validateIdAgainstToken(lecture.user, token);
 
-    validateIdAgainstToken(user, token);
+    const semester = await findOne('lectures', {
+        _id: createObjectId(lecture.semester),
+    });
+    if (
+        new Date(semester.start).getTime() >= modifiedLecture.start.getTime() ||
+        new Date(semester.end).getTime() <= modifiedLecture.end.getTime()
+    ) {
+        throw new BadRequestError(
+            `lecture is not in the range of ${semester.name}`,
+            { modifiedLecture, semester }
+        );
+    }
 
     await updateOne('lectures', { _id }, { $set: modifiedLecture });
     const updatedLecture = await findOne('lectures', { _id });
@@ -62,8 +74,7 @@ async function handleDelete(req, res) {
     const token = auth(req);
     const _id = createObjectId(req.query.id);
 
-    const lecture = await find('lectures', { _id });
-
+    const lecture = await findOne('lectures', { _id });
     validateIdAgainstToken(lecture.user, token);
 
     await deleteOne('lectures', { _id });

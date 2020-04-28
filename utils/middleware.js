@@ -29,7 +29,7 @@ export function auth(req) {
 
     return jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
         if (err)
-            throw new UnauthorizedError('unvalid jwt token', {
+            throw new UnauthorizedError('invalid jwt token', {
                 err,
                 token,
                 req,
@@ -114,7 +114,7 @@ export async function validateData(data, schema) {
  * @param {object} token - The user's id stored in a jwt.
  */
 export function validateIdAgainstToken(id, { _id }) {
-    if (id !== _id) {
+    if (id != _id) {
         throw new ForbiddenError(
             `invalid token for the user with the id ${id}`,
             {

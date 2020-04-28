@@ -9,16 +9,10 @@ const client = new MongoClient(
     }
 );
 
-/**
- * This function checks if the client inside the "client"-variable (see above)
- * has an active connection to the database.
- * If not a connection will be established.
- */
-async function checkConnection() {
-    if (!client.isConnected()) {
-        await client.connect();
-    }
-}
+client.connect().catch((err) => {
+    console.error(err);
+    process.exit(1);
+})
 
 const dbName = process.env.MONGO_DB || 'nextjs';
 
@@ -29,7 +23,6 @@ const dbName = process.env.MONGO_DB || 'nextjs';
  * @param {object} doc
  */
 export async function insertOne(collection, doc) {
-    await checkConnection();
     const result = await client
         .db(dbName)
         .collection(collection)
@@ -50,7 +43,6 @@ export async function insertOne(collection, doc) {
  * @param {object} filter
  */
 export async function findOne(collection, filter) {
-    await checkConnection();
     const result = await client
         .db(dbName)
         .collection(collection)
@@ -73,7 +65,6 @@ export async function findOne(collection, filter) {
  * @param {number} limit
  */
 export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
-    await checkConnection();
     const cursor = client
         .db(dbName)
         .collection(collection)
@@ -103,7 +94,6 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
  * @param {*} update
  */
 export async function updateOne(collection, filter, update) {
-    await checkConnection();
     const result = await client
         .db(dbName)
         .collection(collection)
@@ -128,7 +118,6 @@ export async function updateOne(collection, filter, update) {
  * @param {*} update
  */
 export async function updateMany(collection, filter, update) {
-    await checkConnection();
     const result = await client
         .db(dbName)
         .collection(collection)
@@ -152,7 +141,6 @@ export async function updateMany(collection, filter, update) {
  * @param {*} filter
  */
 export async function deleteOne(collection, filter) {
-    await checkConnection();
     const result = await client
         .db(dbName)
         .collection(collection)
@@ -172,7 +160,6 @@ export async function deleteOne(collection, filter) {
  * @param {*} filter
  */
 export async function deleteMany(collection, filter) {
-    await checkConnection();
     const result = await client
         .db(DB)
         .collection(collection)

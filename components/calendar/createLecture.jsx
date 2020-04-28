@@ -3,12 +3,7 @@ import UserContext from '../userContext';
 import Message from '../message';
 import axios from 'axios';
 import styles from './createLecture.module.css';
-import CalendarContext from '../calendarContext';
-
-function getTimeStringFromDate(date) {
-    const [hours, minutes] = date.toTimeString().split(' ')[0].split(':');
-    return `${hours}:${minutes}`;
-}
+import { getHHMMFromDate, getDateFromHHMM } from '../../utils/date';
 
 export default class CreateLecture extends React.Component {
     constructor(props) {
@@ -17,19 +12,16 @@ export default class CreateLecture extends React.Component {
             title: '',
             start: '08:00:00',
             end: '09:00:00',
-            semester: this.props.calendarContext.selectedSemester,
             course: undefined,
             room: undefined,
             message: '',
         };
 
         this.changeTitle = this.changeTitle.bind(this);
-        this.changeStart = this.changeStart.bind(this);
-        this.changeEnd = this.changeEnd.bind(this);
-        this.changeSemester = this.changeSemester.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
         this.changeRoom = this.changeRoom.bind(this);
-        this.getDateFromTimeString = this.getDateFromTimeString.bind(this);
+        this.changeStart = this.changeStart.bind(this);
+        this.changeEnd = this.changeEnd.bind(this);
         this.submitLectureForm = this.submitLectureForm.bind(this);
     }
 
@@ -37,22 +29,15 @@ export default class CreateLecture extends React.Component {
 
     componentDidMount() {
         const { selectedDate } = this.props.calendarContext;
-        const { courses, rooms, semesters } = this.context;
+        const { courses, rooms } = this.context;
+
         const start = new Date(selectedDate);
         const end = new Date(selectedDate);
         end.setHours(end.getHours() + 1);
+
         this.setState({
-            start: getTimeStringFromDate(start),
-            end: getTimeStringFromDate(end),
-            semester: semesters[0]
-                ? semesters.filter(
-                      (semester) =>
-                          new Date(semester.start).getTime() <=
-                              selectedDate.getTime() &&
-                          new Date(semester.end).getTime() >=
-                              selectedDate.getTime()
-                  )[0]._id
-                : undefined,
+            start: getHHMMFromDate(start),
+            end: getHHMMFromDate(end),
             course: courses[0] ? courses[0]._id : undefined,
             room: rooms[0] ? rooms[0]._id : undefined,
         });
@@ -62,12 +47,12 @@ export default class CreateLecture extends React.Component {
         this.setState({ title: event.target.value });
     }
 
-    changeRoom(event) {
-        this.setState({ selectedRoom: event.target.value });
+    changeCourse(event) {
+        this.setState({ course: event.target.value });
     }
 
-    changeCourse(event) {
-        this.setState({ selectedCourse: event.target.value });
+    changeRoom(event) {
+        this.setState({ room: event.target.value });
     }
 
     changeStart(event) {
@@ -78,35 +63,27 @@ export default class CreateLecture extends React.Component {
         this.setState({ end: event.target.value });
     }
 
-    changeSemester(event) {
-        this.setState({ semester: event.target.value });
-    }
-
-    getDateFromTimeString(time) {
-        const [hours, minutes] = time.split(':');
-        const parsedDate = new Date(this.props.calendarContext.selectedDate);
-        parsedDate.setHours(hours);
-        parsedDate.setMinutes(minutes);
-        parsedDate.setSeconds(0);
-        parsedDate.setMilliseconds(0);
-        return parsedDate;
-    }
-
     async submitLectureForm(event) {
         event.preventDefault();
         this.setState({ message: '' });
         const { apiUrl, token, lectures, changeLectures } = this.context;
-
+        const { selectedSemester, showForm } = this.props.calendarContext;
         try {
             const res = await axios.post(
                 `${apiUrl}/lectures`,
                 {
                     title: this.state.title,
+                    semester: selectedSemester._id,
                     course: this.state.course,
                     room: this.state.room,
-                    start: this.getDateFromTimeString(this.state.start),
-                    end: this.getDateFromTimeString(this.state.end),
-                    semester: this.state.semester,
+                    start: getDateFromHHMM(
+                        this.state.start,
+                        this.props.calendarContext.selectedDate
+                    ),
+                    end: getDateFromHHMM(
+                        this.state.end,
+                        this.props.calendarContext.selectedDate
+                    ),
                 },
                 {
                     headers: {
@@ -116,7 +93,7 @@ export default class CreateLecture extends React.Component {
                 }
             );
             changeLectures([...lectures, res.data]);
-            this.props.calendarContext.showForm();
+            showForm();
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -139,6 +116,10 @@ export default class CreateLecture extends React.Component {
                             required
                         />
                     </label>
+                    <p>
+                        Semester:{' '}
+                        {this.props.calendarContext.selectedSemester.name}
+                    </p>
                     <label>
                         Start:
                         <br />
@@ -202,9 +183,6 @@ export default class CreateLecture extends React.Component {
                         )}
                     </UserContext.Consumer>
                     <button type='submit'>Create</button>
-                    <button onClick={this.props.calendarContext.showForm}>
-                        Cancel
-                    </button>
                 </form>
             </>
         );
