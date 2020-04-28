@@ -98,10 +98,11 @@ export default class EditLecture extends React.Component {
                 }
             );
             const modifiedLectures = lectures;
-            const index = modifiedLectures.indexOf({
-                _id: selectedLecture._id,
-            });
+            const index = modifiedLectures.findIndex(
+                (lecture) => lecture._id === selectedLecture._id
+            );
             modifiedLectures[index] = res.data;
+            console.log(index, modifiedLectures);
             changeLectures(modifiedLectures);
 
             showForm();
@@ -229,9 +230,9 @@ export default class EditLecture extends React.Component {
                     </UserContext.Consumer>
                     <button type='submit'>Save</button>
                 </form>
-                <button onClick={this.deleteLecutre}>
-                    <span className='material-icons'>delete</span>
-                </button>
+                <span className='material-icons' onClick={this.deleteLecutre}>
+                    delete
+                </span>
             </>
         );
     }

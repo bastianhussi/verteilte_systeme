@@ -6,7 +6,12 @@
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
 # check that lectures are not longer than a day and min one hour long
 # improve displaying existing lectures in week (maybe also in month)
+# display information about lectures in week
+# change production protocol back to https ( process.env.NODE_ENV === 'production' ? 'https' : 'http';)
 ================================
 
 Bugs:
 # weird jumping around in week view when selecting dates at the end of the week.
+# changing start- & end-date of semesters doesnt work
+# creating two lectures at the same time is possible
+# updating lectures with form doesnt change the context (api request works)

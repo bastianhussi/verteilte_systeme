@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi';
-import { findOne, updateOne, deleteOne } from '../../../utils/database';
+import { findOne, updateOne, deleteOne, find } from '../../../utils/database';
 import {
     auth,
     handleError,
@@ -27,6 +27,33 @@ async function handlePatch(req, res) {
     const semester = await validateData(req.body, schema);
 
     const _id = createObjectId(req.query.id);
+
+    if (schema.start || schema.end) {
+        // getting start- and end-date from this semester
+        const [start, end] = (async function getStartAndEnd() {
+            if (schema.start && schema.end) {
+                return [schema.start, schema.end];
+            } else {
+                const { start, end } = await find('semesters', { _id });
+                return [start, end];
+            }
+        })();
+
+        // checking is the start- and end-date of this semester conflicts with an other semester.
+        try {
+            const conflict = await findOne('semesters', {
+                $and: [{ start: { $lte: end } }, { end: { $lte: start } }],
+            });
+            throw new BadRequestError(
+                `${semester.name} conflicts with ${conflict.name}`,
+                semester,
+                conflict
+            );
+        } catch (err) {
+            if (!err instanceof NotFoundError) throw err;
+        }
+    }
+
     await updateOne('semesters', { _id }, { $set: semester });
     const updatedSemester = await findOne('semesters', { _id });
     res.status(200).json(updatedSemester);
@@ -36,13 +63,13 @@ async function handleDelete(req, res) {
     await authAdmin(req);
 
     const _id = createObjectId(req.query.id);
-    const deletedSemester = await findOne('rooms', { _id });
+    const deletedSemester = await findOne('semesters', { _id });
 
     try {
         const lecture = await findOne('lectures', {
             $and: [
-                { start: { $gt: deletedSemester.start } },
-                { end: { $lt: deletedSemester.end } },
+                { start: { $gte: deletedSemester.start } },
+                { end: { $lte: deletedSemester.end } },
             ],
         });
         throw new BadRequestError(
@@ -53,7 +80,7 @@ async function handleDelete(req, res) {
         if (!err instanceof NotFoundError) throw err;
     }
 
-    await deleteOne('rooms', { _id });
+    await deleteOne('semesters', { _id });
     res.status(200).json(deletedSemester);
 }
 

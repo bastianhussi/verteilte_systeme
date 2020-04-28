@@ -211,7 +211,7 @@ class Hour extends React.Component {
                             this.context.showForm();
                         }
                     }}>
-                    {this.props.date.getHours()}
+                    {this.props.date.getHours()}:00
                 </div>
                 <style jsx>{`
                     div {

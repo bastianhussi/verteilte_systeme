@@ -84,7 +84,9 @@ export function handleError(res, err) {
         }
     } else {
         res.status(500).end();
-        console.log(err);
+        if (!process.env.NODE_ENV === 'production') {
+            console.log(err);
+        }
     }
 }
 

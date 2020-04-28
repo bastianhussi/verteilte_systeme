@@ -6,6 +6,7 @@ import {
     validateData,
     authAdmin,
 } from '../../utils/middleware';
+import { BadRequestError, NotFoundError } from '../../utils/errors';
 
 async function handleGet(req, res) {
     auth(req);
@@ -30,10 +31,29 @@ async function handlePost(req, res) {
         start: Joi.date().iso().required(),
         end: Joi.date().iso().greater(Joi.ref('start')).required(),
     });
-    const semester = await validateData(req.body, schema);
+    const doc = await validateData(req.body, schema);
 
-    const _id = await insertOne('semesters', semester);
-    res.status(201).json({ ...semester, _id });
+    // would have loved to do this completly in a mongodb query,
+    // but the mongodb driver refuses to do basic date parsing...
+    try {
+        const cursor = await find('semesters', {});
+        const semesters = await cursor.toArray();
+        const conflict = semesters.find(
+            (semester) =>
+                new Date(semester.start).getTime() <= doc.end.getTime() &&
+                new Date(semester.end).getTime() >= doc.start.getTime()
+        );
+        if (conflict) {
+            throw new BadRequestError(
+                `${doc.name} conflicts with ${conflict.name}`
+            );
+        }
+    } catch (err) {
+        if (err instanceof BadRequestError) throw err;
+    }
+
+    const _id = await insertOne('semesters', doc);
+    res.status(201).json({ ...doc, _id });
 }
 
 /**

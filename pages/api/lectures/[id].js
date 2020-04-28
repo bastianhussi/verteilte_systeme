@@ -31,6 +31,7 @@ async function handleGet(req, res) {
  */
 async function handlePatch(req, res) {
     const token = auth(req);
+    const _id = createObjectId(req.query.id);
 
     const schema = Joi.object({
         title: Joi.string().trim().min(3).max(30).optional(),
@@ -39,14 +40,12 @@ async function handlePatch(req, res) {
         start: Joi.date().optional(),
         end: Joi.date().optional(),
     });
-
     const modifiedLecture = await validateData(req.body, schema);
 
-    const _id = createObjectId(req.query.id);
     const lecture = await findOne('lectures', { _id });
     validateIdAgainstToken(lecture.user, token);
 
-    const semester = await findOne('lectures', {
+    const semester = await findOne('semesters', {
         _id: createObjectId(lecture.semester),
     });
     if (

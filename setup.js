@@ -66,6 +66,7 @@ async function setup() {
         createUniqueIndexIfNotExists('users', 'email', 'users_email'),
         createUniqueIndexIfNotExists('courses', 'name', 'courses_name'),
         createUniqueIndexIfNotExists('rooms', 'name', 'rooms_name'),
+        createUniqueIndexIfNotExists('semesters', 'name', 'semesters_name'),
         createUniqueIndexIfNotExists('semesters', 'start', 'semesters_start'),
         createUniqueIndexIfNotExists('semesters', 'end', 'semesters_end'),
     ]);
