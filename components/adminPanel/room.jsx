@@ -31,9 +31,11 @@ export default class Room extends React.Component {
     async changeRoom(event) {
         event.preventDefault();
         const { apiUrl, token, rooms, changeRooms } = this.context;
+        const { value } = this.props;
+
         try {
             const res = await axios.patch(
-                `${apiUrl}/rooms/${this.props.value._id}`,
+                `${apiUrl}/rooms/${value._id}`,
                 { name: this.state.name },
                 {
                     headers: {
@@ -43,9 +45,9 @@ export default class Room extends React.Component {
                 }
             );
             const modifiedRooms = rooms;
-            const index = modifiedRooms.indexOf({
-                _id: this.props.value._id,
-            });
+            const index = modifiedRooms.findIndex(
+                (room) => room._id === value._id
+            );
             modifiedRooms[index] = res.data;
             changeRooms(modifiedRooms);
             this.setState({ showEditing: false });

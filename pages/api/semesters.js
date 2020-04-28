@@ -1,11 +1,12 @@
 import Joi from '@hapi/joi';
-import { find, insertOne } from '../../utils/database';
+import { find, insertOne, findOne } from '../../utils/database';
 import {
     auth,
     handleError,
     validateData,
     authAdmin,
 } from '../../utils/middleware';
+import { BadRequestError } from '../../utils/errors';
 
 async function handleGet(req, res) {
     auth(req);
@@ -30,10 +31,21 @@ async function handlePost(req, res) {
         start: Joi.date().iso().required(),
         end: Joi.date().iso().greater(Joi.ref('start')).required(),
     });
-    const semester = await validateData(req.body, schema);
+    const doc = await validateData(req.body, schema);
 
-    const _id = await insertOne('semesters', semester);
-    res.status(201).json({ ...semester, _id });
+    try {
+        const conflict = await findOne('semesters', {
+            $and: [{ start: { $lte: doc.end } }, { end: { $gte: doc.start } }],
+        });
+        throw new BadRequestError(
+            `${doc.name} conflicts with ${conflict.name}`
+        );
+    } catch (err) {
+        if (err instanceof BadRequestError) throw err;
+    }
+
+    const _id = await insertOne('semesters', doc);
+    res.status(201).json({ ...doc, _id });
 }
 
 /**

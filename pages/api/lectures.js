@@ -6,7 +6,7 @@ import {
     createObjectId,
 } from '../../utils/middleware';
 import { insertOne, find, findOne } from '../../utils/database';
-import { BadRequestError, NotFoundError } from '../../utils/errors';
+import { BadRequestError } from '../../utils/errors';
 
 /**
  * Searches the database for lectures matching the query.
@@ -28,11 +28,7 @@ async function handleGet(req, res) {
         end: Joi.date().iso().greater(Joi.ref('start')).optional(),
         limit: Joi.number().integer().min(1).max(100).optional().default(50),
     });
-    let { limit, ...query } = await validateData(req.query, schema);
-
-    // parse the course- and room-id to ObjectId objects.
-    if (query.course) query.course = createObjectId(query.course);
-    if (query.room) query.room = createObjectId(query.room);
+    const { limit, ...query } = await validateData(req.query, schema);
 
     const cursor = await find(
         'lectures',
@@ -67,9 +63,10 @@ async function handlePost(req, res) {
         start: Joi.date().iso().required(),
         end: Joi.date().iso().greater(Joi.ref('start')).required(),
     });
-
     const doc = await validateData(req.body, schema);
+
     const user = await findOne('users', { _id: createObjectId(token._id) });
+
     const result = await Promise.all([
         findOne('semesters', { _id: createObjectId(doc.semester) }),
         findOne('courses', { _id: createObjectId(doc.course) }),
@@ -91,34 +88,34 @@ async function handlePost(req, res) {
     // check, if other lectures exist and if so check for conflicts.
     try {
         // get all lectures with the same user, course, or room.
-        const cursor = await find('lectures', {
-            $or: [
-                { user: createObjectId(token._id) },
-                { course: createObjectId(doc.course) },
-                { room: createObjectId(doc.room) },
+        const conflict = await findOne('lectures', {
+            $and: [
+                {
+                    $or: [
+                        { user: token._id },
+                        { course: doc.course },
+                        { room: doc.room },
+                    ],
+                },
+                {
+                    $and: [
+                        { start: { $lte: doc.end } },
+                        { end: { $gte: doc.start } },
+                    ],
+                },
             ],
         });
-
-        const otherLectures = await cursor.toArray();
-
-        // search for lectures that conflict with the start and end time of this new one.
-        otherLectures.filter((otherLecture) => {
-            otherLecture.start <= doc.end && otherLecture.end >= doc.start;
-        });
-
-        if (otherLectures.length !== 0) {
-            throw new BadRequestError(
-                `this lectures conflicts with ${JSON.stringify(otherLectures)}`
-            );
-        }
+        throw new BadRequestError(
+            `${doc.title} conflicts with ${conflict.title}`,
+            { doc, conflict }
+        );
     } catch (err) {
-        // no other lectures isn't a problem
-        if (!err instanceof NotFoundError) throw err;
+        // ignore NotFoundErros
+        if (err instanceof BadRequestError) throw err;
     }
 
     const newLecture = { ...doc, user: user._id };
     const _id = await insertOne('lectures', newLecture);
-
     res.status(201).json({ _id, ...newLecture });
 }
 

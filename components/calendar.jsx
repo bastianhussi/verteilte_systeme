@@ -64,13 +64,16 @@ export default class Calendar extends React.Component {
                 <div className={styles.header}>
                     <UserContext.Consumer>
                         {({ semesters }) => (
-                            <select onChange={this.changeSemester} required>
-                                {semesters.map((semester, index) => (
-                                    <option key={index} value={index}>
-                                        {semester.name}
-                                    </option>
-                                ))}
-                            </select>
+                            <label>
+                                Semester:
+                                <select onChange={this.changeSemester} required>
+                                    {semesters.map((semester, index) => (
+                                        <option key={index} value={index}>
+                                            {semester.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </label>
                         )}
                     </UserContext.Consumer>
                 </div>

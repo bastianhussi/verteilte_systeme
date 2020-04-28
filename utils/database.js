@@ -12,7 +12,7 @@ const client = new MongoClient(
 client.connect().catch((err) => {
     console.error(err);
     process.exit(1);
-})
+});
 
 const dbName = process.env.MONGO_DB || 'nextjs';
 

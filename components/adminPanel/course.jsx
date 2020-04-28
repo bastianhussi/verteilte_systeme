@@ -31,9 +31,11 @@ export default class Course extends React.Component {
     async changeCourse(event) {
         event.preventDefault();
         const { apiUrl, token, courses, changeCourses } = this.context;
+        const { value } = this.props;
+
         try {
             const res = await axios.patch(
-                `${apiUrl}/courses/${this.props.value._id}`,
+                `${apiUrl}/courses/${value._id}`,
                 { name: this.state.name },
                 {
                     headers: {
@@ -43,9 +45,9 @@ export default class Course extends React.Component {
                 }
             );
             const modifiedCourses = courses;
-            const index = modifiedCourses.indexOf({
-                _id: this.props.value._id,
-            });
+            const index = modifiedCourses.findIndex(
+                (course) => course._id === value._id
+            );
             modifiedCourses[index] = res.data;
             changeCourses(modifiedCourses);
             this.setState({ showEditing: false });

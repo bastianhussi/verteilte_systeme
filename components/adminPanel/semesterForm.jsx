@@ -109,7 +109,7 @@ export default class SemesterForm extends React.Component {
                 <UserContext.Consumer>
                     {({ semesters }) =>
                         semesters.length === 0 ? (
-                            <div>No courses yet</div>
+                            <div>No semesters yet</div>
                         ) : (
                             <div>
                                 {semesters.map((semester) => (

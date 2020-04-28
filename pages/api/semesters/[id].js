@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi';
-import { findOne, updateOne, deleteOne } from '../../../utils/database';
+import { findOne, updateOne, deleteOne, find } from '../../../utils/database';
 import {
     auth,
     handleError,
@@ -7,7 +7,7 @@ import {
     createObjectId,
     authAdmin,
 } from '../../../utils/middleware';
-import { NotFoundError } from '../../../utils/errors';
+import { BadRequestError } from '../../../utils/errors';
 
 async function handleGet(req, res) {
     auth(req);
@@ -24,10 +24,34 @@ async function handlePatch(req, res) {
         start: Joi.date().iso().optional(),
         end: Joi.date().iso().greater(Joi.ref('start')).optional(),
     });
-    const semester = await validateData(req.body, schema);
+    const doc = await validateData(req.body, schema);
 
     const _id = createObjectId(req.query.id);
-    await updateOne('semesters', { _id }, { $set: semester });
+
+    if (doc.start || doc.end) {
+        // getting start- and end-date from this semester
+        const [start, end] = (async function getStartAndEnd() {
+            if (doc.start && doc.end) {
+                return [doc.start, doc.end];
+            } else {
+                const { start, end } = await find('semesters', { _id });
+                return [start, end];
+            }
+        })();
+
+        try {
+            const conflict = await findOne('semesters', {
+                $and: [{ start: { $lte: end } }, { end: { $gte: start } }],
+            });
+            throw new BadRequestError(
+                `${doc.name} conflicts with ${conflict.name}`
+            );
+        } catch (err) {
+            if (err instanceof BadRequestError) throw err;
+        }
+    }
+
+    await updateOne('semesters', { _id }, { $set: doc });
     const updatedSemester = await findOne('semesters', { _id });
     res.status(200).json(updatedSemester);
 }
@@ -36,24 +60,21 @@ async function handleDelete(req, res) {
     await authAdmin(req);
 
     const _id = createObjectId(req.query.id);
-    const deletedSemester = await findOne('rooms', { _id });
+    const deletedSemester = await findOne('semesters', { _id });
 
     try {
         const lecture = await findOne('lectures', {
-            $and: [
-                { start: { $gt: deletedSemester.start } },
-                { end: { $lt: deletedSemester.end } },
-            ],
+            semester: deletedSemester.semester,
         });
         throw new BadRequestError(
             'there are lectures in this semester',
             lecture
         );
     } catch (err) {
-        if (!err instanceof NotFoundError) throw err;
+        if (err instanceof BadRequestError) throw err;
     }
 
-    await deleteOne('rooms', { _id });
+    await deleteOne('semesters', { _id });
     res.status(200).json(deletedSemester);
 }
 

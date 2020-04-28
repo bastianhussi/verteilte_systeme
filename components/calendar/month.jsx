@@ -181,11 +181,12 @@ class Day extends React.Component {
     static contextType = CalendarContext;
 
     render() {
-        const isInSemester =
-            this.props.date.getTime() >=
-                new Date(this.context.selectedSemester.start).getTime() &&
-            this.props.date.getTime() <=
-                new Date(this.context.selectedSemester.end).getTime();
+        const isInSemester = this.context.selectedSemester
+            ? this.props.date.getTime() >=
+                  new Date(this.context.selectedSemester.start).getTime() &&
+              this.props.date.getTime() <=
+                  new Date(this.context.selectedSemester.end).getTime()
+            : false;
 
         return (
             <>

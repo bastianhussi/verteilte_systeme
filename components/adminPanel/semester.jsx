@@ -63,9 +63,9 @@ export default class Semester extends React.Component {
             );
 
             const modifiedSemesters = semesters;
-            const index = modifiedSemesters.indexOf({
-                _id: value._id,
-            });
+            const index = modifiedSemesters.findIndex(
+                (semester) => semester._id === value._id
+            );
             modifiedSemesters[index] = res.data;
 
             changeSemesters(modifiedSemesters);
