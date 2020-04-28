@@ -18,33 +18,49 @@ async function handleGet(req, res) {
 
 async function handlePatch(req, res) {
     await authAdmin(req);
+    const _id = createObjectId(req.query.id);
 
     const schema = Joi.object({
         name: Joi.string().min(3).max(30).optional(),
         start: Joi.date().iso().optional(),
-        end: Joi.date().iso().greater(Joi.ref('start')).optional(),
+        end: Joi.date().iso().optional(),
     });
     const doc = await validateData(req.body, schema);
 
-    const _id = createObjectId(req.query.id);
+    // all get attributes from this semester
+    const [name, start, end] = await (async function () {
+        if (doc.name && doc.start && doc.end) {
+            return [doc.name, doc.start, doc.end];
+        } else {
+            const { name, start, end } = await findOne('semesters', {
+                _id,
+            });
+            return [doc.name || name, doc.start || start, doc.end || end];
+        }
+    })();
+
+    if (new Date(start).getTime() >= new Date(end).getTime())
+        throw new BadRequestError('"end" must be greater than "start"', {
+            doc,
+            start,
+            end,
+        });
 
     if (doc.start || doc.end) {
-        // getting start- and end-date from this semester
-        const [start, end] = (async function getStartAndEnd() {
-            if (doc.start && doc.end) {
-                return [doc.start, doc.end];
-            } else {
-                const { start, end } = await find('semesters', { _id });
-                return [start, end];
-            }
-        })();
-
         try {
             const conflict = await findOne('semesters', {
-                $and: [{ start: { $lte: end } }, { end: { $gte: start } }],
+                $and: [
+                    { _id: { $ne: _id } },
+                    {
+                        $and: [
+                            { start: { $lte: end } },
+                            { end: { $gte: start } },
+                        ],
+                    },
+                ],
             });
             throw new BadRequestError(
-                `${doc.name} conflicts with ${conflict.name}`
+                `${name} conflicts with ${conflict.name}`
             );
         } catch (err) {
             if (err instanceof BadRequestError) throw err;

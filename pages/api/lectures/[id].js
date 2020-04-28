@@ -52,7 +52,7 @@ async function handlePatch(req, res) {
             // get all lectures with the same user, course, or room.
             const conflict = await findOne('lectures', {
                 $and: [
-                    { _id: { $ne: createObjectId()}},
+                    { _id: { $ne: createObjectId() } },
                     {
                         $or: [
                             { user: token._id },
