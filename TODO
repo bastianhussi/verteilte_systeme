@@ -7,10 +7,12 @@
 # display information about lectures in week
 # change production protocol back to https ( process.env.NODE_ENV === 'production' ? 'https' : 'http';)
 # find way to check if start is less than end in semesters/[id] without requireing both in req body.
+# replace manual validation which joi
+# add validation for lecture, that start and end are at the same time, between 08:00-18:00 and min 30 mins long
 ================================
 
 Bugs:
 # weird jumping around in week view when selecting dates at the end of the week.
 # changing start- & end-date of semesters doesnt work
-# creating two lectures at the same time is possible
 # updating lectures with form doesnt change the context (api request works)
+# changing the date of existing lectures causes weird behavior

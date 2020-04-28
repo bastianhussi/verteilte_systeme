@@ -60,7 +60,9 @@ async function handlePatch(req, res) {
                 ],
             });
             throw new BadRequestError(
-                `${name} conflicts with ${conflict.name}`
+                `${name} conflicts with ${
+                    conflict.name
+                } on ${conflict.start.toDateString()}`
             );
         } catch (err) {
             if (err instanceof BadRequestError) throw err;
