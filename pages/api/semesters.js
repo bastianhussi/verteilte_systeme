@@ -1,12 +1,12 @@
 import Joi from '@hapi/joi';
-import { find, insertOne } from '../../utils/database';
+import { find, insertOne, findOne } from '../../utils/database';
 import {
     auth,
     handleError,
     validateData,
     authAdmin,
 } from '../../utils/middleware';
-import { BadRequestError, NotFoundError } from '../../utils/errors';
+import { BadRequestError } from '../../utils/errors';
 
 async function handleGet(req, res) {
     auth(req);
@@ -33,21 +33,13 @@ async function handlePost(req, res) {
     });
     const doc = await validateData(req.body, schema);
 
-    // would have loved to do this completly in a mongodb query,
-    // but the mongodb driver refuses to do basic date parsing...
     try {
-        const cursor = await find('semesters', {});
-        const semesters = await cursor.toArray();
-        const conflict = semesters.find(
-            (semester) =>
-                new Date(semester.start).getTime() <= doc.end.getTime() &&
-                new Date(semester.end).getTime() >= doc.start.getTime()
+        const conflict = await findOne('semesters', {
+            $and: [{ start: { $lte: doc.end } }, { end: { $gte: doc.start } }],
+        });
+        throw new BadRequestError(
+            `${doc.name} conflicts with ${conflict.name}`
         );
-        if (conflict) {
-            throw new BadRequestError(
-                `${doc.name} conflicts with ${conflict.name}`
-            );
-        }
     } catch (err) {
         if (err instanceof BadRequestError) throw err;
     }

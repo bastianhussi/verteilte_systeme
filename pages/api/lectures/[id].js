@@ -6,7 +6,8 @@ import {
     validateData,
     createObjectId,
 } from '../../../utils/middleware';
-import { findOne, updateOne, find, deleteOne } from '../../../utils/database';
+import { findOne, updateOne, deleteOne } from '../../../utils/database';
+import { BadRequestError } from '../../../utils/errors';
 
 /**
  *
@@ -40,27 +41,47 @@ async function handlePatch(req, res) {
         start: Joi.date().optional(),
         end: Joi.date().optional(),
     });
-    const modifiedLecture = await validateData(req.body, schema);
+    const doc = await validateData(req.body, schema);
 
     const lecture = await findOne('lectures', { _id });
     validateIdAgainstToken(lecture.user, token);
 
-    const semester = await findOne('semesters', {
-        _id: createObjectId(lecture.semester),
-    });
-    if (
-        new Date(semester.start).getTime() >= modifiedLecture.start.getTime() ||
-        new Date(semester.end).getTime() <= modifiedLecture.end.getTime()
-    ) {
-        throw new BadRequestError(
-            `lecture is not in the range of ${semester.name}`,
-            { modifiedLecture, semester }
-        );
+    if (doc.start || doc.end) {
+        // check, if other lectures exist and if so check for conflicts.
+        try {
+            // get all lectures with the same user, course, or room.
+            const conflict = await findOne('lectures', {
+                $and: [
+                    { _id: { $ne: createObjectId()}},
+                    {
+                        $or: [
+                            { user: token._id },
+                            { course: doc.course || lecture.course },
+                            { room: doc.room || lecture.course },
+                        ],
+                    },
+                    {
+                        $and: [
+                            { start: { $lte: doc.end || lecture.end } },
+                            { end: { $gte: doc.start || lecture.start } },
+                        ],
+                    },
+                ],
+            });
+            throw new BadRequestError(
+                `${doc.title || lecture.title} conflicts with ${
+                    conflict.title
+                }`,
+                { doc, conflict }
+            );
+        } catch (err) {
+            // ignore NotFoundErros
+            if (err instanceof BadRequestError) throw err;
+        }
     }
 
-    await updateOne('lectures', { _id }, { $set: modifiedLecture });
+    await updateOne('lectures', { _id }, { $set: doc });
     const updatedLecture = await findOne('lectures', { _id });
-
     res.status(200).json(updatedLecture);
 }
 

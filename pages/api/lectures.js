@@ -6,7 +6,7 @@ import {
     createObjectId,
 } from '../../utils/middleware';
 import { insertOne, find, findOne } from '../../utils/database';
-import { BadRequestError, NotFoundError } from '../../utils/errors';
+import { BadRequestError } from '../../utils/errors';
 
 /**
  * Searches the database for lectures matching the query.
@@ -97,17 +97,21 @@ async function handlePost(req, res) {
                         { room: doc.room },
                     ],
                 },
-                { start: { $lte: semester.end } },
-                { end: { $lte: semester.start } },
+                {
+                    $and: [
+                        { start: { $lte: doc.end } },
+                        { end: { $gte: doc.start } },
+                    ],
+                },
             ],
         });
         throw new BadRequestError(
-            `${doc.name} conflicts with ${conflict.name}`,
+            `${doc.title} conflicts with ${conflict.title}`,
             { doc, conflict }
         );
     } catch (err) {
-        // no other lectures isn't a problem
-        if (!err instanceof NotFoundError) throw err;
+        // ignore NotFoundErros
+        if (err instanceof BadRequestError) throw err;
     }
 
     const newLecture = { ...doc, user: user._id };
