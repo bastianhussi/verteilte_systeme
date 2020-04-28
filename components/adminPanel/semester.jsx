@@ -3,6 +3,10 @@ import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
 
+function getTimeStringFromDate(date) {
+    return date.toISOString().split('T')[0];
+}
+
 export default class Semester extends React.Component {
     constructor(props) {
         super(props);
@@ -163,8 +167,4 @@ export default class Semester extends React.Component {
             </>
         );
     }
-}
-
-function getTimeStringFromDate(date) {
-    return date.toISOString().split('T')[0];
 }

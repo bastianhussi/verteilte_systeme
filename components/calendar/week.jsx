@@ -42,7 +42,12 @@ export default class WeekController extends React.Component {
     render() {
         return (
             <CalendarContext.Consumer>
-                {({ selectedDate, changeDate, changeView }) => (
+                {({
+                    selectedDate,
+                    changeDate,
+                    changeView,
+                    selectedSemester,
+                }) => (
                     <>
                         <div className={styles.header}>
                             <button
@@ -68,7 +73,11 @@ export default class WeekController extends React.Component {
                             {({ lectures }) => (
                                 <Week
                                     date={selectedDate}
-                                    lectures={lectures ? lectures : []}
+                                    lectures={lectures.filter(
+                                        (lecture) =>
+                                            lecture.semester ===
+                                            selectedSemester._id
+                                    )}
                                 />
                             )}
                         </UserContext.Consumer>
@@ -92,10 +101,9 @@ class Week extends React.Component {
 
         const lectures = this.props.lectures.filter(
             (lecture) =>
-                new Date(lecture.start).getMonth() ===
-                    selectedDate.getMonth() &&
                 new Date(lecture.start).getFullYear() ===
-                    selectedDate.getFullYear()
+                    selectedDate.getFullYear() &&
+                new Date(lecture.start).getMonth() === selectedDate.getMonth()
         );
 
         function getDayLectures(day) {
@@ -179,18 +187,45 @@ class Hour extends React.Component {
     static contextType = CalendarContext;
 
     render() {
+        const isInSemester =
+            this.props.date.getTime() >=
+                new Date(this.context.selectedSemester.start).getTime() &&
+            this.props.date.getTime() <=
+                new Date(this.context.selectedSemester.end).getTime();
+
+        let backgroundColor = 'white';
+        if (!isInSemester) {
+            backgroundColor = 'grey';
+        } else if (this.props.lecture) {
+            backgroundColor = 'red';
+        }
+
         return (
             <>
                 <div
                     className={styles.hour}
                     onClick={() => {
-                        this.context.changeDate(this.props.date);
-                        this.context.showForm();
+                        if (isInSemester) {
+                            this.context.changeLecture(this.props.lecture);
+                            this.context.changeDate(this.props.date);
+                            this.context.showForm();
+                        }
                     }}>
-                    <div className={this.props.lecture ? styles.lecture : ''}>
-                        {this.props.date.getHours()}
-                    </div>
+                    {this.props.date.getHours()}
                 </div>
+                <style jsx>{`
+                    div {
+                        height: 50px;
+                        width: 150px;
+                        color: #333333;
+                        border-bottom: 2px solid black;
+                        background-color: ${backgroundColor};
+                    }
+
+                    div:hover {
+                        cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
+                    }
+                `}</style>
             </>
         );
     }

@@ -27,18 +27,3 @@
     background-color: #333333;
     color: #fff;
 }
-
-.hour {
-    height: 50px;
-    width: 150px;
-    color: #333333;
-    border-bottom: 2px solid black;
-}
-
-.hour:hover {
-    cursor: pointer;
-}
-
-.lecture {
-    background-color: red;
-}

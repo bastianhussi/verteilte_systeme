@@ -37,13 +37,21 @@ export default class MonthController extends React.Component {
             previousMonth = new Date(
                 this.context.selectedDate.getFullYear() - 1,
                 0,
-                1
+                1,
+                0,
+                0,
+                0,
+                0
             );
         } else {
             previousMonth = new Date(
                 this.context.selectedDate.getFullYear(),
                 this.context.selectedDate.getMonth() - 1,
-                1
+                1,
+                0,
+                0,
+                0,
+                0
             );
         }
         this.context.changeDate(previousMonth);
@@ -55,13 +63,21 @@ export default class MonthController extends React.Component {
             nextMonth = new Date(
                 this.context.selectedDate.getFullYear() + 1,
                 0,
-                1
+                1,
+                0,
+                0,
+                0,
+                0
             );
         } else {
             nextMonth = new Date(
                 this.context.selectedDate.getFullYear(),
                 this.context.selectedDate.getMonth() + 1,
-                1
+                1,
+                0,
+                0,
+                0,
+                0
             );
         }
         this.context.changeDate(nextMonth);
@@ -70,7 +86,7 @@ export default class MonthController extends React.Component {
     render() {
         return (
             <CalendarContext.Consumer>
-                {({ selectedDate, changeDate }) => (
+                {({ selectedDate, changeDate, selectedSemester }) => (
                     <>
                         <div className={styles.header}>
                             <span
@@ -93,7 +109,11 @@ export default class MonthController extends React.Component {
                             {({ lectures }) => (
                                 <Month
                                     date={selectedDate}
-                                    lectures={lectures}
+                                    lectures={lectures.filter(
+                                        (lecture) =>
+                                            lecture.semester ===
+                                            selectedSemester._id
+                                    )}
                                 />
                             )}
                         </UserContext.Consumer>
@@ -161,15 +181,36 @@ class Day extends React.Component {
     static contextType = CalendarContext;
 
     render() {
+        const isInSemester =
+            this.props.date.getTime() >=
+                new Date(this.context.selectedSemester.start).getTime() &&
+            this.props.date.getTime() <=
+                new Date(this.context.selectedSemester.end).getTime();
+
         return (
-            <div
-                className={styles.day}
-                onClick={() => {
-                    this.context.changeDate(this.props.date);
-                    this.context.changeView(<WeekController />);
-                }}>
-                {this.props.date.getDate()}
-            </div>
+            <>
+                <div
+                    onClick={() => {
+                        if (isInSemester) {
+                            this.context.changeDate(this.props.date);
+                            this.context.changeView(<WeekController />);
+                        }
+                    }}>
+                    {this.props.date.getDate()}
+                </div>
+                <style jsx>{`
+                    div {
+                        height: 50px;
+                        width: auto;
+                        border-bottom: 2px solid black;
+                        background-color: ${isInSemester ? 'white' : 'grey'};
+                    }
+
+                    div:hover {
+                        cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
+                    }
+                `}</style>
+            </>
         );
     }
 }

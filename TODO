@@ -2,11 +2,11 @@
 # when should jwt expire? 12h?
 # min lenght for passwords?
 # set an production logging and a seperate debugging loggin
-# throw error, if no data changed on patch-req?
-# still show rooms if no courses are avalible and the other way around
-# highlight current day
+# highlight current day (in week and month)
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
 # check that lectures are not longer than a day and min one hour long
+# improve displaying existing lectures in week (maybe also in month)
 ================================
 
 Bugs:
+# weird jumping around in week view when selecting dates at the end of the week.
