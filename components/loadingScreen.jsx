@@ -14,6 +14,7 @@ export default function LoadingScreen() {
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    cursor: wait;
                 }
                 span {
                     border: 16px solid #f3f3f3;

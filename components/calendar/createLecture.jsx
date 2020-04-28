@@ -17,7 +17,7 @@ export default class CreateLecture extends React.Component {
             title: '',
             start: '08:00:00',
             end: '09:00:00',
-            semester: undefined,
+            semester: this.props.calendarContext.selectedSemester,
             course: undefined,
             room: undefined,
             message: '',
@@ -164,36 +164,8 @@ export default class CreateLecture extends React.Component {
                         />
                     </label>
                     <UserContext.Consumer>
-                        {({ courses, rooms, semesters }) => (
+                        {({ courses, rooms }) => (
                             <>
-                                <label>
-                                    Semester:
-                                    <br />
-                                    <select
-                                        value={this.state.semester}
-                                        onChange={this.changeSemester}
-                                        required>
-                                        {semesters
-                                            .filter(
-                                                (semester) =>
-                                                    new Date(
-                                                        semester.start
-                                                    ).getTime() <=
-                                                        this.props.calendarContext.selectedDate.getTime() &&
-                                                    new Date(
-                                                        semester.end
-                                                    ).getTime() >=
-                                                        this.props.calendarContext.selectedDate.getTime()
-                                            )
-                                            .map((semester) => (
-                                                <option
-                                                    key={semester._id}
-                                                    value={semester._id}>
-                                                    {semester.name}
-                                                </option>
-                                            ))}
-                                    </select>
-                                </label>
                                 <label>
                                     Course:
                                     <br />
