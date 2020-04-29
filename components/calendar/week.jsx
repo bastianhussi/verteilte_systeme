@@ -193,11 +193,11 @@ class Hour extends React.Component {
             this.props.date.getTime() <=
                 new Date(this.context.selectedSemester.end).getTime();
 
-        let backgroundColor = 'white';
+        let backgroundColor = 'var(--background-color)';
         if (!isInSemester) {
             backgroundColor = 'grey';
         } else if (this.props.lecture) {
-            backgroundColor = 'red';
+            backgroundColor = 'var(--accent-light-color)';
         }
 
         return (

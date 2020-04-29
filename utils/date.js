@@ -19,9 +19,12 @@ export function getYYYYMMDDFromDate(date) {
 
 export function getDateFromYYYMMDD(time) {
     const [year, month, day] = time.split('-');
+    console.log(year, month);
     const parsedDate = new Date();
     parsedDate.setFullYear(year);
-    parsedDate.setMonth(month);
+
+    // month in js go from 0-11 (January: 0, December: 11)
+    parsedDate.setMonth(month - 1);
     parsedDate.setDate(day);
     parsedDate.setHours(0);
     parsedDate.setMinutes(0);

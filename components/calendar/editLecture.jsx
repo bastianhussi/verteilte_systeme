@@ -8,7 +8,7 @@ import {
     getHHMMFromDate,
     getYYYYMMDDFromDate,
 } from '../../utils/date';
-import styles from './createLecture.module.css';
+import styles from './lectureForm.module.css';
 
 export default class EditLecture extends React.Component {
     constructor(props) {
@@ -81,6 +81,8 @@ export default class EditLecture extends React.Component {
                 getDateFromYYYMMDD(this.state.date)
             );
 
+            console.log(start, end, getDateFromYYYMMDD(this.state.date));
+
             const res = await axios.patch(
                 `${apiUrl}/lectures/${selectedLecture._id}`,
                 {
@@ -102,12 +104,10 @@ export default class EditLecture extends React.Component {
                 (lecture) => lecture._id === selectedLecture._id
             );
             modifiedLectures[index] = res.data;
-            console.log(index, modifiedLectures);
             changeLectures(modifiedLectures);
 
             showForm();
         } catch (err) {
-            console.log(err);
             this.setState({ message: err.response.data });
         }
     }
@@ -130,7 +130,6 @@ export default class EditLecture extends React.Component {
             changeLectures(modifiedLectures);
             showForm();
         } catch (err) {
-            console.log(err);
             this.setState({ message: err.response.data });
         }
     }

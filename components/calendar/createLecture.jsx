@@ -2,8 +2,8 @@ import React from 'react';
 import UserContext from '../userContext';
 import Message from '../message';
 import axios from 'axios';
-import styles from './createLecture.module.css';
 import { getHHMMFromDate, getDateFromHHMM } from '../../utils/date';
+import styles from './lectureForm.module.css';
 
 export default class CreateLecture extends React.Component {
     constructor(props) {

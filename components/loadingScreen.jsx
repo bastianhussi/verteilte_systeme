@@ -19,7 +19,7 @@ export default function LoadingScreen() {
                 span {
                     border: 16px solid #f3f3f3;
                     border-radius: 50%;
-                    border-top: 16px solid #3498db;
+                    border-top: 16px solid var(--main-color);
                     width: 120px;
                     height: 120px;
                     -webkit-animation: spin 2s linear infinite; /* Safari */

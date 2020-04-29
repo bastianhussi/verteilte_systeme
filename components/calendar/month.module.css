@@ -20,10 +20,13 @@
     border-bottom: 2px solid black;
 }
 
-.day:hover {
-    cursor: pointer;
+/* remove day name, because it takes to much space on mobile devicees */
+@media only screen and (max-width: 600px) {
+    .dayHeader {
+        display: none;
+    }
 }
 
-.dayLecture {
-    background-color: red;
+.day:hover {
+    cursor: pointer;
 }

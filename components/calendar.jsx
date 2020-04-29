@@ -4,7 +4,6 @@ import LectureDialog from './calendar/lectureDialog';
 import CalendarContext from './calendarContext';
 import UserContext from './userContext';
 import LoadingScreen from './loadingScreen';
-import styles from './calendar.module.css';
 
 export default class Calendar extends React.Component {
     constructor(props) {
@@ -60,12 +59,13 @@ export default class Calendar extends React.Component {
         return this.state.loading ? (
             <LoadingScreen />
         ) : (
-            <>
-                <div className={styles.header}>
+            <div className='calendar'>
+                <div className='header'>
                     <UserContext.Consumer>
                         {({ semesters }) => (
                             <label>
                                 Semester:
+                                <br />
                                 <select onChange={this.changeSemester} required>
                                     {semesters.map((semester, index) => (
                                         <option key={index} value={index}>
@@ -87,10 +87,25 @@ export default class Calendar extends React.Component {
                         changeView: this.changeView,
                         showForm: this.showForm,
                     }}>
-                    {this.state.currentView}
+                    <div className='body'>{this.state.currentView}</div>
                     {this.state.showForm ? <LectureDialog /> : <></>}
                 </CalendarContext.Provider>
-            </>
+                <style jsx>{`
+                    .calendar {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+
+                    .header {
+                        margin-bottom: 1rem;
+                    }
+
+                    .body {
+                        width: 100%;
+                    }
+                `}</style>
+            </div>
         );
     }
 }

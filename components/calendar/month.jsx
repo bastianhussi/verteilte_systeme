@@ -1,8 +1,8 @@
 import React from 'react';
 import CalendarContext from '../calendarContext';
 import WeekController from './week';
-import styles from './month.module.css';
 import UserContext from '../userContext';
+import styles from './month.module.css';
 
 Date.prototype.getMonthDays = function () {
     const date = new Date(this.getFullYear(), this.getMonth() + 1, 0);
@@ -87,14 +87,13 @@ export default class MonthController extends React.Component {
         return (
             <CalendarContext.Consumer>
                 {({ selectedDate, changeDate, selectedSemester }) => (
-                    <>
+                    <div>
                         <div className={styles.header}>
                             <span
                                 className='material-icons'
                                 onClick={this.previousMonth}>
                                 arrow_back
                             </span>
-
                             {selectedDate.toDateString()}
                             <span
                                 className='material-icons'
@@ -117,7 +116,8 @@ export default class MonthController extends React.Component {
                                 />
                             )}
                         </UserContext.Consumer>
-                    </>
+                        <style jsx>{``}</style>
+                    </div>
                 )}
             </CalendarContext.Consumer>
         );
@@ -140,7 +140,11 @@ class Month extends React.Component {
                     selectedDate.getMonth(),
                     day
                 ).getDayName();
-                header.push(<div key={dayName}>{dayName}</div>);
+                header.push(
+                    <div key={dayName} className={styles.dayHeader}>
+                        {dayName}
+                    </div>
+                );
             }
             return header;
         }
