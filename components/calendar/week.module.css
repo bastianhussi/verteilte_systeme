@@ -1,7 +1,24 @@
+.weekContainer {
+}
+
+.header {
+    width: 100%;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.header button {
+    border: none;
+    font-size: small;
+}
+
 .week {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: center;
     align-items: flex-start;
 }
@@ -12,6 +29,12 @@
     flex-wrap: nowrap;
     justify-content: flex-start;
     align-items: center;
+}
+
+@media only screen and (max-width: 600px) {
+    .day {
+        width: 100%;
+    }
 }
 
 .header {

@@ -1,6 +1,10 @@
+.monthContainer {
+    width: min-content;
+}
+
 .month {
     display: grid;
-    grid-template-columns: repeat(7, 10%);
+    grid-template-columns: repeat(7, auto);
     grid-template-rows: auto;
     justify-content: center;
     column-gap: 5px;
@@ -8,22 +12,35 @@
 }
 
 .header {
-    font-size: 20px;
-    text-align: center;
+    width: 100%;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+.header button {
+    border: none;
+    font-size: small;
 }
 
 /* same as .hour */
 
 .day {
-    height: 50px;
-    width: auto;
-    border-bottom: 2px solid black;
+    height: 60px;
+    width: 100px;
+    border: 1px solid black;
 }
 
-/* remove day name, because it takes to much space on mobile devicees */
+/* adjusting calendar for smartphones */
 @media only screen and (max-width: 600px) {
     .dayHeader {
         display: none;
+    }
+
+    .month {
+        grid-template-columns: repeat(3, auto);
     }
 }
 

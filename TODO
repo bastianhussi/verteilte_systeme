@@ -1,9 +1,8 @@
 # when should jwt expire? 12h?
 # min lenght for passwords?
-# highlight current day (in week and month)
+# highlight current day in week
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
 # check that lectures are not longer than a day and min one hour long
-# improve displaying existing lectures in week (maybe also in month)
 # display information about lectures in week
 # change production protocol back to https ( process.env.NODE_ENV === 'production' ? 'https' : 'http';)
 # find way to check if start is less than end in semesters/[id] without requireing both in req body.
@@ -12,7 +11,7 @@
 ================================
 
 Bugs:
-# weird jumping around in week view when selecting dates at the end of the week.
+# lectures may disappear is a date at the start of the week is selected (e.g. sunday)
 # changing start- & end-date of semesters doesnt work
 # updating lectures with form doesnt change the context (api request works)
 # changing the date of existing lectures causes weird behavior

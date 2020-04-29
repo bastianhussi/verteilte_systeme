@@ -86,9 +86,18 @@ export default class MonthController extends React.Component {
     render() {
         return (
             <CalendarContext.Consumer>
-                {({ selectedDate, changeDate, selectedSemester }) => (
-                    <div>
+                {({
+                    selectedDate,
+                    changeDate,
+                    selectedSemester,
+                    changeView,
+                }) => (
+                    <div className={styles.monthContainer}>
                         <div className={styles.header}>
+                            <button
+                                onClick={() => changeView(<WeekController />)}>
+                                to week view
+                            </button>
                             <span
                                 className='material-icons'
                                 onClick={this.previousMonth}>
@@ -111,12 +120,19 @@ export default class MonthController extends React.Component {
                                     lectures={lectures.filter(
                                         (lecture) =>
                                             lecture.semester ===
-                                            selectedSemester._id
+                                                selectedSemester._id &&
+                                            new Date(
+                                                lecture.start
+                                            ).getFullYear() ===
+                                                selectedDate.getFullYear() &&
+                                            new Date(
+                                                lecture.start
+                                            ).getMonth() ===
+                                                selectedDate.getMonth()
                                     )}
                                 />
                             )}
                         </UserContext.Consumer>
-                        <style jsx>{``}</style>
                     </div>
                 )}
             </CalendarContext.Consumer>
@@ -130,14 +146,14 @@ class Month extends React.Component {
     }
 
     render() {
-        const selectedDate = this.props.date;
+        const { date, lectures } = this.props;
 
         function getHeader() {
             const header = [];
             for (let day = 1; day <= 7; day++) {
                 const dayName = new Date(
-                    selectedDate.getFullYear(),
-                    selectedDate.getMonth(),
+                    date.getFullYear(),
+                    date.getMonth(),
                     day
                 ).getDayName();
                 header.push(
@@ -149,19 +165,25 @@ class Month extends React.Component {
             return header;
         }
 
+        function getDayLecture(day) {
+            return lectures.find(
+                (lecture) => new Date(lecture.start).getDate() === day.getDate()
+            );
+        }
+
         function getDays() {
             const days = [];
-            for (let day = 1; day <= selectedDate.getMonthDays(); day++) {
+            for (let day = 1; day <= date.getMonthDays(); day++) {
+                const dayDate = new Date(
+                    date.getFullYear(),
+                    date.getMonth(),
+                    day
+                );
                 days.push(
                     <Day
                         key={day}
-                        date={
-                            new Date(
-                                selectedDate.getFullYear(),
-                                selectedDate.getMonth(),
-                                day
-                            )
-                        }
+                        date={dayDate}
+                        lecture={getDayLecture(dayDate)}
                     />
                 );
             }
@@ -192,9 +214,25 @@ class Day extends React.Component {
                   new Date(this.context.selectedSemester.end).getTime()
             : false;
 
+        const isToday =
+            this.props.date.getFullYear() === new Date().getFullYear() &&
+            this.props.date.getMonth() === new Date().getMonth() &&
+            this.props.date.getDate() === new Date().getDate();
+
+        let backgroundColor = 'var(--background-color)';
+        if (!isInSemester) {
+            backgroundColor = 'grey';
+        } else if (this.props.lecture) {
+            backgroundColor = 'var(--accent-light-color)';
+        }
+
+        // highlight current day
+        if (isToday) backgroundColor = 'var(--accent-color)';
+
         return (
             <>
                 <div
+                    className={styles.day}
                     onClick={() => {
                         if (isInSemester) {
                             this.context.changeDate(this.props.date);
@@ -205,10 +243,7 @@ class Day extends React.Component {
                 </div>
                 <style jsx>{`
                     div {
-                        height: 50px;
-                        width: auto;
-                        border-bottom: 2px solid black;
-                        background-color: ${isInSemester ? 'white' : 'grey'};
+                        background-color: ${backgroundColor};
                     }
 
                     div:hover {

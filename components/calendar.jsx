@@ -87,7 +87,7 @@ export default class Calendar extends React.Component {
                         changeView: this.changeView,
                         showForm: this.showForm,
                     }}>
-                    <div className='body'>{this.state.currentView}</div>
+                    {this.state.currentView}
                     {this.state.showForm ? <LectureDialog /> : <></>}
                 </CalendarContext.Provider>
                 <style jsx>{`
@@ -99,10 +99,6 @@ export default class Calendar extends React.Component {
 
                     .header {
                         margin-bottom: 1rem;
-                    }
-
-                    .body {
-                        width: 100%;
                     }
                 `}</style>
             </div>

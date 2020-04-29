@@ -48,7 +48,7 @@ export default class WeekController extends React.Component {
                     changeView,
                     selectedSemester,
                 }) => (
-                    <>
+                    <div className={styles.weekContainer}>
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<MonthController />)}>
@@ -81,7 +81,7 @@ export default class WeekController extends React.Component {
                                 />
                             )}
                         </UserContext.Consumer>
-                    </>
+                    </div>
                 )}
             </CalendarContext.Consumer>
         );
