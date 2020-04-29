@@ -1,22 +1,47 @@
+:root {
+    --main-color: #006d99;
+    --main-light-color: #4cc7ba;
+    --accent-color: #e53c68;
+    --accent-light-color: #ff8033;
+    --background-color: rgb(250, 237, 236);
+    --font-color: #333333;
+}
+
 body {
     font-family: 'Roboto', sans-serif;
+    font-size: large;
     padding: 0;
     margin: 0;
+    background-color: var(--background-color);
+    color: var(--font-color);
 }
 
 a {
+    color: var(--main-color);
     text-decoration: none;
     cursor: pointer;
 }
 
+input[type='text'],
+input[type='email'],
+input[type='password'] {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgb(255, 254, 254);
+    border-radius: 4px;
+    box-sizing: border-box;
+    resize: vertical;
+}
+
 button {
     color: #ffffff;
-    background-color: red;
-    border: 2px solid;
-    border-radius: 6px;
+    background-color: var(--main-color);
+    border: 1px solid var(--main-color);
+    border-radius: 4px;
     padding: 8px;
     cursor: pointer;
     font-weight: bold;
+    font-size: large;
 }
 
 @font-face {
@@ -49,5 +74,5 @@ button {
 }
 
 .material-icons:hover {
-    color: red;
+    color: var(--accent-color);
 }

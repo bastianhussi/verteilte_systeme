@@ -41,7 +41,7 @@ export default class UpNext extends React.Component {
                         lectures
                             .filter(
                                 (lecture) =>
-                                    new Date(lecture.start).getTime() <
+                                    new Date(lecture.start).getTime() >
                                     new Date().getTime()
                             )
                             .sort(

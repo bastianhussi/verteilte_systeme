@@ -1,6 +1,6 @@
 .navbar {
     overflow: hidden;
-    background-color: #333;
+    background-color: var(--accent-color);
     margin-bottom: 2rem;
 }
 
@@ -31,7 +31,7 @@
 
 .navbar a:hover,
 .dropdown:hover .dropbtn {
-    background-color: red;
+    background-color: var(--accent-light-color);
 }
 
 .dropdownContent {
@@ -54,7 +54,7 @@
 }
 
 .dropdownContent a:hover {
-    background-color: #ddd;
+    background-color: var(--accent-light-color);
 }
 
 .dropdown:hover .dropdownContent {

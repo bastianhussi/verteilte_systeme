@@ -48,7 +48,7 @@ export default class WeekController extends React.Component {
                     changeView,
                     selectedSemester,
                 }) => (
-                    <>
+                    <div className={styles.weekContainer}>
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<MonthController />)}>
@@ -81,7 +81,7 @@ export default class WeekController extends React.Component {
                                 />
                             )}
                         </UserContext.Consumer>
-                    </>
+                    </div>
                 )}
             </CalendarContext.Consumer>
         );
@@ -193,11 +193,11 @@ class Hour extends React.Component {
             this.props.date.getTime() <=
                 new Date(this.context.selectedSemester.end).getTime();
 
-        let backgroundColor = 'white';
+        let backgroundColor = 'var(--background-color)';
         if (!isInSemester) {
             backgroundColor = 'grey';
         } else if (this.props.lecture) {
-            backgroundColor = 'red';
+            backgroundColor = 'var(--accent-light-color)';
         }
 
         return (

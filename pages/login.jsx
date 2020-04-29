@@ -112,7 +112,6 @@ export default class Login extends React.Component {
                         <div>
                             <label>
                                 Email:
-                                <br />
                                 <input
                                     type='email'
                                     value={this.state.email}
@@ -124,7 +123,6 @@ export default class Login extends React.Component {
                         <div>
                             <label>
                                 Password:
-                                <br />
                                 <input
                                     type={
                                         this.state.showPassword
@@ -136,7 +134,8 @@ export default class Login extends React.Component {
                                     required
                                 />
                             </label>
-                            <br />
+                        </div>
+                        <div>
                             <label>
                                 <input
                                     type='checkbox'

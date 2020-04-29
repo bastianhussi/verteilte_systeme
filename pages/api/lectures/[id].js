@@ -47,12 +47,27 @@ async function handlePatch(req, res) {
     validateIdAgainstToken(lecture.user, token);
 
     if (doc.start || doc.end) {
-        // check, if other lectures exist and if so check for conflicts.
+        // check is lecture is still in range of the semester
+        const semester = await findOne('semesters', {
+            _id: createObjectId(lecture.semester),
+        });
+        if (
+            new Date(semester.start).getTime() >= doc.start.getTime() ||
+            new Date(semester.end).getTime() <= doc.end.getTime()
+        ) {
+            throw new BadRequestError(
+                `${doc.name || lecture.name} is not in the range of ${
+                    semester.name
+                }`,
+                { doc, semester }
+            );
+        }
+
+        // check, if the lecture conflicts with other lectures (same user, room, or course at the same time)
         try {
-            // get all lectures with the same user, course, or room.
             const conflict = await findOne('lectures', {
                 $and: [
-                    { _id: { $ne: createObjectId()}},
+                    { _id: { $ne: _id } },
                     {
                         $or: [
                             { user: token._id },
@@ -71,11 +86,11 @@ async function handlePatch(req, res) {
             throw new BadRequestError(
                 `${doc.title || lecture.title} conflicts with ${
                     conflict.title
-                }`,
+                } on ${conflict.start.toDateString()}`,
                 { doc, conflict }
             );
         } catch (err) {
-            // ignore NotFoundErros
+            // ignore NotFoundErrors
             if (err instanceof BadRequestError) throw err;
         }
     }

@@ -106,7 +106,9 @@ async function handlePost(req, res) {
             ],
         });
         throw new BadRequestError(
-            `${doc.title} conflicts with ${conflict.title}`,
+            `${doc.title} conflicts with ${
+                conflict.title
+            } on ${conflict.start.toDateString()}`,
             { doc, conflict }
         );
     } catch (err) {

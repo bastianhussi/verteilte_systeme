@@ -124,7 +124,6 @@ export default class Register extends React.Component {
                         <div>
                             <label>
                                 Email:
-                                <br />
                                 <input
                                     type='email'
                                     value={this.state.email}
@@ -136,7 +135,6 @@ export default class Register extends React.Component {
                         <div>
                             <label>
                                 Name:
-                                <br />
                                 <input
                                     type='text'
                                     value={this.state.name}
@@ -148,7 +146,6 @@ export default class Register extends React.Component {
                         <div>
                             <label>
                                 Password:
-                                <br />
                                 <input
                                     type={
                                         this.state.showPassword
@@ -160,7 +157,8 @@ export default class Register extends React.Component {
                                     required
                                 />
                             </label>
-                            <br />
+                        </div>
+                        <div>
                             <label>
                                 <input
                                     type='checkbox'

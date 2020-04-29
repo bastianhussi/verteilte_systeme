@@ -69,7 +69,6 @@ export async function authAdmin(req) {
 export function handleError(res, err) {
     if (err instanceof UserFacingError) {
         res.status(err.statusCode).send(err.message);
-        if (process.env.NODE_ENV !== 'production') console.log(err);
     } else if (err instanceof MongoError) {
         switch (err.code) {
             case 11000:
@@ -79,14 +78,14 @@ export function handleError(res, err) {
                 break;
             default:
                 res.status(500).end();
-                console.log(err);
                 break;
         }
     } else {
         res.status(500).end();
-        if (!process.env.NODE_ENV === 'production') {
-            console.log(err);
-        }
+    }
+
+    if (process.env.NODE_ENV != 'production') {
+        console.log(err);
     }
 }
 
