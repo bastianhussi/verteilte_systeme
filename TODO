@@ -13,6 +13,3 @@
 Bugs:
 # lectures may disappear is a date at the start of the week is selected (e.g. sunday)
 # changing start- & end-date of semesters doesnt work
-# updating lectures with form doesnt change the context (api request works)
-# changing the date of existing lectures causes weird behavior
-# logging in causes "invalid jwt" error (although jwt is valid), if pages gets refreshed user is logged in anyways

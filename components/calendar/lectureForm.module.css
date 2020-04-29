@@ -12,3 +12,8 @@
     width: 100%;
     margin-bottom: 1rem;
 }
+
+.lectureForm .deleteIcon {
+    float: right;
+    font-size: 3rem;
+}

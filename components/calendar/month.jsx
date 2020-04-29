@@ -2,6 +2,7 @@ import React from 'react';
 import CalendarContext from '../calendarContext';
 import WeekController from './week';
 import UserContext from '../userContext';
+import { isToday } from '../../utils/date';
 import styles from './month.module.css';
 
 Date.prototype.getMonthDays = function () {
@@ -214,11 +215,6 @@ class Day extends React.Component {
                   new Date(this.context.selectedSemester.end).getTime()
             : false;
 
-        const isToday =
-            this.props.date.getFullYear() === new Date().getFullYear() &&
-            this.props.date.getMonth() === new Date().getMonth() &&
-            this.props.date.getDate() === new Date().getDate();
-
         let backgroundColor = 'var(--background-color)';
         if (!isInSemester) {
             backgroundColor = 'grey';
@@ -227,7 +223,7 @@ class Day extends React.Component {
         }
 
         // highlight current day
-        if (isToday) backgroundColor = 'var(--accent-color)';
+        if (isToday(this.props.date)) backgroundColor = 'var(--accent-color)';
 
         return (
             <>

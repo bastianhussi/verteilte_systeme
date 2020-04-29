@@ -21,7 +21,9 @@ function getCookieByName(cookieName, { req }) {
         cookies = document.cookie.split('; ');
     }
 
-    const cookie = cookies.find((cookie) => cookie.trim().startsWith(`${cookieName}=`));
+    const cookie = cookies.find((cookie) =>
+        cookie.trim().startsWith(`${cookieName}=`)
+    );
     if (cookie) {
         return cookie.split('=')[1];
     } else {
@@ -90,9 +92,9 @@ export async function auth(ctx, apiUrl) {
             headers: { Authorization: `Bearer ${token}` },
         });
         return { user: res.data, token };
-    } catch(err) {
+    } catch (err) {
         redirect(ctx, '/login');
-        throw new UnauthorizedError('invalid jwt', {err});
+        throw new UnauthorizedError('invalid jwt', { err });
     }
 }
 

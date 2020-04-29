@@ -47,6 +47,8 @@
     height: 50px;
     position: sticky;
     top: 0;
-    background-color: #333333;
     color: #fff;
+}
+
+.hour {
 }

@@ -3,6 +3,7 @@ import CalendarContext from '../calendarContext';
 import UserContext from '../userContext';
 import MonthController from './month';
 import styles from './week.module.css';
+import { isToday } from '../../utils/date';
 
 Date.prototype.getDayName = function () {
     const weekDays = [
@@ -173,6 +174,13 @@ class Day extends React.Component {
                         {`${this.props.date.getDate()}. ${this.props.date.getDayName()}`}
                     </div>
                     {getHours()}
+                    <style jsx>{`
+                        div {
+                            background-color: ${isToday(this.props.date)
+                                ? 'var(--accent-color)'
+                                : 'var(--accent-light-color)'};
+                        }
+                    `}</style>
                 </div>
             </>
         );
