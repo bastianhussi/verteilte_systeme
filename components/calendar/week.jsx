@@ -195,34 +195,71 @@ class Hour extends React.Component {
     static contextType = CalendarContext;
 
     render() {
+        const { date, lecture } = this.props;
+
         const isInSemester =
-            this.props.date.getTime() >=
+            date.getTime() >=
                 new Date(this.context.selectedSemester.start).getTime() &&
-            this.props.date.getTime() <=
+            date.getTime() <=
                 new Date(this.context.selectedSemester.end).getTime();
 
-        let backgroundColor = 'var(--background-color)';
-        if (!isInSemester) {
-            backgroundColor = 'grey';
-        } else if (this.props.lecture) {
-            backgroundColor = 'var(--accent-light-color)';
-        }
+        const backgroundColor = isInSemester
+            ? 'var(--background-color)'
+            : 'grey';
+
+        const title = (function () {
+            if (!lecture) return '';
+            console.log(
+                new Date(lecture.start).getMinutes(),
+                new Date(lecture.start).getHours() + 1,
+                date.getHours()
+            );
+            if (
+                new Date(lecture.start).getMinutes() === 0 &&
+                new Date(lecture.start).getHours() === date.getHours()
+            )
+                return lecture.title;
+            if (
+                new Date(lecture.start).getMinutes() !== 0 &&
+                new Date(lecture.start).getHours() + 1 === date.getHours()
+            )
+                return lecture.title;
+            return '';
+        })();
+
+        // returns the percentage the lecture will take in this hour and if
+        // the lecture div has to be aligned at the top (bool)
+        const [percent, positionTop] = (function () {
+            if (!lecture) return [null, null];
+            if (new Date(lecture.start).getHours() === date.getHours()) {
+                return [
+                    (100 / 60) * new Date(lecture.start).getMinutes(),
+                    false,
+                ];
+            } else if (new Date(lecture.end).getHours() === date.getHours()) {
+                return [(100 / 60) * new Date(lecture.end).getMinutes(), true];
+            } else {
+                return [100, true];
+            }
+        })();
 
         return (
-            <>
-                <div
-                    className={styles.hour}
-                    onClick={() => {
-                        if (isInSemester) {
-                            this.context.changeLecture(this.props.lecture);
-                            this.context.changeDate(this.props.date);
-                            this.context.showForm();
-                        }
-                    }}>
-                    {this.props.date.getHours()}:00
+            <div
+                className='hour'
+                onClick={() => {
+                    if (isInSemester) {
+                        this.context.changeLecture(lecture);
+                        this.context.changeDate(date);
+                        this.context.showForm();
+                    }
+                }}>
+                {lecture ? '' : `${date.getHours()}:00`}
+                <div className={percent ? 'lecture' : ''}>
+                    {title ? title : ''}
                 </div>
                 <style jsx>{`
-                    div {
+                    .hour {
+                        position: relative;
                         height: 50px;
                         width: 150px;
                         color: #333333;
@@ -230,11 +267,19 @@ class Hour extends React.Component {
                         background-color: ${backgroundColor};
                     }
 
-                    div:hover {
+                    .hour:hover {
                         cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
                     }
+
+                    .lecture {
+                        position: absolute;
+                        ${positionTop ? 'top: 0;' : 'bottom: 0;'}
+                        height: ${percent}%;
+                        width: 100%;
+                        background-color: var(--accent-light-color);
+                    }
                 `}</style>
-            </>
+            </div>
         );
     }
 }

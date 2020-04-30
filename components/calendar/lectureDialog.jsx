@@ -42,6 +42,7 @@ export default function LectureDialog() {
                             right: 25px;
                             color: var(--main-color);
                             font-size: 4rem;
+                            z-index: 1000;
                         }
 
                         div {
