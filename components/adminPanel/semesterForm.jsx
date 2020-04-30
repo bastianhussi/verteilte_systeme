@@ -110,7 +110,7 @@ export default class SemesterForm extends React.Component {
                         </div>
                     </form>
                 </div>
-                <div className={styles.separatorLine}/>
+                <div className={styles.separatorLine} />
                 <UserContext.Consumer>
                     {({ semesters }) =>
                         semesters.length === 0 ? (

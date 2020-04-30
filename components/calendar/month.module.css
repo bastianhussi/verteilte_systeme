@@ -21,7 +21,7 @@
 .day {
     height: 60px;
     width: 100px;
-    border: 1px solid var(--font-color);
+    border-bottom: 1px solid var(--dark-purple);
 }
 
 /* adjusting calendar for smartphones */

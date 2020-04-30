@@ -5,7 +5,7 @@
 }
 
 .container {
-    background-color: var(--cyan-color);
+    background-color: var(--cyan);
     padding: 1rem;
     border: solid 2px #0000002f;
     border-radius: 4px;
@@ -32,7 +32,7 @@
 }
 
 .separatorLine {
-    border: 1px solid var(--purple-color);
+    border: 1px solid var(--purple);
     border-radius: 4px;
     margin-top: 1rem;
     margin-bottom: 1rem;

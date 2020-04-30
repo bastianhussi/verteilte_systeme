@@ -74,7 +74,7 @@ export default class RoomForm extends React.Component {
                         </div>
                     </form>
                 </div>
-                <div className={styles.separatorLine}/>
+                <div className={styles.separatorLine} />
                 <UserContext.Consumer>
                     {({ rooms }) =>
                         rooms.length === 0 ? (

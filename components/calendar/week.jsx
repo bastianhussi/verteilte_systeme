@@ -199,69 +199,33 @@ class Hour extends React.Component {
 
     render() {
         const { date, lecture } = this.props;
+        const {
+            selectedSemester,
+            changeLecture,
+            changeDate,
+            showForm,
+        } = this.context;
 
         const isInSemester =
-            date.getTime() >=
-                new Date(this.context.selectedSemester.start).getTime() &&
-            date.getTime() <=
-                new Date(this.context.selectedSemester.end).getTime();
-
-        const backgroundColor = isInSemester
-            ? 'var(--background-color)'
-            : 'grey';
-
-        const title = (function () {
-            if (!lecture) return '';
-            if (
-                new Date(lecture.start).getMinutes() === 0 &&
-                new Date(lecture.start).getHours() === date.getHours()
-            )
-                return lecture.title;
-            if (
-                new Date(lecture.start).getMinutes() !== 0 &&
-                new Date(lecture.start).getHours() + 1 === date.getHours()
-            )
-                return lecture.title;
-            return '';
-        })();
-
-        // returns the percentage the lecture will take in this hour and if
-        // the lecture div has to be aligned at the top (bool)
-        const [percent, positionTop] = (function () {
-            if (!lecture) return [null, null];
-            if (new Date(lecture.start).getHours() === date.getHours()) {
-                return [100 - (100 / 60 * (new Date(lecture.start).getMinutes() === 0
-                    ? 60
-                    : new Date(lecture.start).getMinutes())), false];
-            } else if (new Date(lecture.end).getHours() === date.getHours()) {
-                return [
-                    100 / 60 *
-                        (new Date(lecture.end).getMinutes() === 0
-                            ? 60
-                            : new Date(lecture.end).getMinutes()),
-                    true,
-                ];
-            } else {
-                return [100, true];
-            }
-        })();
+            date.getTime() >= new Date(selectedSemester.start).getTime() &&
+            date.getTime() <= new Date(selectedSemester.end).getTime();
 
         return (
-            <div
-                className='hour'
-                onClick={() => {
-                    if (isInSemester) {
-                        this.context.changeLecture(lecture);
-                        this.context.changeDate(date);
-                        this.context.showForm();
-                    }
-                }}>
-                {lecture ? '' : `${date.getHours()}:00`}
-                <div className={percent ? 'lecture' : ''}>
-                    {title ? title : ''}
-                </div>
+            <div className='.hour'>
+                {lecture ? (
+                    <Lecture date={date} lecture={lecture} />
+                ) : (
+                    <div
+                        onClick={() => {
+                            changeDate(date);
+                            changeLecture(undefined);
+                            showForm();
+                        }}>
+                        `${date.getHours()}:00`
+                    </div>
+                )}
                 <style jsx>{`
-                    .hour {
+                    div {
                         position: relative;
                         height: 50px;
                         width: 150px;
@@ -270,19 +234,68 @@ class Hour extends React.Component {
                         background-color: ${backgroundColor};
                     }
 
-                    .hour:hover {
+                    div:hover {
                         cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
-                    }
-
-                    .lecture {
-                        position: absolute;
-                        ${positionTop ? 'top: 0;' : 'bottom: 0;'}
-                        height: ${percent}%;
-                        width: 100%;
-                        background-color: var(--dark-cyan-color);
                     }
                 `}</style>
             </div>
+        );
+    }
+}
+
+class Lecture extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.getPercent = this.getPercent.bind(this);
+    }
+
+    static contextType = UserContext;
+
+    getPercent() {
+        const { date, lecture } = this.props;
+        const lectureStart = new Date(lecture.start);
+        const lectureEnd = new Date(lecture.end);
+
+        if (lectureStart.getHours() === date.getHours()) {
+            return 100 - (100 / 60) * lectureStart.getMinutes() === 0
+                ? 60
+                : lectureStart.getMinutes();
+        } else if (lectureEnd.getHours() === date.getHours()) {
+            return (100 / 60) * lectureEnd.getMinutes();
+        } else {
+            return 100;
+        }
+    }
+
+    render() {
+        const { date, lecture } = this.props;
+
+        return (
+            <UserContext.Consumer>
+                {({ courses }) => (
+                    <div>
+                        <style jsx>{`
+                    div {
+                        position: absolute;
+                        ${
+                            new Date(lecture.start).getHours() ===
+                            date.getHours()
+                                ? 'top: 0;'
+                                : 'bottom: 0;'
+                        }
+                        height: ${this.getPercent}%;
+                        width: 100%;
+                        background-color: ${
+                            courses.find(
+                                (course) => course._id === lecture.course
+                            ).color
+                        };
+                    }
+                    `}</style>
+                    </div>
+                )}
+            </UserContext.Consumer>
         );
     }
 }

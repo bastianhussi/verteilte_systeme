@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
-import styles from '../adminPanel.module.css'
+import styles from '../adminPanel.module.css';
 
 export default class Course extends React.Component {
     constructor(props) {
@@ -81,23 +81,27 @@ export default class Course extends React.Component {
             <div className={styles.item}>
                 <Message value={this.state.message} />
                 {this.state.showEditing ? (
-                    <form onSubmit={this.changeCourse} className={styles.itemForm}>
+                    <form
+                        onSubmit={this.changeCourse}
+                        className={styles.itemForm}>
                         <div>
-                        <input
-                            type='text'
-                            value={this.state.name}
-                            onChange={this.changeName}
-                            required
-                        />
+                            <input
+                                type='text'
+                                value={this.state.name}
+                                onChange={this.changeName}
+                                required
+                            />
                         </div>
                         <div>
-                        <button
-                            onClick={() =>
-                                this.setState({ showEditing: false })
-                            }>
-                            cancel
-                        </button>
-                        <button type='submit' className={styles.saveButton}>Save</button>
+                            <button
+                                onClick={() =>
+                                    this.setState({ showEditing: false })
+                                }>
+                                cancel
+                            </button>
+                            <button type='submit' className={styles.saveButton}>
+                                Save
+                            </button>
                         </div>
                     </form>
                 ) : (
@@ -113,7 +117,6 @@ export default class Course extends React.Component {
                             onClick={this.changeShowEditing}>
                             edit
                         </span>
-                        
                     </div>
                 )}
             </div>

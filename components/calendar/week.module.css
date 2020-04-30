@@ -42,4 +42,6 @@
     height: 50px;
     position: sticky;
     top: 0;
+    color: var(--background-color);
+    background-color: var(--dark-purple);
 }

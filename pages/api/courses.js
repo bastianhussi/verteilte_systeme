@@ -19,6 +19,10 @@ async function handleGet(req, res) {
 
     const schema = Joi.object({
         name: Joi.string().trim().max(30).optional(),
+        color: Joi.string()
+            .trim()
+            .regex(new RegExp('^#(?:[0-9a-fA-F]{3}){1,2}$'))
+            .optional(),
         limit: Joi.number().integer().min(1).max(100).optional().default(50),
     });
     const { limit, ...query } = await validateData(req.query, schema);
@@ -38,6 +42,10 @@ async function handlePost(req, res) {
 
     const schema = Joi.object({
         name: Joi.string().trim().min(3).max(30).required(),
+        color: Joi.string()
+            .trim()
+            .regex(new RegExp('^#(?:[0-9a-fA-F]{3}){1,2}$'))
+            .required(),
     });
     const doc = await validateData(req.body, schema);
 
