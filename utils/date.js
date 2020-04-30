@@ -1,3 +1,11 @@
+export function isToday(date) {
+    return (
+        date.getFullYear() === new Date().getFullYear() &&
+        date.getMonth() === new Date().getMonth() &&
+        date.getDate() === new Date().getDate()
+    );
+}
+
 export function getHHMMFromDate(date) {
     const [hours, minutes] = date.toTimeString().split(' ')[0].split(':');
     return `${hours}:${minutes}`;
@@ -19,7 +27,6 @@ export function getYYYYMMDDFromDate(date) {
 
 export function getDateFromYYYMMDD(time) {
     const [year, month, day] = time.split('-');
-    console.log(year, month);
     const parsedDate = new Date();
     parsedDate.setFullYear(year);
 

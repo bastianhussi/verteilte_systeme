@@ -3,6 +3,7 @@ import UserContext from '../userContext';
 import axios from 'axios';
 import Message from '../message';
 import Semester from './semester';
+import styles from '../adminPanel.module.css';
 
 export default class SemesterForm extends React.Component {
     constructor(props) {
@@ -64,13 +65,12 @@ export default class SemesterForm extends React.Component {
     render() {
         return (
             <>
-                <div>
+                <div className={styles.createForm}>
                     <Message value={this.state.message} />
                     <form onSubmit={this.createSemester}>
                         <div>
                             <label>
                                 Semester:
-                                <br />
                                 <input
                                     type='text'
                                     value={this.state.name}
@@ -82,7 +82,6 @@ export default class SemesterForm extends React.Component {
                         <div>
                             <label>
                                 Start:
-                                <br />
                                 <input
                                     type='date'
                                     value={this.state.start}
@@ -94,7 +93,6 @@ export default class SemesterForm extends React.Component {
                         <div>
                             <label>
                                 End:
-                                <br />
                                 <input
                                     type='date'
                                     value={this.state.end}
@@ -103,9 +101,16 @@ export default class SemesterForm extends React.Component {
                                 />
                             </label>
                         </div>
-                        <button type='submit'>Create</button>
+                        <div>
+                            <button
+                                type='submit'
+                                className={styles.createButton}>
+                                Create
+                            </button>
+                        </div>
                     </form>
                 </div>
+                <div className={styles.separatorLine}/>
                 <UserContext.Consumer>
                     {({ semesters }) =>
                         semesters.length === 0 ? (

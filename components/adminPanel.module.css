@@ -5,18 +5,73 @@
 }
 
 .container {
+    background-color: var(--cyan-color);
     padding: 1rem;
     border: solid 2px #0000002f;
-    border-radius: 1rem;
-    min-width: 50vw;
+    border-radius: 4px;
+    width: 30vw;
 }
 
 .containerHeader {
     display: flex;
     flex-wrap: wrap;
     flex-direction: row;
-    justify-content: space-around;
+    justify-content: space-between;
+    margin-bottom: 1rem;
 }
 
 .containerBody {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.containerBody > * {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.separatorLine {
+    border: 1px solid var(--purple-color);
+    border-radius: 4px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.createForm div {
+    margin-bottom: 1rem;
+}
+
+.createButton {
+    float: right;
+}
+
+.item {
+    padding: 1rem;
+    border: 1px solid var(--main-light-color);
+    border-radius: 4px;
+    background-color: var(--main-light-color);
+}
+
+.item .itemIcon {
+    float: right;
+}
+
+.item .itemForm div {
+    margin-bottom: 1rem;
+}
+
+.item .itemForm .saveButton {
+    float: right;
+}
+
+@media only screen and (max-width: 600px) {
+    .center {
+        justify-content: flex-start;
+    }
+    .container {
+        width: 100%;
+        border: none;
+        border-radius: 0px;
+    }
 }

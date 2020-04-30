@@ -1,0 +1,35 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lecture {
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-areas:
+        'header header'
+        'date date'
+        'time time'
+        'course course'
+        'room room'
+        'semester semester';
+    grid-template-rows: auto;
+    row-gap: 1rem;
+    padding: 1rem;
+    border: 1px solid var(--cyan-color);
+    background-color: var(--cyan-color);
+    border-radius: 4px;
+    width: 50vw;
+    margin-top: 2rem;
+}
+
+.lecture h1 {
+    grid-area: header;
+}
+
+@media only screen and (max-width: 600px) {
+    .lecture {
+        width: auto;
+    }
+}

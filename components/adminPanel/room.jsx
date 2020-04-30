@@ -2,6 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
+import styles from '../adminPanel.module.css';
 
 export default class Room extends React.Component {
     constructor(props) {
@@ -77,41 +78,44 @@ export default class Room extends React.Component {
 
     render() {
         return (
-            <>
+            <div className={styles.item}>
                 <Message value={this.state.message} />
                 {this.state.showEditing ? (
-                    <form onSubmit={this.changeRoom}>
+                    <form onSubmit={this.changeRoom} className={styles.itemForm}>
+                        <div>
                         <input
                             type='text'
                             value={this.state.name}
                             onChange={this.changeName}
                             required
                         />
-                        <br />
-                        <button type='submit'>Save</button>
-                        <button
+                        </div>
+                        <div>
+                        <button 
                             onClick={() =>
                                 this.setState({ showEditing: false })
                             }>
                             cancel
                         </button>
+                        <button type='submit' className={styles.saveButton}>Save</button>
+                        </div>
                     </form>
                 ) : (
                     <div>
                         <span>{this.state.name}</span>
                         <span
-                            className='material-icons'
-                            onClick={this.changeShowEditing}>
-                            edit
-                        </span>
-                        <span
-                            className='material-icons'
+                            className={`material-icons ${styles.itemIcon}`}
                             onClick={this.deleteRoom}>
                             delete
                         </span>
+                        <span
+                            className={`material-icons ${styles.itemIcon}`}
+                            onClick={this.changeShowEditing}>
+                            edit
+                        </span>
                     </div>
                 )}
-            </>
+            </div>
         );
     }
 }

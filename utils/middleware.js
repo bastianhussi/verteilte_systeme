@@ -68,7 +68,9 @@ export async function authAdmin(req) {
  */
 export function handleError(res, err) {
     if (err instanceof UserFacingError) {
-        res.status(err.statusCode).send(err.message);
+        res.status(err.statusCode).send(
+            err.message.replace('{', '').replace('}', '')
+        );
     } else if (err instanceof MongoError) {
         switch (err.code) {
             case 11000:

@@ -3,6 +3,7 @@ import UserContext from '../userContext';
 import Course from './course';
 import axios from 'axios';
 import Message from '../message';
+import styles from '../adminPanel.module.css';
 
 export default class CourseForm extends React.Component {
     constructor(props) {
@@ -50,28 +51,36 @@ export default class CourseForm extends React.Component {
     render() {
         return (
             <>
-                <div>
+                <div className={styles.createForm}>
                     <Message value={this.state.message} />
                     <form onSubmit={this.createCourse}>
-                        <label>
-                            Course:
-                            <br />
-                            <input
-                                type='text'
-                                value={this.state.name}
-                                onChange={this.changeName}
-                                required
-                            />
-                        </label>
-                        <button type='submit'>Create</button>
+                        <div>
+                            <label>
+                                Course:
+                                <input
+                                    type='text'
+                                    value={this.state.name}
+                                    onChange={this.changeName}
+                                    required
+                                />
+                            </label>
+                        </div>
+                        <div>
+                            <button
+                                type='submit'
+                                className={styles.createButton}>
+                                Create
+                            </button>
+                        </div>
                     </form>
                 </div>
+                <div className={styles.separatorLine}/>
                 <UserContext.Consumer>
                     {({ courses }) =>
                         courses.length === 0 ? (
                             <div>No courses yet</div>
                         ) : (
-                            <div>
+                            <div className={styles.course}>
                                 {courses.map((course) => (
                                     <Course key={course._id} value={course} />
                                 ))}

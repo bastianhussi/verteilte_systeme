@@ -81,8 +81,6 @@ export default class EditLecture extends React.Component {
                 getDateFromYYYMMDD(this.state.date)
             );
 
-            console.log(start, end, getDateFromYYYMMDD(this.state.date));
-
             const res = await axios.patch(
                 `${apiUrl}/lectures/${selectedLecture._id}`,
                 {
@@ -136,103 +134,120 @@ export default class EditLecture extends React.Component {
 
     render() {
         return (
-            <>
+            <div>
                 <Message value={this.state.message} />
                 <form
                     className={styles.lectureForm}
                     onSubmit={this.submitLectureForm}>
-                    <label>
-                        Title:
-                        <br />
+                    <div>
+                        <label>
+                            Title:
+                            <input
+                                type='text'
+                                value={this.state.title}
+                                onChange={this.changeTitle}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>Semester:</label>
                         <input
                             type='text'
-                            value={this.state.title}
-                            onChange={this.changeTitle}
-                            required
+                            value={
+                                this.props.calendarContext.selectedSemester.name
+                            }
+                            disabled
                         />
-                    </label>
-                    <p>
-                        Semester:{' '}
-                        {this.props.calendarContext.selectedSemester.name}
-                    </p>
-                    <label>
-                        Date:
-                        <br />
-                        <input
-                            type='date'
-                            value={this.state.date}
-                            onChange={this.changeDate}
-                            required
-                        />
-                    </label>
-                    <label>
-                        Start:
-                        <br />
-                        <input
-                            type='time'
-                            min={'08:00'}
-                            max={'18:00'}
-                            value={this.state.start}
-                            onChange={this.changeStart}
-                            required
-                        />
-                    </label>
-                    <label>
-                        End:
-                        <br />
-                        <input
-                            type='time'
-                            min={'08:00'}
-                            max={'18:00'}
-                            value={this.state.end}
-                            onChange={this.changeEnd}
-                            required
-                        />
-                    </label>
+                    </div>
+                    <div>
+                        <label>
+                            Date:
+                            <input
+                                type='date'
+                                value={this.state.date}
+                                onChange={this.changeDate}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            Start:
+                            <input
+                                type='time'
+                                min={'08:00'}
+                                max={'18:00'}
+                                value={this.state.start}
+                                onChange={this.changeStart}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            End:
+                            <input
+                                type='time'
+                                min={'08:00'}
+                                max={'18:00'}
+                                value={this.state.end}
+                                onChange={this.changeEnd}
+                                required
+                            />
+                        </label>
+                    </div>
+
                     <UserContext.Consumer>
                         {({ courses, rooms }) => (
                             <>
-                                <label>
-                                    Course:
-                                    <br />
-                                    <select
-                                        value={this.state.course}
-                                        onChange={this.changeCourse}
-                                        required>
-                                        {courses.map((course) => (
-                                            <option
-                                                key={course._id}
-                                                value={course._id}>
-                                                {course.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <label>
-                                    Room:
-                                    <br />
-                                    <select
-                                        value={this.state.room}
-                                        onChange={this.changeRoom}
-                                        required>
-                                        {rooms.map((room) => (
-                                            <option
-                                                key={room._id}
-                                                value={room._id}>
-                                                {room.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
+                                <div>
+                                    <label>
+                                        Course:
+                                        <select
+                                            value={this.state.course}
+                                            onChange={this.changeCourse}
+                                            required>
+                                            {courses.map((course) => (
+                                                <option
+                                                    key={course._id}
+                                                    value={course._id}>
+                                                    {course.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        Room:
+                                        <select
+                                            value={this.state.room}
+                                            onChange={this.changeRoom}
+                                            required>
+                                            {rooms.map((room) => (
+                                                <option
+                                                    key={room._id}
+                                                    value={room._id}>
+                                                    {room.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
                             </>
                         )}
                     </UserContext.Consumer>
-                    <button type='submit'>Save</button>
+                    <div>
+                        <button type='submit'>Save</button>
+                        <span
+                            className={`material-icons ${styles.deleteIcon}`}
+                            onClick={this.deleteLecutre}>
+                            delete
+                        </span>
+                    </div>
                 </form>
-                <span className='material-icons' onClick={this.deleteLecutre}>
-                    delete
-                </span>
-            </>
+            </div>
         );
     }
 }

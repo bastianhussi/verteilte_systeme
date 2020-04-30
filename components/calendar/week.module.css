@@ -10,11 +10,6 @@
     margin-bottom: 1rem;
 }
 
-.header button {
-    border: none;
-    font-size: small;
-}
-
 .week {
     display: flex;
     flex-direction: row;
@@ -47,6 +42,4 @@
     height: 50px;
     position: sticky;
     top: 0;
-    background-color: #333333;
-    color: #fff;
 }

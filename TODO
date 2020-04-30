@@ -3,7 +3,6 @@
 # highlight current day in week
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
 # check that lectures are not longer than a day and min one hour long
-# display information about lectures in week
 # change production protocol back to https ( process.env.NODE_ENV === 'production' ? 'https' : 'http';)
 # find way to check if start is less than end in semesters/[id] without requireing both in req body.
 # replace manual validation which joi
@@ -13,6 +12,3 @@
 Bugs:
 # lectures may disappear is a date at the start of the week is selected (e.g. sunday)
 # changing start- & end-date of semesters doesnt work
-# updating lectures with form doesnt change the context (api request works)
-# changing the date of existing lectures causes weird behavior
-# logging in causes "invalid jwt" error (although jwt is valid), if pages gets refreshed user is logged in anyways

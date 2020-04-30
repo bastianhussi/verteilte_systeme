@@ -12,7 +12,6 @@ import { UnauthorizedError } from './errors';
  */
 function getCookieByName(cookieName, { req }) {
     // all cookies are saved in one string and seperated by "; "
-    // check if on server or client
     let cookies;
     if (req) {
         if (!req.headers.cookie) return null;
@@ -22,11 +21,14 @@ function getCookieByName(cookieName, { req }) {
         cookies = document.cookie.split('; ');
     }
 
-    const cookie = cookies.filter((c) => c.startsWith(cookieName))[0];
+    const cookie = cookies.find((cookie) =>
+        cookie.trim().startsWith(`${cookieName}=`)
+    );
     if (cookie) {
         return cookie.split('=')[1];
+    } else {
+        return null;
     }
-    return null;
 }
 
 /**
@@ -90,9 +92,9 @@ export async function auth(ctx, apiUrl) {
             headers: { Authorization: `Bearer ${token}` },
         });
         return { user: res.data, token };
-    } catch {
+    } catch (err) {
         redirect(ctx, '/login');
-        throw new UnauthorizedError('invalid jwt', ctx);
+        throw new UnauthorizedError('invalid jwt', { err });
     }
 }
 

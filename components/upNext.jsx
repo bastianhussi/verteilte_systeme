@@ -1,5 +1,6 @@
 import React from 'react';
 import UserContext from './userContext';
+import styles from './upNext.module.css';
 
 function getTimeStringFromDate(date) {
     const [hours, minutes] = date.toTimeString().split(' ')[0].split(':');
@@ -22,20 +23,18 @@ export default class UpNext extends React.Component {
 
     render() {
         return (
-            <>
-                <div>
-                    <label>
-                        Show entries:
-                        <select
-                            value={this.state.showEntries}
-                            onChange={this.changeShowEntries}>
-                            <option value='5'>5</option>
-                            <option value='10'>10</option>
-                            <option value='25'>25</option>
-                            <option value='50'>50</option>
-                        </select>
-                    </label>
-                </div>
+            <div className={styles.container}>
+                <label>
+                    Show entries:
+                    <select
+                        value={this.state.showEntries}
+                        onChange={this.changeShowEntries}>
+                        <option value='5'>5</option>
+                        <option value='10'>10</option>
+                        <option value='25'>25</option>
+                        <option value='50'>50</option>
+                    </select>
+                </label>
                 <UserContext.Consumer>
                     {({ lectures, rooms, courses, semesters }) =>
                         lectures
@@ -51,66 +50,58 @@ export default class UpNext extends React.Component {
                             )
                             .slice(0, this.state.showEntries)
                             .map((lecture) => (
-                                <>
-                                    <div key={lecture._id}>
-                                        <p>Title: {lecture.title}</p>
-                                        <p>
-                                            Date:{' '}
-                                            {new Date(
-                                                lecture.start
-                                            ).toDateString()}
-                                        </p>
-                                        <p>
-                                            {getTimeStringFromDate(
-                                                new Date(lecture.start)
-                                            )}{' '}
-                                            -{' '}
-                                            {getTimeStringFromDate(
-                                                new Date(lecture.end)
-                                            )}
-                                        </p>
-                                        <p>
-                                            Room:
-                                            {
-                                                rooms.find(
-                                                    (room) =>
-                                                        room._id ===
-                                                        lecture.room
-                                                ).name
-                                            }
-                                        </p>
-                                        <p>
-                                            Course:
-                                            {
-                                                courses.find(
-                                                    (course) =>
-                                                        course._id ===
-                                                        lecture.course
-                                                ).name
-                                            }
-                                        </p>
-                                        <p>
-                                            Semester:
-                                            {
-                                                semesters.find(
-                                                    (semester) =>
-                                                        semester._id ===
-                                                        lecture.semester
-                                                ).name
-                                            }
-                                        </p>
-                                    </div>
-                                    <style jsx>{`
-                                        div {
-                                            border: solid 2px black;
-                                            margin-bottom: 2rem;
+                                <div
+                                    key={lecture._id}
+                                    className={styles.lecture}>
+                                    <h1>{lecture.title}</h1>
+                                    <span>Date:</span>
+                                    <span>
+                                        {new Date(lecture.start).toDateString()}
+                                    </span>
+                                    <span>Time:</span>
+                                    <span>
+                                        {getTimeStringFromDate(
+                                            new Date(lecture.start)
+                                        )}{' '}
+                                        -{' '}
+                                        {getTimeStringFromDate(
+                                            new Date(lecture.end)
+                                        )}
+                                    </span>
+                                    <span>Course:</span>
+                                    <span>
+                                        {
+                                            courses.find(
+                                                (course) =>
+                                                    course._id ===
+                                                    lecture.course
+                                            ).name
                                         }
-                                    `}</style>
-                                </>
+                                    </span>
+                                    <span>Room:</span>
+                                    <span>
+                                        {
+                                            rooms.find(
+                                                (room) =>
+                                                    room._id === lecture.room
+                                            ).name
+                                        }
+                                    </span>
+                                    <span>Semester:</span>
+                                    <span>
+                                        {
+                                            semesters.find(
+                                                (semester) =>
+                                                    semester._id ===
+                                                    lecture.semester
+                                            ).name
+                                        }
+                                    </span>
+                                </div>
                             ))
                     }
                 </UserContext.Consumer>
-            </>
+            </div>
         );
     }
 }
