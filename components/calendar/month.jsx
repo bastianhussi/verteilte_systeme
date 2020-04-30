@@ -97,14 +97,14 @@ export default class MonthController extends React.Component {
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<WeekController />)}>
-                                week view
+                                change view
                             </button>
                             <span
                                 className='material-icons'
                                 onClick={this.previousMonth}>
                                 arrow_back
                             </span>
-                            {selectedDate.toDateString()}
+                            <h2>{selectedDate.toLocaleDateString()}</h2>
                             <span
                                 className='material-icons'
                                 onClick={this.nextMonth}>

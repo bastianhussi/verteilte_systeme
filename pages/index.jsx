@@ -44,6 +44,7 @@ export default class Index extends React.Component {
                         resolve(res.data);
                     })
                     .catch((err) => {
+                        console.log(err);
                         err.response.status === 404 ? resolve([]) : reject(err);
                     });
             }),
@@ -59,6 +60,7 @@ export default class Index extends React.Component {
                         resolve(res.data);
                     })
                     .catch((err) => {
+                        console.log(err);
                         err.response.status === 404 ? resolve([]) : reject(err);
                     });
             }),
@@ -74,6 +76,7 @@ export default class Index extends React.Component {
                         resolve(res.data);
                     })
                     .catch((err) => {
+                        console.log(err);
                         err.response.status === 404 ? resolve([]) : reject(err);
                     });
             }),
@@ -89,6 +92,7 @@ export default class Index extends React.Component {
                         resolve(res.data);
                     })
                     .catch((err) => {
+                        console.log(err);
                         err.response.status === 404 ? resolve([]) : reject(err);
                     });
             }),

@@ -11,30 +11,18 @@
 }
 
 .week {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(7, auto);
+    grid-template-rows: auto;
     justify-content: center;
-    align-items: flex-start;
+    column-gap: 5px;
+    row-gap: 5px;
 }
 
 .day {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    justify-content: flex-start;
-    align-items: center;
 }
 
 @media only screen and (max-width: 600px) {
-    .day {
-        width: 100%;
-    }
-}
-
-.header {
-    font-size: 20px;
-    text-align: center;
 }
 
 .dayHeader {
@@ -42,8 +30,8 @@
     height: 50px;
     position: sticky;
     top: 0;
-    color: var(--background-color);
-    background-color: var(--dark-purple);
+    padding: 4px;
+    background-color: var(--dark-yellow);
 }
 
 .hour {
@@ -51,5 +39,5 @@
     height: 50px;
     width: 150px;
     color: var(--font-color);
-    border-bottom: 2px solid var(--dark-purple);
+    border-bottom: 1px solid var(--dark-purple);
 }

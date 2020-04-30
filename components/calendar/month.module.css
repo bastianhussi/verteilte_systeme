@@ -19,9 +19,18 @@
 /* same as .hour */
 
 .day {
-    height: 60px;
-    width: 100px;
+    height: 50px;
+    width: 150px;
     border-bottom: 1px solid var(--dark-purple);
+}
+
+.dayHeader {
+    width: 100%;
+    height: 50px;
+    position: sticky;
+    top: 0;
+    padding: 4px;
+    background-color: var(--dark-yellow);
 }
 
 /* adjusting calendar for smartphones */
@@ -33,8 +42,4 @@
     .month {
         grid-template-columns: repeat(3, auto);
     }
-}
-
-.day:hover {
-    cursor: pointer;
 }

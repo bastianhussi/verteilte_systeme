@@ -53,14 +53,14 @@ export default class WeekController extends React.Component {
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<MonthController />)}>
-                                back to month view
+                                change view
                             </button>
                             <span
                                 className='material-icons'
                                 onClick={this.previousWeek}>
                                 arrow_back
                             </span>
-                            {selectedDate.toDateString()}
+                            <h2>{selectedDate.toLocaleDateString()}</h2>
                             <span
                                 className='material-icons'
                                 onClick={this.nextWeek}>
@@ -292,29 +292,31 @@ class Lecture extends React.Component {
                                 changeDate(date);
                                 changeLecture(lecture);
                                 showForm();
-                            }}></div>
+                            }}>
+                        </div>
                         <style jsx>{`
-                    div {
-                        position: absolute;
-                        ${
-                            new Date(lecture.start).getHours() ===
-                            date.getHours()
-                                ? 'bottom: 0;'
-                                : 'top: 0;'
-                        }
-                        height: ${this.getPercent()}%;
-                        width: 100%;
-                        background-color: ${
-                            courses.find(
-                                (course) => course._id === lecture.course
-                            ).color
-                        };
-                    }
+                            div {
+                                position: absolute;
+                                ${
+                                    new Date(lecture.start).getHours() ===
+                                    date.getHours()
+                                        ? 'bottom: 0;'
+                                        : 'top: 0;'
+                                }
+                                height: ${this.getPercent()}%;
+                                width: 100%;
+                                background-color: ${
+                                    courses.find(
+                                        (course) =>
+                                            course._id === lecture.course
+                                    ).color
+                                };
+                            }
 
-                    div:hover {
-                        cursor: pointer;
-                    }
-                    `}</style>
+                            div:hover {
+                                cursor: pointer;
+                            }
+                        `}</style>
                     </>
                 )}
             </UserContext.Consumer>
