@@ -1,10 +1,12 @@
 :root {
-    --dark-purple-color: #6F04D9;
-    --purple-color: #8245BF;
-    --dark-cyan-color: #05F29B;
-    --cyan-color: #B7F7DF;
-    --background-color: #F2F2F2;
-    --yellow-color: #F2CB05;
+    --dark-blue: #6805f2;
+    --dark-purple: #6f04d9;
+    --purple: #8245bf;
+    --dark-cyan: #05f29b;
+    --cyan: #b7f7df;
+    --background-color: #f9eff2;
+    --dark-yellow: #f2cb05;
+    --yellow: #f7e68f;
     --font-color: #333333;
 }
 
@@ -21,7 +23,7 @@ body * {
 }
 
 a {
-    color: var(--yellow-color);
+    color: var(--dark-blue);
     text-decoration: none;
     cursor: pointer;
 }
@@ -45,8 +47,8 @@ select {
 
 button {
     color: var(--background-color);
-    background-color: var(--dark-purple-color);
-    border: 1px solid var(--dark-purple-color);
+    background-color: var(--dark-purple);
+    border: 1px solid var(--dark-purple);
     border-radius: 4px;
     padding: 8px;
     cursor: pointer;
@@ -55,13 +57,13 @@ button {
 }
 
 button:hover {
-    background-color: var(--purple-color);
-    border: 1px solid var(--purple-color);
+    background-color: var(--purple);
+    border: 1px solid var(--purple);
 }
 
 .activeButton {
-    background-color: var(--purple-color);
-    border: 1px solid var(--purple-color) ;
+    background-color: var(--purple);
+    border: 1px solid var(--purple);
 }
 
 @font-face {
@@ -94,5 +96,5 @@ button:hover {
 }
 
 .material-icons:hover {
-    color: var(--yellow-color);
+    color: var(--dark-yellow);
 }

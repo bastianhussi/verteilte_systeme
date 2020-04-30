@@ -5,7 +5,7 @@
     padding: 1rem;
     border: solid 2px #0000002f;
     border-radius: 1rem;
-    background-color: var(--cyan-color);
+    background-color: var(--cyan);
 }
 
 .lectureForm div {

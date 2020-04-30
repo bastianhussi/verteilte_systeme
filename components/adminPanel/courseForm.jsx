@@ -10,10 +10,12 @@ export default class CourseForm extends React.Component {
         super(props);
         this.state = {
             name: '',
+            color: '#05F29B',
             message: '',
         };
 
         this.changeName = this.changeName.bind(this);
+        this.changeColor = this.changeColor.bind(this);
         this.createCourse = this.createCourse.bind(this);
     }
 
@@ -21,6 +23,10 @@ export default class CourseForm extends React.Component {
 
     changeName(event) {
         this.setState({ name: event.target.value });
+    }
+
+    changeColor(event) {
+        this.setState({ color: event.target.value });
     }
 
     async createCourse(event) {
@@ -32,6 +38,7 @@ export default class CourseForm extends React.Component {
                 `${apiUrl}/courses`,
                 {
                     name: this.state.name,
+                    color: this.state.color,
                 },
                 {
                     headers: {
@@ -66,6 +73,16 @@ export default class CourseForm extends React.Component {
                             </label>
                         </div>
                         <div>
+                            <label>
+                                Color:
+                                <input
+                                    type='color'
+                                    value={this.state.color}
+                                    onChange={this.changeColor}
+                                />
+                            </label>
+                        </div>
+                        <div>
                             <button
                                 type='submit'
                                 className={styles.createButton}>
@@ -74,7 +91,7 @@ export default class CourseForm extends React.Component {
                         </div>
                     </form>
                 </div>
-                <div className={styles.separatorLine}/>
+                <div className={styles.separatorLine} />
                 <UserContext.Consumer>
                     {({ courses }) =>
                         courses.length === 0 ? (

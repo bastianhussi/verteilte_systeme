@@ -215,15 +215,11 @@ class Day extends React.Component {
                   new Date(this.context.selectedSemester.end).getTime()
             : false;
 
-        let backgroundColor = 'var(--background-color)';
-        if (!isInSemester) {
-            backgroundColor = 'grey';
-        } else if (this.props.lecture) {
-            backgroundColor = 'var(--dark-cyan-color)';
-        }
-
-        // highlight current day
-        if (isToday(this.props.date)) backgroundColor = 'var(--yellow-color)';
+        let backgroundColor = isInSemester
+            ? isToday(this.props.date)
+                ? 'var(--yellow)'
+                : 'var(--background-color)'
+            : 'grey';
 
         return (
             <>

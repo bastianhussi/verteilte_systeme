@@ -42,4 +42,14 @@
     height: 50px;
     position: sticky;
     top: 0;
+    color: var(--background-color);
+    background-color: var(--dark-purple);
+}
+
+.hour {
+    position: relative;
+    height: 50px;
+    width: 150px;
+    color: var(--font-color);
+    border-bottom: 2px solid var(--dark-purple);
 }

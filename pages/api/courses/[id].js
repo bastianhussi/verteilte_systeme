@@ -4,7 +4,6 @@ import {
     deleteOne,
     updateOne,
     updateMany,
-    find,
 } from '../../../utils/database';
 import {
     validateData,
@@ -36,7 +35,11 @@ async function handlePatch(req, res) {
     await authAdmin(req);
 
     const schema = Joi.object({
-        name: Joi.string().trim().min(3).max(30).optional().default(''),
+        name: Joi.string().trim().min(3).max(30).optional(),
+        color: Joi.string()
+            .trim()
+            .regex(new RegExp('^#(?:[0-9a-fA-F]{3}){1,2}$'))
+            .optional(),
     });
     const modifiedCourse = await validateData(req.body, schema);
 

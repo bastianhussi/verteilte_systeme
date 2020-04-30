@@ -65,7 +65,7 @@ export default class AdminPanel extends React.Component {
                             Semesters
                         </button>
                     </div>
-                    <div className={styles.separatorLine}/>
+                    <div className={styles.separatorLine} />
                     <div className={styles.containerBody}>
                         {this.state.currentView}
                     </div>

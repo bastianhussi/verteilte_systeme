@@ -100,7 +100,9 @@ export default class Semester extends React.Component {
             <div className={styles.item}>
                 <Message value={this.state.message} />
                 {this.state.showEditing ? (
-                    <form onSubmit={this.changeSemster} className={styles.itemForm}>
+                    <form
+                        onSubmit={this.changeSemster}
+                        className={styles.itemForm}>
                         <div>
                             <label>
                                 Name:
@@ -137,13 +139,15 @@ export default class Semester extends React.Component {
                             </label>
                         </div>
                         <div>
-                            <button 
+                            <button
                                 onClick={() =>
                                     this.setState({ showEditing: false })
                                 }>
                                 cancel
                             </button>
-                            <button type='submit' className={styles.saveButton}>Save</button>
+                            <button type='submit' className={styles.saveButton}>
+                                Save
+                            </button>
                         </div>
                     </form>
                 ) : (
