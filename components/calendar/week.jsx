@@ -209,11 +209,6 @@ class Hour extends React.Component {
 
         const title = (function () {
             if (!lecture) return '';
-            console.log(
-                new Date(lecture.start).getMinutes(),
-                new Date(lecture.start).getHours() + 1,
-                date.getHours()
-            );
             if (
                 new Date(lecture.start).getMinutes() === 0 &&
                 new Date(lecture.start).getHours() === date.getHours()
@@ -233,11 +228,20 @@ class Hour extends React.Component {
             if (!lecture) return [null, null];
             if (new Date(lecture.start).getHours() === date.getHours()) {
                 return [
-                    (100 / 60) * new Date(lecture.start).getMinutes(),
+                    (100 / 60) *
+                        (new Date(lecture.start).getMinutes() === 0
+                            ? 60
+                            : new Date(lecture.start).getMinutes()),
                     false,
                 ];
             } else if (new Date(lecture.end).getHours() === date.getHours()) {
-                return [(100 / 60) * new Date(lecture.end).getMinutes(), true];
+                return [
+                    (100 / 60) *
+                        (new Date(lecture.start).getMinutes() === 0
+                            ? 60
+                            : new Date(lecture.start).getMinutes()),
+                    true,
+                ];
             } else {
                 return [100, true];
             }

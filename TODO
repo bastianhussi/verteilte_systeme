@@ -3,7 +3,6 @@
 # highlight current day in week
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
 # check that lectures are not longer than a day and min one hour long
-# display information about lectures in week
 # change production protocol back to https ( process.env.NODE_ENV === 'production' ? 'https' : 'http';)
 # find way to check if start is less than end in semesters/[id] without requireing both in req body.
 # replace manual validation which joi
