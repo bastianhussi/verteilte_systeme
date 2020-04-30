@@ -3,6 +3,7 @@ import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
 import { getYYYYMMDDFromDate, getDateFromYYYMMDD } from '../../utils/date';
+import styles from '../adminPanel.module.css';
 
 export default class Semester extends React.Component {
     constructor(props) {
@@ -96,14 +97,13 @@ export default class Semester extends React.Component {
 
     render() {
         return (
-            <>
+            <div className={styles.item}>
                 <Message value={this.state.message} />
                 {this.state.showEditing ? (
-                    <form onSubmit={this.changeSemster}>
+                    <form onSubmit={this.changeSemster} className={styles.itemForm}>
                         <div>
                             <label>
                                 Name:
-                                <br />
                                 <input
                                     type='text'
                                     value={this.state.name}
@@ -137,31 +137,31 @@ export default class Semester extends React.Component {
                             </label>
                         </div>
                         <div>
-                            <button type='submit'>Save</button>
-                            <button
+                            <button 
                                 onClick={() =>
                                     this.setState({ showEditing: false })
                                 }>
                                 cancel
                             </button>
+                            <button type='submit' className={styles.saveButton}>Save</button>
                         </div>
                     </form>
                 ) : (
                     <div>
                         <span>{this.state.name}</span>
                         <span
-                            className='material-icons'
-                            onClick={this.changeShowEditing}>
-                            edit
-                        </span>
-                        <span
-                            className='material-icons'
+                            className={`material-icons ${styles.itemIcon}`}
                             onClick={this.deleteSemester}>
                             delete
                         </span>
+                        <span
+                            className={`material-icons ${styles.itemIcon}`}
+                            onClick={this.changeShowEditing}>
+                            edit
+                        </span>
                     </div>
                 )}
-            </>
+            </div>
         );
     }
 }

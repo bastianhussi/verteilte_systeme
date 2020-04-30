@@ -93,11 +93,11 @@ export default class MonthController extends React.Component {
                     selectedSemester,
                     changeView,
                 }) => (
-                    <div className={styles.monthContainer}>
+                    <div>
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<WeekController />)}>
-                                to week view
+                                week view
                             </button>
                             <span
                                 className='material-icons'
@@ -219,11 +219,11 @@ class Day extends React.Component {
         if (!isInSemester) {
             backgroundColor = 'grey';
         } else if (this.props.lecture) {
-            backgroundColor = 'var(--accent-light-color)';
+            backgroundColor = 'var(--dark-cyan-color)';
         }
 
         // highlight current day
-        if (isToday(this.props.date)) backgroundColor = 'var(--accent-color)';
+        if (isToday(this.props.date)) backgroundColor = 'var(--yellow-color)';
 
         return (
             <>

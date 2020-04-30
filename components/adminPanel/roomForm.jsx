@@ -3,6 +3,7 @@ import UserContext from '../userContext';
 import Room from './room';
 import axios from 'axios';
 import Message from '../message';
+import styles from '../adminPanel.module.css';
 
 export default class RoomForm extends React.Component {
     constructor(props) {
@@ -50,22 +51,30 @@ export default class RoomForm extends React.Component {
     render() {
         return (
             <>
-                <div>
+                <div className={styles.createForm}>
                     <Message value={this.state.message} />
                     <form onSubmit={this.createRoom}>
-                        <label>
-                            Room:
-                            <br />
-                            <input
-                                type='text'
-                                value={this.state.name}
-                                onChange={this.changeName}
-                                required
-                            />
-                        </label>
-                        <button type='submit'>Create</button>
+                        <div>
+                            <label>
+                                Room:
+                                <input
+                                    type='text'
+                                    value={this.state.name}
+                                    onChange={this.changeName}
+                                    required
+                                />
+                            </label>
+                        </div>
+                        <div>
+                            <button
+                                type='submit'
+                                className={styles.createButton}>
+                                Create
+                            </button>
+                        </div>
                     </form>
                 </div>
+                <div className={styles.separatorLine}/>
                 <UserContext.Consumer>
                     {({ rooms }) =>
                         rooms.length === 0 ? (

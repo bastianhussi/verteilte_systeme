@@ -17,8 +17,8 @@
     grid-template-rows: auto;
     row-gap: 1rem;
     padding: 1rem;
-    border: 1px solid rgb(255, 254, 254);
-    background-color: rgb(255, 254, 254);
+    border: 1px solid var(--cyan-color);
+    background-color: var(--cyan-color);
     border-radius: 4px;
     width: 50vw;
     margin-top: 2rem;

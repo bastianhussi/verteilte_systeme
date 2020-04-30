@@ -9,12 +9,18 @@ export default class AdminPanel extends React.Component {
         super(props);
         this.state = {
             currentView: <CourseForm />,
+            activeButton: 'course',
         };
         this.changeCurrentView = this.changeCurrentView.bind(this);
+        this.changeActiveButton = this.changeActiveButton.bind(this);
     }
 
-    changeCurrentView(newView) {
-        this.setState({ currentView: newView });
+    changeCurrentView(view) {
+        this.setState({ currentView: view });
+    }
+
+    changeActiveButton(button) {
+        this.setState({ activeButton: button });
     }
 
     render() {
@@ -23,25 +29,43 @@ export default class AdminPanel extends React.Component {
                 <div className={styles.container}>
                     <div className={styles.containerHeader}>
                         <button
-                            onClick={() =>
-                                this.changeCurrentView(<CourseForm />)
-                            }>
+                            className={
+                                this.state.activeButton === 'course'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<CourseForm />);
+                                this.changeActiveButton('course');
+                            }}>
                             Courses
                         </button>
                         <button
-                            onClick={() =>
-                                this.changeCurrentView(<RoomForm />)
-                            }>
+                            className={
+                                this.state.activeButton === 'room'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<RoomForm />);
+                                this.changeActiveButton('room');
+                            }}>
                             Rooms
                         </button>
                         <button
-                            onClick={() =>
-                                this.changeCurrentView(<SemesterForm />)
-                            }>
+                            className={
+                                this.state.activeButton === 'semester'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<SemesterForm />);
+                                this.changeActiveButton('semester');
+                            }}>
                             Semesters
                         </button>
                     </div>
-                    <hr />
+                    <div className={styles.separatorLine}/>
                     <div className={styles.containerBody}>
                         {this.state.currentView}
                     </div>

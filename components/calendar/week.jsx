@@ -176,9 +176,12 @@ class Day extends React.Component {
                     {getHours()}
                     <style jsx>{`
                         div {
+                            color: ${isToday(this.props.date)
+                                ? 'var(--font-color)'
+                                : 'var(--background-color)'};
                             background-color: ${isToday(this.props.date)
-                                ? 'var(--accent-color)'
-                                : 'var(--accent-light-color)'};
+                                ? 'var(--yellow-color)'
+                                : 'var(--dark-purple-color)'};
                         }
                     `}</style>
                 </div>
@@ -227,19 +230,15 @@ class Hour extends React.Component {
         const [percent, positionTop] = (function () {
             if (!lecture) return [null, null];
             if (new Date(lecture.start).getHours() === date.getHours()) {
-                return [
-                    (100 / 60) *
-                        (new Date(lecture.start).getMinutes() === 0
-                            ? 60
-                            : new Date(lecture.start).getMinutes()),
-                    false,
-                ];
+                return [100 - (100 / 60 * (new Date(lecture.start).getMinutes() === 0
+                    ? 60
+                    : new Date(lecture.start).getMinutes())), false];
             } else if (new Date(lecture.end).getHours() === date.getHours()) {
                 return [
-                    (100 / 60) *
-                        (new Date(lecture.start).getMinutes() === 0
+                    100 / 60 *
+                        (new Date(lecture.end).getMinutes() === 0
                             ? 60
-                            : new Date(lecture.start).getMinutes()),
+                            : new Date(lecture.end).getMinutes()),
                     true,
                 ];
             } else {
@@ -266,8 +265,8 @@ class Hour extends React.Component {
                         position: relative;
                         height: 50px;
                         width: 150px;
-                        color: #333333;
-                        border-bottom: 2px solid black;
+                        color: var(--font-color);
+                        border-bottom: 2px solid var(--dark-purple-color);
                         background-color: ${backgroundColor};
                     }
 
@@ -280,7 +279,7 @@ class Hour extends React.Component {
                         ${positionTop ? 'top: 0;' : 'bottom: 0;'}
                         height: ${percent}%;
                         width: 100%;
-                        background-color: var(--accent-light-color);
+                        background-color: var(--dark-cyan-color);
                     }
                 `}</style>
             </div>

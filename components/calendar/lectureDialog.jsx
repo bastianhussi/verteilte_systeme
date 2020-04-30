@@ -40,7 +40,7 @@ export default function LectureDialog() {
                             position: absolute;
                             top: 10px;
                             right: 25px;
-                            color: var(--main-color);
+                            color: var(--yellow-color);
                             font-size: 4rem;
                             z-index: 1000;
                         }
