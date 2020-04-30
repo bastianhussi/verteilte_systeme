@@ -142,12 +142,16 @@ class Day extends React.Component {
     render() {
         const { lectures, date } = this.props;
 
-        function getHourLecture(hour) {
-            return lectures.find(
-                (lecture) =>
-                    new Date(lecture.start).getHours() <= hour.getHours() &&
-                    new Date(lecture.end).getHours() >= hour.getHours()
-            );
+        function getHourLectures(hour) {
+            return lectures.filter((lecture) => {
+                const lectureStart = new Date(lecture.start);
+                const lectureEnd = new Date(lecture.end);
+
+                return (
+                    lectureStart.getHours() <= hour.getHours() &&
+                    lectureEnd.getHours() >= hour.getHours()
+                );
+            });
         }
 
         function getHours() {
@@ -160,7 +164,7 @@ class Day extends React.Component {
                     <Hour
                         key={hour}
                         date={hourDate}
-                        lecture={getHourLecture(hourDate)}
+                        lectures={getHourLectures(hourDate)}
                     />
                 );
             }
@@ -174,16 +178,6 @@ class Day extends React.Component {
                         {`${this.props.date.getDate()}. ${this.props.date.getDayName()}`}
                     </div>
                     {getHours()}
-                    <style jsx>{`
-                        div {
-                            color: ${isToday(this.props.date)
-                                ? 'var(--font-color)'
-                                : 'var(--background-color)'};
-                            background-color: ${isToday(this.props.date)
-                                ? 'var(--yellow-color)'
-                                : 'var(--dark-purple-color)'};
-                        }
-                    `}</style>
                 </div>
             </>
         );
@@ -198,7 +192,7 @@ class Hour extends React.Component {
     static contextType = CalendarContext;
 
     render() {
-        const { date, lecture } = this.props;
+        const { date, lectures } = this.props;
         const {
             selectedSemester,
             changeLecture,
@@ -211,33 +205,46 @@ class Hour extends React.Component {
             date.getTime() <= new Date(selectedSemester.end).getTime();
 
         return (
-            <div className='.hour'>
-                {lecture ? (
-                    <Lecture date={date} lecture={lecture} />
-                ) : (
-                    <div
-                        onClick={() => {
-                            changeDate(date);
-                            changeLecture(undefined);
-                            showForm();
-                        }}>
-                        `${date.getHours()}:00`
-                    </div>
-                )}
-                <style jsx>{`
-                    div {
-                        position: relative;
-                        height: 50px;
-                        width: 150px;
-                        color: var(--font-color);
-                        border-bottom: 2px solid var(--dark-purple-color);
-                        background-color: ${backgroundColor};
-                    }
+            <div className={styles.hour}>
+                <>
+                    {lectures.map((lecture) => (
+                        <Lecture
+                            key={lecture._id}
+                            date={date}
+                            lecture={lecture}
+                        />
+                    ))}
+                </>
+                <div
+                    onClick={() => {
+                        changeDate(
+                            new Date(
+                                date.getFullYear(),
+                                date.getMonth(),
+                                date.getDate(),
+                                date.getHours(),
+                                0,
+                                0,
+                                0
+                            )
+                        );
+                        changeLecture(undefined);
+                        showForm();
+                    }}>
+                    {`${date.getHours()}:00`}
+                    <style jsx>{`
+                        div {
+                            background-color: ${isInSemester
+                                ? 'var(--background-color)'
+                                : 'grey'};
+                            height: 100%;
+                        }
 
-                    div:hover {
-                        cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
-                    }
-                `}</style>
+                        div:hover {
+                            cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
+                        }
+                    `}</style>
+                </div>
             </div>
         );
     }
@@ -250,7 +257,7 @@ class Lecture extends React.Component {
         this.getPercent = this.getPercent.bind(this);
     }
 
-    static contextType = UserContext;
+    static contextType = CalendarContext;
 
     getPercent() {
         const { date, lecture } = this.props;
@@ -258,9 +265,13 @@ class Lecture extends React.Component {
         const lectureEnd = new Date(lecture.end);
 
         if (lectureStart.getHours() === date.getHours()) {
-            return 100 - (100 / 60) * lectureStart.getMinutes() === 0
-                ? 60
-                : lectureStart.getMinutes();
+            return (
+                100 -
+                (100 / 60) *
+                    (lectureStart.getMinutes() === 0
+                        ? 60
+                        : lectureStart.getMinutes())
+            );
         } else if (lectureEnd.getHours() === date.getHours()) {
             return (100 / 60) * lectureEnd.getMinutes();
         } else {
@@ -270,21 +281,28 @@ class Lecture extends React.Component {
 
     render() {
         const { date, lecture } = this.props;
+        const { changeDate, changeLecture, showForm } = this.context;
 
         return (
             <UserContext.Consumer>
                 {({ courses }) => (
-                    <div>
+                    <>
+                        <div
+                            onClick={() => {
+                                changeDate(date);
+                                changeLecture(lecture);
+                                showForm();
+                            }}></div>
                         <style jsx>{`
                     div {
                         position: absolute;
                         ${
                             new Date(lecture.start).getHours() ===
                             date.getHours()
-                                ? 'top: 0;'
-                                : 'bottom: 0;'
+                                ? 'bottom: 0;'
+                                : 'top: 0;'
                         }
-                        height: ${this.getPercent}%;
+                        height: ${this.getPercent()}%;
                         width: 100%;
                         background-color: ${
                             courses.find(
@@ -292,8 +310,12 @@ class Lecture extends React.Component {
                             ).color
                         };
                     }
+
+                    div:hover {
+                        cursor: pointer;
+                    }
                     `}</style>
-                    </div>
+                    </>
                 )}
             </UserContext.Consumer>
         );

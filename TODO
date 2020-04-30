@@ -12,3 +12,4 @@
 Bugs:
 # lectures may disappear is a date at the start of the week is selected (e.g. sunday)
 # changing start- & end-date of semesters doesnt work
+# when creating semesters the start date is always wrong
