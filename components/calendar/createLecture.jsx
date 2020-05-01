@@ -101,14 +101,11 @@ export default class CreateLecture extends React.Component {
 
     render() {
         return (
-            <>
+            <div className={styles.lectureForm}>
                 <Message value={this.state.message} />
-                <form
-                    className={styles.lectureForm}
-                    onSubmit={this.submitLectureForm}>
+                <form onSubmit={this.submitLectureForm}>
                     <label>
                         Title:
-                        <br />
                         <input
                             type='text'
                             value={this.state.title}
@@ -122,7 +119,6 @@ export default class CreateLecture extends React.Component {
                     </p>
                     <label>
                         Start:
-                        <br />
                         <input
                             type='time'
                             min={'08:00'}
@@ -134,7 +130,6 @@ export default class CreateLecture extends React.Component {
                     </label>
                     <label>
                         End:
-                        <br />
                         <input
                             type='time'
                             min={'08:00'}
@@ -149,7 +144,6 @@ export default class CreateLecture extends React.Component {
                             <>
                                 <label>
                                     Course:
-                                    <br />
                                     <select
                                         value={this.state.course}
                                         onChange={this.changeCourse}
@@ -165,7 +159,6 @@ export default class CreateLecture extends React.Component {
                                 </label>
                                 <label>
                                     Room:
-                                    <br />
                                     <select
                                         value={this.state.room}
                                         onChange={this.changeRoom}
@@ -184,7 +177,7 @@ export default class CreateLecture extends React.Component {
                     </UserContext.Consumer>
                     <button type='submit'>Create</button>
                 </form>
-            </>
+            </div>
         );
     }
 }

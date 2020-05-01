@@ -7,9 +7,11 @@
 # find way to check if start is less than end in semesters/[id] without requireing both in req body.
 # replace manual validation which joi
 # add validation for lecture, that start and end are at the same time, between 08:00-18:00 and min 30 mins long
+# courses can be deleted even if lectures with it exist
 ================================
 
 Bugs:
-# lectures may disappear is a date at the start of the week is selected (e.g. sunday)
+# lectures may disappear is a date at the start/end of a month
 # changing start- & end-date of semesters doesnt work
-# when creating semesters the start date is always wrong
+# Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
+    in Index (created by MyApp)

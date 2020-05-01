@@ -21,11 +21,12 @@
 .day {
     height: 50px;
     width: 150px;
+    padding: 4px;
     border-bottom: 1px solid var(--dark-purple);
 }
 
 .dayHeader {
-    width: 100%;
+    width: 150px;
     height: 50px;
     position: sticky;
     top: 0;
@@ -33,13 +34,16 @@
     background-color: var(--dark-yellow);
 }
 
-/* adjusting calendar for smartphones */
 @media only screen and (max-width: 600px) {
     .dayHeader {
         display: none;
     }
-
     .month {
-        grid-template-columns: repeat(3, auto);
+        grid-template-columns: repeat(2, 50%);
+    }
+
+    .day {
+        width: 100%;
+        border-bottom: 1px solid var(--dark-purple);
     }
 }

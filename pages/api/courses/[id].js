@@ -63,29 +63,15 @@ async function handleDelete(req, res) {
     const { id } = req.query;
 
     try {
-        await findOne('lectures', { room: createObjectId(id) });
-        // if the expression above passes, a lecture matching the query exists -> BadRequest
+        const lecture = await findOne('lectures', {
+            course: createObjectId(id),
+        });
         throw new BadRequestError(
-            'there are lectures for this course',
+            `${lecture.name} exists for this course`,
             lecture
         );
     } catch (err) {
         // NotFoundErros should make this fail
-        if (!err instanceof NotFoundError) throw err;
-    }
-
-    // deletes course in each user, if necessary
-    try {
-        await updateMany(
-            'users',
-            {
-                courses: { $in: [id] },
-            },
-            {
-                $pull: { id },
-            }
-        );
-    } catch (err) {
         if (!err instanceof NotFoundError) throw err;
     }
 

@@ -47,6 +47,15 @@ async function handlePatch(req, res) {
     validateIdAgainstToken(lecture.user, token);
 
     if (doc.start || doc.end) {
+        if (
+            new Date(doc.start || lecture.start).getTime() >
+            new Date(doc.end || lecture.end).getTime()
+        ) {
+            throw new BadRequestError('"end" has to be greater than "start"', {
+                doc,
+                lecture,
+            });
+        }
         // check is lecture is still in range of the semester
         const semester = await findOne('semesters', {
             _id: createObjectId(lecture.semester),

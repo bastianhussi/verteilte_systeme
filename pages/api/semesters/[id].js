@@ -78,20 +78,20 @@ async function handleDelete(req, res) {
     await authAdmin(req);
 
     const _id = createObjectId(req.query.id);
-    const deletedSemester = await findOne('semesters', { _id });
 
     try {
         const lecture = await findOne('lectures', {
-            semester: deletedSemester.semester,
+            semester: _id,
         });
         throw new BadRequestError(
-            'there are lectures in this semester',
+            `${lecture.name} exists for this semester`,
             lecture
         );
     } catch (err) {
         if (err instanceof BadRequestError) throw err;
     }
 
+    const deletedSemester = await findOne('semesters', { _id });
     await deleteOne('semesters', { _id });
     res.status(200).json(deletedSemester);
 }

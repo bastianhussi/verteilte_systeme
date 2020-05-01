@@ -46,11 +46,11 @@ export default class EditLecture extends React.Component {
     }
 
     changeCourse(event) {
-        this.setState({ selectedCourse: event.target.value });
+        this.setState({ course: event.target.value });
     }
 
     changeRoom(event) {
-        this.setState({ selectedRoom: event.target.value });
+        this.setState({ room: event.target.value });
     }
 
     changeDate(event) {
@@ -134,11 +134,9 @@ export default class EditLecture extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className={styles.lectureForm}>
                 <Message value={this.state.message} />
-                <form
-                    className={styles.lectureForm}
-                    onSubmit={this.submitLectureForm}>
+                <form onSubmit={this.submitLectureForm}>
                     <div>
                         <label>
                             Title:
@@ -197,44 +195,39 @@ export default class EditLecture extends React.Component {
                             />
                         </label>
                     </div>
-
                     <UserContext.Consumer>
                         {({ courses, rooms }) => (
                             <>
-                                <div>
-                                    <label>
-                                        Course:
-                                        <select
-                                            value={this.state.course}
-                                            onChange={this.changeCourse}
-                                            required>
-                                            {courses.map((course) => (
-                                                <option
-                                                    key={course._id}
-                                                    value={course._id}>
-                                                    {course.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                </div>
-                                <div>
-                                    <label>
-                                        Room:
-                                        <select
-                                            value={this.state.room}
-                                            onChange={this.changeRoom}
-                                            required>
-                                            {rooms.map((room) => (
-                                                <option
-                                                    key={room._id}
-                                                    value={room._id}>
-                                                    {room.name}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                </div>
+                                <label>
+                                    Course:
+                                    <select
+                                        value={this.state.course}
+                                        onChange={this.changeCourse}
+                                        required>
+                                        {courses.map((course) => (
+                                            <option
+                                                key={course._id}
+                                                value={course._id}>
+                                                {course.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
+                                <label>
+                                    Room:
+                                    <select
+                                        value={this.state.room}
+                                        onChange={this.changeRoom}
+                                        required>
+                                        {rooms.map((room) => (
+                                            <option
+                                                key={room._id}
+                                                value={room._id}>
+                                                {room.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
                             </>
                         )}
                     </UserContext.Consumer>

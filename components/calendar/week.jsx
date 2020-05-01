@@ -2,8 +2,8 @@ import React from 'react';
 import CalendarContext from '../calendarContext';
 import UserContext from '../userContext';
 import MonthController from './month';
-import styles from './week.module.css';
 import { isToday } from '../../utils/date';
+import styles from './week.module.css';
 
 Date.prototype.getDayName = function () {
     const weekDays = [
@@ -74,11 +74,15 @@ export default class WeekController extends React.Component {
                             {({ lectures }) => (
                                 <Week
                                     date={selectedDate}
-                                    lectures={lectures.filter(
-                                        (lecture) =>
-                                            lecture.semester ===
-                                            selectedSemester._id
-                                    )}
+                                    lectures={
+                                        selectedSemester
+                                            ? lectures.filter(
+                                                  (lecture) =>
+                                                      lecture.semester ===
+                                                      selectedSemester._id
+                                              )
+                                            : []
+                                    }
                                 />
                             )}
                         </UserContext.Consumer>
@@ -94,22 +98,16 @@ class Week extends React.Component {
         super(props);
     }
 
-    static contextType = CalendarContext;
-
     render() {
-        const { date } = this.props;
-        const { selectedDate } = this.context;
-
-        const lectures = this.props.lectures.filter(
-            (lecture) =>
-                new Date(lecture.start).getFullYear() ===
-                    selectedDate.getFullYear() &&
-                new Date(lecture.start).getMonth() === selectedDate.getMonth()
-        );
+        const { date, lectures } = this.props;
 
         function getDayLectures(day) {
             return lectures.filter(
-                (lecture) => new Date(lecture.start).getDate() === day.getDate()
+                (lecture) =>
+                    new Date(lecture.start).getFullYear() ===
+                        day.getFullYear() &&
+                    new Date(lecture.start).getMonth() === day.getMonth() &&
+                    new Date(lecture.start).getDate() === day.getDate()
             );
         }
 
@@ -172,14 +170,12 @@ class Day extends React.Component {
         }
 
         return (
-            <>
-                <div className={styles.day}>
-                    <div className={styles.dayHeader}>
-                        {`${this.props.date.getDate()}. ${this.props.date.getDayName()}`}
-                    </div>
-                    {getHours()}
+            <div>
+                <div className={styles.dayHeader}>
+                    {`${this.props.date.getDate()}. ${this.props.date.getDayName()}`}
                 </div>
-            </>
+                {getHours()}
+            </div>
         );
     }
 }
@@ -200,9 +196,10 @@ class Hour extends React.Component {
             showForm,
         } = this.context;
 
-        const isInSemester =
-            date.getTime() >= new Date(selectedSemester.start).getTime() &&
-            date.getTime() <= new Date(selectedSemester.end).getTime();
+        const isInSemester = selectedSemester
+            ? date.getTime() >= new Date(selectedSemester.start).getTime() &&
+              date.getTime() <= new Date(selectedSemester.end).getTime()
+            : false;
 
         return (
             <div className={styles.hour}>
@@ -217,25 +214,29 @@ class Hour extends React.Component {
                 </>
                 <div
                     onClick={() => {
-                        changeDate(
-                            new Date(
-                                date.getFullYear(),
-                                date.getMonth(),
-                                date.getDate(),
-                                date.getHours(),
-                                0,
-                                0,
-                                0
-                            )
-                        );
-                        changeLecture(undefined);
-                        showForm();
+                        if (isInSemester) {
+                            changeDate(
+                                new Date(
+                                    date.getFullYear(),
+                                    date.getMonth(),
+                                    date.getDate(),
+                                    date.getHours(),
+                                    0,
+                                    0,
+                                    0
+                                )
+                            );
+                            changeLecture(undefined);
+                            showForm();
+                        }
                     }}>
                     {`${date.getHours()}:00`}
                     <style jsx>{`
                         div {
                             background-color: ${isInSemester
-                                ? 'var(--background-color)'
+                                ? isToday(date)
+                                    ? 'var(--yellow)'
+                                    : 'var(--background-color)'
                                 : 'grey'};
                             height: 100%;
                         }
@@ -265,13 +266,7 @@ class Lecture extends React.Component {
         const lectureEnd = new Date(lecture.end);
 
         if (lectureStart.getHours() === date.getHours()) {
-            return (
-                100 -
-                (100 / 60) *
-                    (lectureStart.getMinutes() === 0
-                        ? 60
-                        : lectureStart.getMinutes())
-            );
+            return 100 - (100 / 60) * lectureStart.getMinutes();
         } else if (lectureEnd.getHours() === date.getHours()) {
             return (100 / 60) * lectureEnd.getMinutes();
         } else {
@@ -292,8 +287,7 @@ class Lecture extends React.Component {
                                 changeDate(date);
                                 changeLecture(lecture);
                                 showForm();
-                            }}>
-                        </div>
+                            }}></div>
                         <style jsx>{`
                             div {
                                 position: absolute;

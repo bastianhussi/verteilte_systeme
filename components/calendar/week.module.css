@@ -19,14 +19,8 @@
     row-gap: 5px;
 }
 
-.day {
-}
-
-@media only screen and (max-width: 600px) {
-}
-
 .dayHeader {
-    width: 100%;
+    width: 150px;
     height: 50px;
     position: sticky;
     top: 0;
@@ -35,9 +29,24 @@
 }
 
 .hour {
+    margin: 4px;
     position: relative;
     height: 50px;
     width: 150px;
     color: var(--font-color);
     border-bottom: 1px solid var(--dark-purple);
+}
+
+@media only screen and (max-width: 600px) {
+    .week {
+        grid-template-columns: repeat(1, 100%);
+    }
+
+    .dayHeader {
+        width: 100%;
+    }
+
+    .hour {
+        width: 100%;
+    }
 }
