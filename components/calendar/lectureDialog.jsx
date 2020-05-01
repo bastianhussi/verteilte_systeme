@@ -40,7 +40,7 @@ export default function LectureDialog() {
                             position: absolute;
                             top: 10px;
                             right: 25px;
-                            color: var(--dark-blue);
+                            color: var(--dark-cyan);
                             font-size: 4rem;
                             z-index: 1000;
                         }
@@ -54,6 +54,7 @@ export default function LectureDialog() {
                             display: flex;
                             justify-content: center;
                             align-items: center;
+                            z-index: 1000;
                         }
                     `}</style>
                 </div>

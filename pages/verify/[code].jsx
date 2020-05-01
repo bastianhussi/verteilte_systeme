@@ -1,7 +1,9 @@
 import React from 'react';
+import Head from 'next/head';
 import { useRouter } from 'next/router';
 import axois from 'axios';
 import Link from 'next/link';
+import Message from '../../components/message';
 
 export default class Verify extends React.Component {
     constructor(props) {
@@ -32,19 +34,53 @@ export default class Verify extends React.Component {
     render() {
         return (
             <>
+                <Head>
+                    <meta charSet='UTF-8' />
+                    <meta
+                        name='viewport'
+                        content='width=device-width, initial-scale=1.0'
+                    />
+                    <title>Verify</title>
+                </Head>
                 {this.props.error ? (
-                    <div>
-                        <h1>An Error occured:</h1>
-                        <p>{this.props.error}</p>
-                    </div>
+                    <>
+                        <h1>An error occurred:</h1>
+                        <div>
+                            <p>{this.props.error}</p>
+                            <p>
+                                Please make sure your account is not alread
+                                activated.
+                            </p>
+                        </div>
+                    </>
                 ) : (
-                    <div>
-                        <h1>Yay!</h1>
-                        <Link href='/'>
-                            <a>login now</a>
-                        </Link>
-                    </div>
+                    <>
+                        <h1>Your account is now activated</h1>
+                        <div>
+                            <Link href='/'>
+                                <a>login now</a>
+                            </Link>
+                        </div>
+                    </>
                 )}
+                <style jsx>{`
+                    h1 {
+                        text-align: center;
+                    }
+                    div {
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                    }
+
+                    a {
+                        padding: 1rem;
+                        font-size: larger;
+                        border: 1px solid var(--cyan);
+                        background-color: var(--cyan);
+                        border-radius: 4px;
+                    }
+                `}</style>
             </>
         );
     }

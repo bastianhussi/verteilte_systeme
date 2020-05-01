@@ -134,11 +134,11 @@ export default class EditLecture extends React.Component {
 
     render() {
         return (
-            <div className={styles.center}>
-                <Message value={this.state.message} />
+            <>
                 <form
                     onSubmit={this.submitLectureForm}
                     className={styles.lectureForm}>
+                    <Message value={this.state.message} />
                     <div>
                         <label>
                             Title:
@@ -151,14 +151,10 @@ export default class EditLecture extends React.Component {
                         </label>
                     </div>
                     <div>
-                        <label>Semester:</label>
-                        <input
-                            type='text'
-                            value={
-                                this.props.calendarContext.selectedSemester.name
-                            }
-                            disabled
-                        />
+                        <p>
+                            Semester:{' '}
+                            {this.props.calendarContext.selectedSemester.name}
+                        </p>
                     </div>
                     <div>
                         <label>
@@ -246,7 +242,7 @@ export default class EditLecture extends React.Component {
                         </span>
                     </div>
                 </form>
-            </div>
+            </>
         );
     }
 }

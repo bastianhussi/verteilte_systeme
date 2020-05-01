@@ -104,7 +104,7 @@ export default class MonthController extends React.Component {
                                 onClick={this.previousMonth}>
                                 arrow_back
                             </span>
-                            <h2>{selectedDate.toLocaleDateString()}</h2>
+                            <h2>{selectedDate.toDateString()}</h2>
                             <span
                                 className='material-icons'
                                 onClick={this.nextMonth}>
@@ -232,7 +232,14 @@ class Day extends React.Component {
                         }
                     }}>
                     {this.props.date.getDate()}
-                    {this.props.lecture ? <span className={`material-icons ${styles.lectureIcon}`}>event</span> : <></>}
+                    {this.props.lecture ? (
+                        <span
+                            className={`material-icons ${styles.lectureIcon}`}>
+                            event
+                        </span>
+                    ) : (
+                        <></>
+                    )}
                 </div>
                 <style jsx>{`
                     div {
