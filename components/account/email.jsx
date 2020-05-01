@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
-import styles from './email.module.css';
+import styles from '../account.module.css';
 
 export default class Email extends React.Component {
     constructor(props) {
@@ -70,40 +70,52 @@ export default class Email extends React.Component {
         return (
             <UserContext.Consumer>
                 {({ user }) => (
-                    <>
+                    <div className={styles.item}>
                         <Message value={this.state.message} />
                         {this.state.showEditing ? (
-                            <form onSubmit={this.submitEmailForm}>
-                                <label>
-                                    New email:
-                                    <input
-                                        type='email'
-                                        value={this.state.email}
-                                        onChange={this.changeEmail}
-                                        required
-                                    />
-                                </label>
-                                <button type='submit'>Change</button>
-                                <button
-                                    onClick={() =>
-                                        this.setState({ showEditing: false })
-                                    }>
-                                    cancel
-                                </button>
+                            <form
+                                onSubmit={this.submitEmailForm}
+                                className={styles.itemForm}>
+                                <div>
+                                    <label>
+                                        New email:
+                                        <input
+                                            type='email'
+                                            value={this.state.email}
+                                            onChange={this.changeEmail}
+                                            required
+                                        />
+                                    </label>
+                                </div>
+                                <div>
+                                    <button
+                                        onClick={() =>
+                                            this.setState({
+                                                showEditing: false,
+                                            })
+                                        }>
+                                        Cancel
+                                    </button>
+                                    <button
+                                        type='submit'
+                                        className={styles.saveButton}>
+                                        Save
+                                    </button>
+                                </div>
                             </form>
                         ) : (
-                            <div>
+                            <div className={styles.item}>
                                 <span>
-                                    Current email: <strong>{user.email}</strong>
+                                    <strong>{user.email}</strong>
                                 </span>
                                 <span
-                                    className='material-icons'
+                                    className={`material-icons ${styles.itemIcon}`}
                                     onClick={this.changeShowEditing}>
                                     edit
                                 </span>
                             </div>
                         )}
-                    </>
+                    </div>
                 )}
             </UserContext.Consumer>
         );

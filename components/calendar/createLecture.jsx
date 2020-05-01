@@ -101,81 +101,97 @@ export default class CreateLecture extends React.Component {
 
     render() {
         return (
-            <div className={styles.lectureForm}>
+            <div className={styles.center}>
                 <Message value={this.state.message} />
-                <form onSubmit={this.submitLectureForm}>
-                    <label>
-                        Title:
-                        <input
-                            type='text'
-                            value={this.state.title}
-                            onChange={this.changeTitle}
-                            required
-                        />
-                    </label>
-                    <p>
-                        Semester:{' '}
-                        {this.props.calendarContext.selectedSemester.name}
-                    </p>
-                    <label>
-                        Start:
-                        <input
-                            type='time'
-                            min={'08:00'}
-                            max={'18:00'}
-                            value={this.state.start}
-                            onChange={this.changeStart}
-                            required
-                        />
-                    </label>
-                    <label>
-                        End:
-                        <input
-                            type='time'
-                            min={'08:00'}
-                            max={'18:00'}
-                            value={this.state.end}
-                            onChange={this.changeEnd}
-                            required
-                        />
-                    </label>
+                <form
+                    onSubmit={this.submitLectureForm}
+                    className={styles.lectureForm}>
+                    <div>
+                        <label>
+                            Title:
+                            <input
+                                type='text'
+                                value={this.state.title}
+                                onChange={this.changeTitle}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <p>
+                            Semester:{' '}
+                            {this.props.calendarContext.selectedSemester.name}
+                        </p>
+                    </div>
+                    <div>
+                        <label>
+                            Start:
+                            <input
+                                type='time'
+                                min={'08:00'}
+                                max={'18:00'}
+                                value={this.state.start}
+                                onChange={this.changeStart}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            End:
+                            <input
+                                type='time'
+                                min={'08:00'}
+                                max={'18:00'}
+                                value={this.state.end}
+                                onChange={this.changeEnd}
+                                required
+                            />
+                        </label>
+                    </div>
                     <UserContext.Consumer>
                         {({ courses, rooms }) => (
                             <>
-                                <label>
-                                    Course:
-                                    <select
-                                        value={this.state.course}
-                                        onChange={this.changeCourse}
-                                        required>
-                                        {courses.map((course) => (
-                                            <option
-                                                key={course._id}
-                                                value={course._id}>
-                                                {course.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <label>
-                                    Room:
-                                    <select
-                                        value={this.state.room}
-                                        onChange={this.changeRoom}
-                                        required>
-                                        {rooms.map((room) => (
-                                            <option
-                                                key={room._id}
-                                                value={room._id}>
-                                                {room.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
+                                <div>
+                                    <label>
+                                        Course:
+                                        <select
+                                            value={this.state.course}
+                                            onChange={this.changeCourse}
+                                            required>
+                                            {courses.map((course) => (
+                                                <option
+                                                    key={course._id}
+                                                    value={course._id}>
+                                                    {course.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        Room:
+                                        <select
+                                            value={this.state.room}
+                                            onChange={this.changeRoom}
+                                            required>
+                                            {rooms.map((room) => (
+                                                <option
+                                                    key={room._id}
+                                                    value={room._id}>
+                                                    {room.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
                             </>
                         )}
                     </UserContext.Consumer>
-                    <button type='submit'>Create</button>
+                    <div>
+                        <button type='submit'>Create</button>
+                    </div>
                 </form>
             </div>
         );

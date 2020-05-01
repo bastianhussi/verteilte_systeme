@@ -12,7 +12,7 @@ export default function LectureDialog() {
                 selectedLecture,
                 selectedSemester,
             }) => (
-                <div>
+                <div className='lightbox'>
                     <span
                         className={'material-icons closeButton'}
                         onClick={showForm}>
@@ -45,7 +45,7 @@ export default function LectureDialog() {
                             z-index: 1000;
                         }
 
-                        div {
+                        .lightbox {
                             position: fixed;
                             top: 0;
                             width: 100%;

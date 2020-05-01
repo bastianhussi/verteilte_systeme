@@ -117,7 +117,7 @@ export default class Course extends React.Component {
                                 onClick={() =>
                                     this.setState({ showEditing: false })
                                 }>
-                                cancel
+                                Cancel
                             </button>
                             <button type='submit' className={styles.saveButton}>
                                 Save
@@ -127,9 +127,6 @@ export default class Course extends React.Component {
                 ) : (
                     <div>
                         <span>{this.state.name}</span>
-                        <span style={{ backgroundColor: this.state.color }}>
-                            {this.state.color}
-                        </span>
                         <span
                             className={`material-icons ${styles.itemIcon}`}
                             onClick={this.deleteCourse}>

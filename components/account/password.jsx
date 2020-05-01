@@ -2,7 +2,7 @@ import React from 'react';
 import axios from 'axios';
 import UserContext from '../userContext';
 import Message from '../message';
-import styles from './email.module.css';
+import styles from '../account.module.css';
 
 export default class Password extends React.Component {
     constructor(props) {

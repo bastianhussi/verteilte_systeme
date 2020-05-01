@@ -1,9 +1,9 @@
 import React from 'react';
 import axios from 'axios';
 import UserContext from '../userContext';
-import styles from './deleteAccount.module.css';
 import { logout } from '../../utils/auth';
 import Message from '../message';
+import styles from '../account.module.css';
 
 export default class DeleteAccount extends React.Component {
     constructor(props) {

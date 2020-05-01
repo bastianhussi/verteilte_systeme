@@ -49,7 +49,7 @@ export default class WeekController extends React.Component {
                     changeView,
                     selectedSemester,
                 }) => (
-                    <div className={styles.weekContainer}>
+                    <div>
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<MonthController />)}>
@@ -243,6 +243,7 @@ class Hour extends React.Component {
 
                         div:hover {
                             cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
+                            ${isInSemester ? 'background-color: var(--yellow)' : ''}
                         }
                     `}</style>
                 </div>
@@ -255,10 +256,18 @@ class Lecture extends React.Component {
     constructor(props) {
         super(props);
 
+        this.getTitle = this.getTitle.bind(this);
         this.getPercent = this.getPercent.bind(this);
     }
 
     static contextType = CalendarContext;
+
+    getTitle() {
+        const { date, lecture } = this.props;
+        const lectureStart = new Date(lecture.start);
+
+        return lectureStart.getHours() === date.getHours() ? lecture.title : undefined;
+    }
 
     getPercent() {
         const { date, lecture } = this.props;
@@ -287,7 +296,7 @@ class Lecture extends React.Component {
                                 changeDate(date);
                                 changeLecture(lecture);
                                 showForm();
-                            }}></div>
+                            }}>{this.getTitle()}</div>
                         <style jsx>{`
                             div {
                                 position: absolute;

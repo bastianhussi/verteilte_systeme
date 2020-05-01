@@ -232,6 +232,7 @@ class Day extends React.Component {
                         }
                     }}>
                     {this.props.date.getDate()}
+                    {this.props.lecture ? <span className={`material-icons ${styles.lectureIcon}`}>event</span> : <></>}
                 </div>
                 <style jsx>{`
                     div {
@@ -240,6 +241,7 @@ class Day extends React.Component {
 
                     div:hover {
                         cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
+                        ${isInSemester ? 'background-color: var(--yellow)' : ''}
                     }
                 `}</style>
             </>

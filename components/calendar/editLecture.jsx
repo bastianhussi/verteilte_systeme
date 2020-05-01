@@ -134,9 +134,11 @@ export default class EditLecture extends React.Component {
 
     render() {
         return (
-            <div className={styles.lectureForm}>
+            <div className={styles.center}>
                 <Message value={this.state.message} />
-                <form onSubmit={this.submitLectureForm}>
+                <form
+                    onSubmit={this.submitLectureForm}
+                    className={styles.lectureForm}>
                     <div>
                         <label>
                             Title:
@@ -198,36 +200,40 @@ export default class EditLecture extends React.Component {
                     <UserContext.Consumer>
                         {({ courses, rooms }) => (
                             <>
-                                <label>
-                                    Course:
-                                    <select
-                                        value={this.state.course}
-                                        onChange={this.changeCourse}
-                                        required>
-                                        {courses.map((course) => (
-                                            <option
-                                                key={course._id}
-                                                value={course._id}>
-                                                {course.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <label>
-                                    Room:
-                                    <select
-                                        value={this.state.room}
-                                        onChange={this.changeRoom}
-                                        required>
-                                        {rooms.map((room) => (
-                                            <option
-                                                key={room._id}
-                                                value={room._id}>
-                                                {room.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
+                                <div>
+                                    <label>
+                                        Course:
+                                        <select
+                                            value={this.state.course}
+                                            onChange={this.changeCourse}
+                                            required>
+                                            {courses.map((course) => (
+                                                <option
+                                                    key={course._id}
+                                                    value={course._id}>
+                                                    {course.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
+                                <div>
+                                    <label>
+                                        Room:
+                                        <select
+                                            value={this.state.room}
+                                            onChange={this.changeRoom}
+                                            required>
+                                            {rooms.map((room) => (
+                                                <option
+                                                    key={room._id}
+                                                    value={room._id}>
+                                                    {room.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                </div>
                             </>
                         )}
                     </UserContext.Consumer>
