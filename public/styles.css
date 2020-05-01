@@ -28,6 +28,10 @@ a {
     cursor: pointer;
 }
 
+input {
+    display: block;
+}
+
 input[type='text'],
 input[type='email'],
 input[type='password'],
@@ -39,6 +43,11 @@ input[type='date'] {
     border-radius: 4px;
     box-sizing: border-box;
     resize: vertical;
+}
+
+input[type='color'] {
+    height: 40px;
+    padding: 0px;
 }
 
 select {
@@ -93,8 +102,4 @@ button:hover {
     cursor: pointer;
     -moz-font-feature-settings: 'liga';
     -moz-osx-font-smoothing: grayscale;
-}
-
-.material-icons:hover {
-    color: var(--dark-yellow);
 }

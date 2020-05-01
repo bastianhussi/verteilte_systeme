@@ -56,7 +56,7 @@
 }
 
 .dropdownContent a:hover {
-    background-color: var(--cyan);
+    background-color: var(--yellow);
 }
 
 .dropdown:hover .dropdownContent {

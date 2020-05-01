@@ -97,7 +97,7 @@ export default class Room extends React.Component {
                                 onClick={() =>
                                     this.setState({ showEditing: false })
                                 }>
-                                cancel
+                                Cancel
                             </button>
                             <button type='submit' className={styles.saveButton}>
                                 Save

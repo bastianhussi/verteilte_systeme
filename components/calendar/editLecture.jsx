@@ -46,11 +46,11 @@ export default class EditLecture extends React.Component {
     }
 
     changeCourse(event) {
-        this.setState({ selectedCourse: event.target.value });
+        this.setState({ course: event.target.value });
     }
 
     changeRoom(event) {
-        this.setState({ selectedRoom: event.target.value });
+        this.setState({ room: event.target.value });
     }
 
     changeDate(event) {
@@ -134,11 +134,11 @@ export default class EditLecture extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className={styles.center}>
                 <Message value={this.state.message} />
                 <form
-                    className={styles.lectureForm}
-                    onSubmit={this.submitLectureForm}>
+                    onSubmit={this.submitLectureForm}
+                    className={styles.lectureForm}>
                     <div>
                         <label>
                             Title:
@@ -197,7 +197,6 @@ export default class EditLecture extends React.Component {
                             />
                         </label>
                     </div>
-
                     <UserContext.Consumer>
                         {({ courses, rooms }) => (
                             <>

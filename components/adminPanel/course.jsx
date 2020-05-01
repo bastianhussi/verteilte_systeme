@@ -9,11 +9,13 @@ export default class Course extends React.Component {
         super(props);
         this.state = {
             name: this.props.value.name,
+            color: this.props.value.color,
             showEditing: false,
             message: '',
         };
 
         this.changeName = this.changeName.bind(this);
+        this.changeColor = this.changeColor.bind(this);
         this.changeShowEditing = this.changeShowEditing.bind(this);
         this.changeCourse = this.changeCourse.bind(this);
         this.deleteCourse = this.deleteCourse.bind(this);
@@ -23,6 +25,10 @@ export default class Course extends React.Component {
 
     changeName(event) {
         this.setState({ name: event.target.value });
+    }
+
+    changeColor(event) {
+        this.setState({ color: event.target.value });
     }
 
     changeShowEditing() {
@@ -37,7 +43,7 @@ export default class Course extends React.Component {
         try {
             const res = await axios.patch(
                 `${apiUrl}/courses/${value._id}`,
-                { name: this.state.name },
+                { name: this.state.name, color: this.state.color },
                 {
                     headers: {
                         'Content-Type': 'application/json; charset=utf-8',
@@ -85,19 +91,33 @@ export default class Course extends React.Component {
                         onSubmit={this.changeCourse}
                         className={styles.itemForm}>
                         <div>
-                            <input
-                                type='text'
-                                value={this.state.name}
-                                onChange={this.changeName}
-                                required
-                            />
+                            <label>
+                                Name:
+                                <input
+                                    type='text'
+                                    value={this.state.name}
+                                    onChange={this.changeName}
+                                    required
+                                />
+                            </label>
+                        </div>
+                        <div>
+                            <label>
+                                Color:
+                                <input
+                                    type='color'
+                                    value={this.state.color}
+                                    onChange={this.changeColor}
+                                    required
+                                />
+                            </label>
                         </div>
                         <div>
                             <button
                                 onClick={() =>
                                     this.setState({ showEditing: false })
                                 }>
-                                cancel
+                                Cancel
                             </button>
                             <button type='submit' className={styles.saveButton}>
                                 Save

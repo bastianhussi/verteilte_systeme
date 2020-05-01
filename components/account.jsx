@@ -10,12 +10,18 @@ export default class Account extends React.Component {
         super(props);
         this.state = {
             currentView: <Email />,
+            activeButton: 'email',
         };
         this.changeCurrentView = this.changeCurrentView.bind(this);
+        this.changeActiveButton = this.changeActiveButton.bind(this);
     }
 
     changeCurrentView(newView) {
         this.setState({ currentView: newView });
+    }
+
+    changeActiveButton(button) {
+        this.setState({ activeButton: button });
     }
 
     render() {
@@ -24,27 +30,55 @@ export default class Account extends React.Component {
                 <div className={styles.container}>
                     <div className={styles.containerHeader}>
                         <button
-                            onClick={() => this.changeCurrentView(<Email />)}>
+                            className={
+                                this.state.activeButton === 'email'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<Email />);
+                                this.changeActiveButton('email');
+                            }}>
                             Email
                         </button>
                         <button
-                            onClick={() => this.changeCurrentView(<Name />)}>
+                            className={
+                                this.state.activeButton === 'name'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<Name />);
+                                this.changeActiveButton('name');
+                            }}>
                             Name
                         </button>
                         <button
-                            onClick={() =>
-                                this.changeCurrentView(<Password />)
-                            }>
+                            className={
+                                this.state.activeButton === 'password'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<Password />);
+                                this.changeActiveButton('password');
+                            }}>
                             Password
                         </button>
                         <button
-                            onClick={() =>
-                                this.changeCurrentView(<DeleteAccount />)
-                            }>
+                            className={
+                                this.state.activeButton === 'delete'
+                                    ? 'activeButton'
+                                    : ''
+                            }
+                            onClick={() => {
+                                this.changeCurrentView(<DeleteAccount />);
+                                this.changeActiveButton('delete');
+                            }}>
                             Danger Zone
                         </button>
                     </div>
-                    <hr />
+                    <div className={styles.separatorLine} />
                     <div className={styles.containerBody}>
                         {this.state.currentView}
                     </div>

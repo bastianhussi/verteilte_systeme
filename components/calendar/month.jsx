@@ -97,14 +97,14 @@ export default class MonthController extends React.Component {
                         <div className={styles.header}>
                             <button
                                 onClick={() => changeView(<WeekController />)}>
-                                week view
+                                change view
                             </button>
                             <span
                                 className='material-icons'
                                 onClick={this.previousMonth}>
                                 arrow_back
                             </span>
-                            {selectedDate.toDateString()}
+                            <h2>{selectedDate.toLocaleDateString()}</h2>
                             <span
                                 className='material-icons'
                                 onClick={this.nextMonth}>
@@ -232,6 +232,7 @@ class Day extends React.Component {
                         }
                     }}>
                     {this.props.date.getDate()}
+                    {this.props.lecture ? <span className={`material-icons ${styles.lectureIcon}`}>event</span> : <></>}
                 </div>
                 <style jsx>{`
                     div {
@@ -240,6 +241,7 @@ class Day extends React.Component {
 
                     div:hover {
                         cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
+                        ${isInSemester ? 'background-color: var(--yellow)' : ''}
                     }
                 `}</style>
             </>

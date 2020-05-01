@@ -5,9 +5,9 @@
 }
 
 .container {
+    border: 1px solid var(--cyan);
     background-color: var(--cyan);
     padding: 1rem;
-    border: solid 2px #0000002f;
     border-radius: 4px;
     width: 30vw;
 }

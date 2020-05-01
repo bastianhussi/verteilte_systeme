@@ -143,7 +143,7 @@ export default class Semester extends React.Component {
                                 onClick={() =>
                                     this.setState({ showEditing: false })
                                 }>
-                                cancel
+                                Cancel
                             </button>
                             <button type='submit' className={styles.saveButton}>
                                 Save
