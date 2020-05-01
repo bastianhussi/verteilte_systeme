@@ -60,7 +60,7 @@ export default class WeekController extends React.Component {
                                 onClick={this.previousWeek}>
                                 arrow_back
                             </span>
-                            <h2>{selectedDate.toLocaleDateString()}</h2>
+                            <h2>{selectedDate.toDateString()}</h2>
                             <span
                                 className='material-icons'
                                 onClick={this.nextWeek}>
@@ -239,11 +239,14 @@ class Hour extends React.Component {
                                     : 'var(--background-color)'
                                 : 'grey'};
                             height: 100%;
+                            font-size: small;
                         }
 
                         div:hover {
                             cursor: ${isInSemester ? 'pointer' : 'not-allowed'};
-                            ${isInSemester ? 'background-color: var(--yellow)' : ''}
+                            ${isInSemester
+                                ? 'background-color: var(--yellow)'
+                                : ''}
                         }
                     `}</style>
                 </div>
@@ -265,8 +268,7 @@ class Lecture extends React.Component {
     getTitle() {
         const { date, lecture } = this.props;
         const lectureStart = new Date(lecture.start);
-
-        return lectureStart.getHours() === date.getHours() ? lecture.title : undefined;
+        return lectureStart.getHours() === date.getHours() ? lecture.title : '';
     }
 
     getPercent() {
@@ -296,7 +298,11 @@ class Lecture extends React.Component {
                                 changeDate(date);
                                 changeLecture(lecture);
                                 showForm();
-                            }}>{this.getTitle()}</div>
+                            }}>
+                            {this.getTitle().length > 8
+                                ? `${this.getTitle().substring(0, 8)}...`
+                                : this.getTitle()}
+                        </div>
                         <style jsx>{`
                             div {
                                 position: absolute;
@@ -307,7 +313,8 @@ class Lecture extends React.Component {
                                         : 'top: 0;'
                                 }
                                 height: ${this.getPercent()}%;
-                                width: 100%;
+                                width: 70%;
+                                right: 0;
                                 background-color: ${
                                     courses.find(
                                         (course) =>

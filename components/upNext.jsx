@@ -1,5 +1,6 @@
 import React from 'react';
 import UserContext from './userContext';
+import CalendarContext from './calendarContext';
 import styles from './upNext.module.css';
 
 function getTimeStringFromDate(date) {
@@ -16,6 +17,8 @@ export default class UpNext extends React.Component {
 
         this.changeShowEntries = this.changeShowEntries.bind(this);
     }
+
+    static contextType = CalendarContext;
 
     changeShowEntries(event) {
         this.setState({ showEntries: event.target.value });

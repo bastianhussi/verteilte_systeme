@@ -101,11 +101,11 @@ export default class CreateLecture extends React.Component {
 
     render() {
         return (
-            <div className={styles.center}>
-                <Message value={this.state.message} />
+            <>
                 <form
                     onSubmit={this.submitLectureForm}
                     className={styles.lectureForm}>
+                    <Message value={this.state.message} />
                     <div>
                         <label>
                             Title:
@@ -193,7 +193,7 @@ export default class CreateLecture extends React.Component {
                         <button type='submit'>Create</button>
                     </div>
                 </form>
-            </div>
+            </>
         );
     }
 }
