@@ -12,7 +12,7 @@ export default class Verify extends React.Component {
 
     static async getInitialProps({ req }) {
         const protocol =
-            process.env.NODE_ENV === 'production' ? 'http' : 'http';
+            process.env.NODE_ENV === 'production' ? 'https' : 'http';
         const apiUrl = process.browser
             ? `${protocol}://${window.location.host}/api/verify`
             : `${protocol}://${req.headers.host}/api/verify`;

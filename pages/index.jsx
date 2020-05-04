@@ -177,7 +177,7 @@ export default class Index extends React.Component {
 }
 
 export async function getServerSideProps(ctx) {
-    const protocol = process.env.NODE_ENV === 'production' ? 'http' : 'http';
+    const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const apiUrl = process.browser
         ? `${protocol}://${window.location.host}/api`
         : `${protocol}://${ctx.req.headers.host}/api`;

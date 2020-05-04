@@ -32,7 +32,7 @@ export default class Register extends React.Component {
     static getInitialProps(ctx) {
         noAuth(ctx);
         const protocol =
-            process.env.NODE_ENV === 'production' ? 'http' : 'http';
+            process.env.NODE_ENV === 'production' ? 'https' : 'http';
         const apiUrl = process.browser
             ? `${protocol}://${window.location.host}/api/register`
             : `${protocol}://${ctx.req.headers.host}/api/register`;
