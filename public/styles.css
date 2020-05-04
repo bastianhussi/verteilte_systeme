@@ -1,3 +1,10 @@
+/**
+ * This stylesheet includes css rules,
+ * that will be used throw the whole app.
+ * The goal is to provide a consistent design and user experience.
+ */
+
+/* colors that are used in the app */
 :root {
     --dark-blue: #6805f2;
     --dark-purple: #6f04d9;
@@ -10,6 +17,7 @@
     --font-color: #333333;
 }
 
+/* Font, background color, ... */
 body {
     font-family: 'Roboto', sans-serif;
     font-size: large;
@@ -28,6 +36,7 @@ a {
     cursor: pointer;
 }
 
+/* Styling for forms to achive better ux */
 input {
     display: block;
 }
@@ -74,6 +83,8 @@ button:hover {
     background-color: var(--purple);
     border: 1px solid var(--purple);
 }
+
+/* Required settings to use material icons */
 
 @font-face {
     font-family: 'Material Icons';

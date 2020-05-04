@@ -1,13 +1,13 @@
 import React from 'react';
 import UserContext from './userContext';
 import CalendarContext from './calendarContext';
+import { getHHMMFromDate } from '../utils/date';
 import styles from './upNext.module.css';
 
-function getTimeStringFromDate(date) {
-    const [hours, minutes] = date.toTimeString().split(' ')[0].split(':');
-    return `${hours}:${minutes}`;
-}
-
+/**
+ * This component displays the next X lectures.
+ * The number of lectures to show can be set by the user.
+ */
 export default class UpNext extends React.Component {
     constructor(props) {
         super(props);
@@ -24,6 +24,10 @@ export default class UpNext extends React.Component {
         this.setState({ showEntries: event.target.value });
     }
 
+    /**
+     * Rendering a select element with all the lecutes below.
+     * To get all the lectures the UserContext is beeing consumed.
+     */
     render() {
         return (
             <div className={styles.container}>
@@ -45,11 +49,15 @@ export default class UpNext extends React.Component {
                                 new Date(lecture.start).getTime() >
                                 new Date().getTime()
                         ).length === 0 ? (
+                            // Display in case that now lecutes exist.
                             <div className={styles.lecture}>
                                 {' '}
                                 <h1>Nothing to do</h1>
                             </div>
                         ) : (
+                            // filter out lectures in the past, sort the array and slice it to
+                            // fit the selected number of entries.
+                            // After that for each remaining item of the array a div is beeing created.
                             lectures
                                 .filter(
                                     (lecture) =>
@@ -75,11 +83,11 @@ export default class UpNext extends React.Component {
                                         </span>
                                         <span>Time:</span>
                                         <span>
-                                            {getTimeStringFromDate(
+                                            {getHHMMFromDate(
                                                 new Date(lecture.start)
                                             )}{' '}
                                             -{' '}
-                                            {getTimeStringFromDate(
+                                            {getHHMMFromDate(
                                                 new Date(lecture.end)
                                             )}
                                         </span>

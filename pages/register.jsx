@@ -27,12 +27,13 @@ export default class Register extends React.Component {
      * Uses the noAuth-function to check if the user is not logged in.
      * After that this function will check which protocol is beeing used and gets the url for making
      * api calls.
+     * Only user that are not logged in can use this page.
      * @param {object} ctx - The context.
      */
     static getInitialProps(ctx) {
         noAuth(ctx);
         const protocol =
-            process.env.NODE_ENV === 'production' ? 'http' : 'http';
+            process.env.NODE_ENV === 'production' ? 'https' : 'http';
         const apiUrl = process.browser
             ? `${protocol}://${window.location.host}/api/register`
             : `${protocol}://${ctx.req.headers.host}/api/register`;
@@ -40,10 +41,9 @@ export default class Register extends React.Component {
     }
 
     /**
-     * This function and the other three below are beeing called
-     * whenever the value of an input field changes.
-     * This way the components state will always be up to date.
-     * @param {object} event - The input event.
+     * This function and the three above keep track of the value in the html form
+     * and update the state of this component.
+     * @param {object} event - The form event
      */
     changeEmail(event) {
         this.setState({ email: event.target.value });

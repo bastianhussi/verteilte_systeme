@@ -5,6 +5,11 @@ import CalendarContext from './calendarContext';
 import UserContext from './userContext';
 import LoadingScreen from './loadingScreen';
 
+/**
+ * This component displays either a month-, or week view.
+ * It also keeps track of the selected date, selected semester
+ * and if the form to create or edit lectures shoudl be shown.
+ */
 export default class Calendar extends React.Component {
     constructor(props) {
         super(props);

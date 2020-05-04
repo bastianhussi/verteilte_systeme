@@ -6,9 +6,9 @@ import { UnauthorizedError } from './errors';
 /**
  * This helper function will search the users browser for a cookie with the given name.
  * It will then return the content of the cookie.
- * The function was written to avoid a unnecessary libary like js-cookie.
+ * The function was written to avoid a libary like js-cookie.
  * @param {*} cookieName
- * @param {*} param1
+ * @param {*} request
  */
 function getCookieByName(cookieName, { req }) {
     // all cookies are saved in one string and seperated by "; "

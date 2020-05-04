@@ -1,3 +1,7 @@
+/**
+ * This will render when a HTTP-Error with the status code of 404 occurres (page not found).
+ * The page exists to provide a consistent design and user experience.
+ */
 export default function NotFound() {
     return (
         <>

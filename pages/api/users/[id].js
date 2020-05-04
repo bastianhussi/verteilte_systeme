@@ -18,7 +18,10 @@ import sendVerificationMail from '../../../utils/email';
 import { NotFoundError } from '../../../utils/errors';
 
 /**
- *
+ * Returns the user with the specified id.
+ * This route may only be called from the user, that ownes this account.
+ * Full information (including password) is send back if the validation was successfull.
+ * This way the user can see and change his account information in the app.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -34,7 +37,11 @@ async function handleGet(req, res) {
 }
 
 /**
- *
+ * Change attribute(s) of the users account.
+ * This route may only be called from the user, that ownes this account.
+ * Possible attributes are email, name of password.
+ * The code has to be changed at api/verify/[code] and the admin attribute
+ * cannot be changed/deleted.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -51,6 +58,7 @@ async function handlePatch(req, res) {
     const { id } = req.query;
     validateIdAgainstToken(id, token);
 
+    // hash the password, if it gets changed.
     if (modifiedUser.password) {
         modifiedUser.password = await bcrypt.hash(modifiedUser.password, 10);
     }
@@ -59,11 +67,16 @@ async function handlePatch(req, res) {
     await updateOne('users', { _id }, { $set: modifiedUser });
     const updatedUser = await findOne('users', { _id });
 
+    // if the email address gets changed a new code has to be generated
+    // and the new email address has to be verified.
     if (modifiedUser.email) {
         const salt = crypto.randomBytes(128).toString('base64');
         const code = crypto
             .pbkdf2Sync(modifiedUser.email, salt, 10, 32, 'sha256')
             .toString('hex');
+
+        // adding a code attribute to the user document and sending a verification email.
+        // This happens asyncroniously to speed things up.
         await Promise.all([
             updateOne(
                 'users',
@@ -81,7 +94,9 @@ async function handlePatch(req, res) {
 }
 
 /**
- *
+ * Deletes a user account.
+ * This route may only be called from the user, that ownes this account.
+ * Will also delete all lectures held by the user.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */

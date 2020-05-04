@@ -21,12 +21,20 @@ async function handlePost(req, res) {
     });
     const newUser = await validateData(req.body, schema);
 
+    // hash the given password
     const hashedPassword = await bcrypt.hash(newUser.password, 10);
+
+    // generate a random code.
+    // users with a code cannot log in. If the verify their account,
+    // by clicking on the link in their confirmation email,
+    // the code attribute in their account will be deleted.
     const salt = crypto.randomBytes(128).toString('base64');
     const code = crypto
         .pbkdf2Sync(newUser.email, salt, 10, 32, 'sha256')
         .toString('hex');
 
+    // insertes the user into the database and sends the verification email.
+    // This will happen asyncroniously to speed things up.
     await Promise.all([
         insertOne('users', {
             code,
@@ -40,9 +48,10 @@ async function handlePost(req, res) {
 }
 
 /**
- * Creates a new room.
- * The requst body must have a name attribute.
- * Requires a authorization header.
+ * Top layer of this route.
+ * Will check the request method and if the method is supported
+ * the matching function is called.
+ * Any errors that occurre will be handled by the handleError function from util/middleware.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */

@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 
+// configurates nodemails with the credentials provided in the .env-file
 const transport = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,

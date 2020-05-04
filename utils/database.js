@@ -1,19 +1,26 @@
 import { MongoClient } from 'mongodb';
 import { NotFoundError, DatabaseError } from './errors';
 
+// The client that executes all the quires.
+// In MongoDB it's best practice to keep a connection open during
+// the whole time the server is running.
 const client = new MongoClient(
     process.env.MONGO_HOST || 'mongodb://localhost:27017',
     {
+        // options, that prevent deprecation warnings
         useNewUrlParser: true,
         useUnifiedTopology: true,
     }
 );
 
+// connect to the database once.
 client.connect().catch((err) => {
     console.error(err);
     process.exit(1);
 });
 
+// Will read the database name from the environment variables.
+// If none exist 'nextjs' will be used.
 const dbName = process.env.MONGO_DB || 'nextjs';
 
 /**

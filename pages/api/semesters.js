@@ -8,6 +8,11 @@ import {
 } from '../../utils/middleware';
 import { BadRequestError } from '../../utils/errors';
 
+/**
+ * Checks the database for semesters matching the request query.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleGet(req, res) {
     auth(req);
 
@@ -23,6 +28,14 @@ async function handleGet(req, res) {
     res.status(200).json(semesters);
 }
 
+/**
+ * Creates a new semester.
+ * The request body must have a name, start- and end-date.
+ * The end has to be after the start.
+ * This route may only be called by an admin.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handlePost(req, res) {
     await authAdmin(req);
 

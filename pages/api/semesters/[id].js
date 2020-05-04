@@ -9,6 +9,11 @@ import {
 } from '../../../utils/middleware';
 import { BadRequestError } from '../../../utils/errors';
 
+/**
+ * Searches the database for a semester with the given id.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleGet(req, res) {
     auth(req);
     const { id } = req.query;
@@ -16,6 +21,13 @@ async function handleGet(req, res) {
     res.status(200).json(semester);
 }
 
+/**
+ * Changes a existing semester.
+ * Attributes that may be changed are the name, start- and end-date.
+ * This route may only be called by an admin.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handlePatch(req, res) {
     await authAdmin(req);
     const _id = createObjectId(req.query.id);
@@ -27,7 +39,7 @@ async function handlePatch(req, res) {
     });
     const doc = await validateData(req.body, schema);
 
-    // all get attributes from this semester
+    // all get attributes from this semester, even the ones that have not changed.
     const [name, start, end] = await (async function () {
         if (doc.name && doc.start && doc.end) {
             return [doc.name, doc.start, doc.end];
@@ -39,6 +51,7 @@ async function handlePatch(req, res) {
         }
     })();
 
+    // throw an error if the start date after the end date.
     if (new Date(start).getTime() >= new Date(end).getTime())
         throw new BadRequestError('"end" must be greater than "start"', {
             doc,
@@ -46,8 +59,10 @@ async function handlePatch(req, res) {
             end,
         });
 
+    // check for conflicts if start- or end-date have changed
     if (doc.start || doc.end) {
         try {
+            // query the database for all other semesters that conflict with this one.
             const conflict = await findOne('semesters', {
                 $and: [
                     { _id: { $ne: _id } },
@@ -74,6 +89,13 @@ async function handlePatch(req, res) {
     res.status(200).json(updatedSemester);
 }
 
+/**
+ * Deletes a semester.
+ * Throws an error if lectures in this semester exist.
+ * This route may only be called by an admin.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleDelete(req, res) {
     await authAdmin(req);
 

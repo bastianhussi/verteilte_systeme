@@ -1,3 +1,9 @@
+/*
+ * This css file is beeing used by login.jsx and register.jsx.
+ * Both the login and register should have the same styling
+ * and don't differ to much from each other (one form in the center in the screen).
+ */
+
 .center {
     display: flex;
     flex-direction: column;

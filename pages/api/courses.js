@@ -33,7 +33,9 @@ async function handleGet(req, res) {
 }
 
 /**
- *
+ * Creates a new course.
+ * The request body must have a name and a color (in hex-code, e.g. #9c93d6).
+ * This route may only be called by an admin.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */

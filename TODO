@@ -1,17 +1,15 @@
 # when should jwt expire? 12h?
 # min lenght for passwords?
-# highlight current day in week
 # set min and max time (08:00-18:00?) in week.jsx and form.jsx
 # check that lectures are not longer than a day and min one hour long
-# change production protocol back to https ( process.env.NODE_ENV === 'production' ? 'https' : 'http';)
 # find way to check if start is less than end in semesters/[id] without requireing both in req body.
 # replace manual validation which joi
 # add validation for lecture, that start and end are at the same time, between 08:00-18:00 and min 30 mins long
 # courses can be deleted even if lectures with it exist
+# Show error page if fetching data at index.jsx fails.
 ================================
 
 Bugs:
-# lectures may disappear is a date at the start/end of a month
 # changing start- & end-date of semesters doesnt work
 # Warning: Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application. To fix, cancel all subscriptions and asynchronous tasks in the componentWillUnmount method.
     in Index (created by MyApp)

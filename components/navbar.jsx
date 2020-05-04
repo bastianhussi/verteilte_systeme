@@ -7,6 +7,11 @@ import Account from './account';
 import { logout } from '../utils/auth';
 import styles from './navbar.module.css';
 
+/**
+ * This component will always be shown at the top of the index component.
+ * The changeView function given in the props is beeing called on each entry
+ * of this navbar to change the view below.
+ */
 export default class Navbar extends React.Component {
     constructor(props) {
         super(props);
@@ -17,6 +22,7 @@ export default class Navbar extends React.Component {
     render() {
         const { changeView } = this.props;
         return (
+            // Consuming the UserContext to display his name in the right corner.
             <UserContext.Consumer>
                 {({ user }) => (
                     <div className={styles.navbar}>
@@ -27,6 +33,7 @@ export default class Navbar extends React.Component {
                                 Admin
                             </a>
                         ) : (
+                            // only display this entrie if the user is an admin.
                             <></>
                         )}
                         <div

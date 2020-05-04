@@ -10,8 +10,7 @@ import {
 import { NotFoundError } from '../../../utils/errors';
 
 /**
- * Returns a room if one is found in the database.
- * Requires a authorization header.
+ * Searches the database for a semester with the given id.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -23,7 +22,9 @@ async function handleGet(req, res) {
 }
 
 /**
- *
+ * Changes a room.
+ * The only possible attribute is the name of the room.
+ * This route may only be called by an admin.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -41,6 +42,13 @@ async function handlePatch(req, res) {
     res.status(200).json(updatedRoom);
 }
 
+/**
+ * Deletes a room.
+ * Will throw an error if lectures in this room exist.
+ * This route may only be called by an admin.
+ * @param {object} req - The incoming request.
+ * @param {object} res - The outgoing response.
+ */
 async function handleDelete(req, res) {
     await authAdmin(req);
 
