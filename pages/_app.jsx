@@ -1,6 +1,11 @@
 import '../public/styles.css';
 
-// This default export is required in a new `pages/_app.js` file.
+/**
+ * This component is the protype for each React component in this app.
+ * The reason for this is that this way all the styling in public/styles.css
+ * can be used in all of the project (consistent design and reusability)
+ * @param {object} param0
+ */
 export default function MyApp({ Component, pageProps }) {
     return (
         <Component {...pageProps}>

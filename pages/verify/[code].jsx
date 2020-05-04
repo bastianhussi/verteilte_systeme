@@ -3,8 +3,12 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import axois from 'axios';
 import Link from 'next/link';
-import Message from '../../components/message';
 
+/**
+ * This page is beeing renderd when the user clicks on the link inside of
+ * his confirmation email. If the code exists the user is prompted to login,
+ * if not an error is displayed.
+ */
 export default class Verify extends React.Component {
     constructor(props) {
         super(props);

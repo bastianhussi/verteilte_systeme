@@ -2,7 +2,10 @@ import { handleError } from '../../../utils/middleware';
 import { updateOne } from '../../../utils/database';
 
 /**
- *
+ * This route is beeing called when a user clicks on the link
+ * in his confirmation email.
+ * This will update his user account and remove the code attribute,
+ * or throw an 404-error if no such code exists.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */

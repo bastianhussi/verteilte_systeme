@@ -176,6 +176,14 @@ export default class Index extends React.Component {
     }
 }
 
+/**
+ * This will get the inital props of this component: The url for api request, the user and this jwt.
+ * This function is ensures that the props are generated on the server side.
+ * Normally this is done with "getInitalProps", which is rendered on the server- or client-side.
+ * However getter the user's token can only be done on the server side:
+ * Verifing the jwt doesn't work on the client side (which shouldn't be done anyways).
+ * @param {object} ctx - The context
+ */
 export async function getServerSideProps(ctx) {
     const protocol = process.env.NODE_ENV === 'production' ? 'https' : 'http';
     const apiUrl = process.browser

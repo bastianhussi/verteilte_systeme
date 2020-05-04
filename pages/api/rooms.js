@@ -11,7 +11,6 @@ import {
  * Searches the database for rooms and returns the ones
  * which match the given query.
  * The rooms name and a limit of rooms can be specified.
- * Requires a authorization header.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */

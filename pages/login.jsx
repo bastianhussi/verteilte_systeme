@@ -25,6 +25,7 @@ export default class Login extends React.Component {
      * Uses the noAuth-function to check if the user is not logged in.
      * After that this function will check which protocol is beeing used and gets the url for making
      * api calls.
+     * Only user that are logged out can use this page.
      * @param {*} ctx - The context
      */
     static getInitialProps(ctx) {

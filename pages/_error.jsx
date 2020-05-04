@@ -1,3 +1,7 @@
+/**
+ * This will render when a HTTP-Error with the status code of 500 occurres (Internal Server Error).
+ * The page exists to provide a consistent design and user experience.
+ */
 export default function Error({ statusCode }) {
     return (
         <>

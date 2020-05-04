@@ -10,7 +10,7 @@ import { findOne, updateOne, deleteOne } from '../../../utils/database';
 import { BadRequestError } from '../../../utils/errors';
 
 /**
- *
+ * Searches the database for a lecture with the given id.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -26,7 +26,9 @@ async function handleGet(req, res) {
 }
 
 /**
- *
+ * Changes a lecture.
+ * Possible attributes are the title, course, room, start- and end-date.
+ * This route may only be called from the user, that created this lecture.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -46,6 +48,7 @@ async function handlePatch(req, res) {
     const lecture = await findOne('lectures', { _id });
     validateIdAgainstToken(lecture.user, token);
 
+    // check for possible conflicts if the start- or end-date have changed
     if (doc.start || doc.end) {
         if (
             new Date(doc.start || lecture.start).getTime() >
@@ -110,7 +113,8 @@ async function handlePatch(req, res) {
 }
 
 /**
- *
+ * Deletes a lecture.
+ * This route may only be called from the user, that created this lecture.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */

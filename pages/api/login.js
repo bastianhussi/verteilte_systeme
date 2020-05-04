@@ -23,19 +23,24 @@ async function handlePost(req, res) {
 
     const user = await findOne('users', { email });
 
+    // if the user objects has a code attribute his account is not verified yet
+    // and he must follow the link in his confirmation email.
     if (user.code) {
         throw new UnauthorizedError('please verify your email address', {
             reqBody: req.body,
             user,
         });
     }
+
+    // compares the plain password in the request body against the hashed one in the database.
     if (!(await bcrypt.compare(password, user.password))) {
         throw new UnauthorizedError('you entered a wrong password', {
             reqBody: req.body,
             encrypted: user.password,
         });
     }
-    // token witch expires in 12 hours
+
+    // sending back a token, that expires in 12 hours.
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
         expiresIn: '12h',
     });

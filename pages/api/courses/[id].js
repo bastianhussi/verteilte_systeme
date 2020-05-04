@@ -1,10 +1,5 @@
 import Joi from '@hapi/joi';
-import {
-    findOne,
-    deleteOne,
-    updateOne,
-    updateMany,
-} from '../../../utils/database';
+import { findOne, deleteOne, updateOne } from '../../../utils/database';
 import {
     validateData,
     handleError,
@@ -15,7 +10,7 @@ import {
 import { BadRequestError, NotFoundError } from '../../../utils/errors';
 
 /**
- *
+ * Searches the database for a course with the given id.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -27,7 +22,9 @@ async function handleGet(req, res) {
 }
 
 /**
- *
+ * Changes a course.
+ * Possible attributes are the name and the color (in hex-code, e.g. #9c93d6).
+ * This route may only be called by an admin.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
@@ -54,7 +51,9 @@ async function handlePatch(req, res) {
 }
 
 /**
- *
+ * Deletes a course.
+ * Throws an error if lectures with the course exist.
+ * This route may only be called by an admin.
  * @param {object} req - The incoming request.
  * @param {object} res - The outgoing response.
  */
