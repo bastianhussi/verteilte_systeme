@@ -6,6 +6,7 @@
 # replace manual validation which joi
 # add validation for lecture, that start and end are at the same time, between 08:00-18:00 and min 30 mins long
 # courses can be deleted even if lectures with it exist
+# Show error page if fetching data at index.jsx fails.
 ================================
 
 Bugs:

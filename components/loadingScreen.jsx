@@ -1,5 +1,9 @@
+/**
+ * This helper function is beeing used throughout the entire
+ * application to display a loading screen.
+ * This follows the example at: https://www.w3schools.com/howto/howto_css_loader.asp
+ */
 export default function LoadingScreen() {
-    // for animation see: https://www.w3schools.com/howto/howto_css_loader.asp
     return (
         <>
             <div>
