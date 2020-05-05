@@ -15,7 +15,7 @@ import {
     createObjectId,
 } from '../../../utils/middleware';
 import sendVerificationMail from '../../../utils/email';
-import { NotFoundError } from '../../../utils/errors';
+import { NotFoundError, BadRequestError } from '../../../utils/errors';
 
 /**
  * Returns the user with the specified id.
@@ -33,6 +33,9 @@ async function handleGet(req, res) {
 
     const _id = createObjectId(id);
     const user = await findOne('users', { _id });
+
+    // removing password, although they are hashed
+    delete user.password;
     res.status(200).json(user);
 }
 
@@ -51,19 +54,40 @@ async function handlePatch(req, res) {
     const schema = Joi.object({
         email: Joi.string().email().trim().optional(),
         name: Joi.string().trim().min(3).max(50).optional(),
-        password: Joi.string().min(3).max(50).optional(),
+        newPassword: Joi.string().min(3).max(50).optional(),
+        oldPassword: Joi.string()
+            .min(3)
+            .max(50)
+            .optional()
+            .when('newPassword', { then: Joi.not(Joi.ref('newPassword')) }),
     });
     const modifiedUser = await validateData(req.body, schema);
 
     const { id } = req.query;
     validateIdAgainstToken(id, token);
 
-    // hash the password, if it gets changed.
-    if (modifiedUser.password) {
-        modifiedUser.password = await bcrypt.hash(modifiedUser.password, 10);
+    const _id = createObjectId(id);
+
+    if (modifiedUser.newPassword) {
+        const { password } = await findOne('users', { _id });
+
+        // check if the old password is correct
+        if (!(await bcrypt.compare(modifiedUser.oldPassword, password))) {
+            throw new BadRequestError('old password is wrong', {
+                modifiedUser,
+                password,
+            });
+        }
+
+        // hash the password, if it gets changed.
+        modifiedUser.password = await bcrypt.hash(
+            modifiedUser.newPassword,
+            10);
+
+        delete modifiedUser.newPassword;
+        delete modifiedUser.oldPassword;
     }
 
-    const _id = createObjectId(id);
     await updateOne('users', { _id }, { $set: modifiedUser });
     const updatedUser = await findOne('users', { _id });
 

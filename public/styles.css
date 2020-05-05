@@ -9,7 +9,7 @@
     --dark-blue: #6805f2;
     --dark-purple: #6f04d9;
     --purple: #8245bf;
-    --dark-cyan: #05f29b;
+    --dark-cyan: #04b977;
     --cyan: #b7f7df;
     --background-color: #f9eff2;
     --dark-yellow: #f2cb05;
@@ -39,6 +39,10 @@ a {
 /* Styling for forms to achive better ux */
 input {
     display: block;
+}
+
+input[type='checkbox'] {
+    display: inline;
 }
 
 input[type='text'],

@@ -26,8 +26,8 @@ const dbName = process.env.MONGO_DB || 'nextjs';
 /**
  * Inserts the given document into a collection.
  * Will throw an DatabaseError if the document could not be inserted.
- * @param {string} collection
- * @param {object} doc
+ * @param {string} collection - The collection for this data.
+ * @param {object} doc - The document to insert.
  */
 export async function insertOne(collection, doc) {
     const result = await client
@@ -46,7 +46,7 @@ export async function insertOne(collection, doc) {
  * Searches the database for a document matching a filter.
  * Only returns one documents, even if multiple documents match the filter.
  * For finding multiple documents refer to the "findMany"-function below.
- * @param {string} collection
+ * @param {string} collection - The collection for this data.
  * @param {object} filter
  */
 export async function findOne(collection, filter) {
@@ -67,7 +67,7 @@ export async function findOne(collection, filter) {
  * The limit specifies the amout of documents that will be returned.
  * If no limit is given the maximum number of documents will be returned.
  * For finding only one document refer to the "findOne"-function above.
- * @param {string} collection
+ * @param {string} collection - The collection for this data.
  * @param {object} query
  * @param {number} limit
  */
@@ -96,7 +96,7 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
  * Even if multiple documents match the filter only the first will be updated.
  * Filtering should only be done by a unique attribute of the document.
  * If no documents were found a NotFoundError will be thrown.
- * @param {*} collection
+ * @param {*} collection - The collection for this data.
  * @param {*} filter
  * @param {*} update
  */
@@ -120,7 +120,7 @@ export async function updateOne(collection, filter, update) {
 /**
  * Updates all documents matching the filter.
  * The update attribute specifies the update to be executed on the found documents.
- * @param {*} collection
+ * @param {*} collection - The collection for this data.
  * @param {*} filter
  * @param {*} update
  */
@@ -144,7 +144,7 @@ export async function updateMany(collection, filter, update) {
 /**
  * Deletes one document for the collection. This will be the first document matching the filter
  * If no document get deleted a NotFoundError will be thrown.
- * @param {*} collection
+ * @param {*} collection - The collection for this data.
  * @param {*} filter
  */
 export async function deleteOne(collection, filter) {
@@ -163,7 +163,7 @@ export async function deleteOne(collection, filter) {
 /**
  * Deletes all documents from the collection matching the filter.
  * If no documents get deleted a NotFoundError will the thrown.
- * @param {*} collection
+ * @param {*} collection - The collection for this data.
  * @param {*} filter
  */
 export async function deleteMany(collection, filter) {

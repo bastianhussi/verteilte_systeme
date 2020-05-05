@@ -30,23 +30,47 @@ After that just execute:
 docker-compose up
 ```
 
-On default the app will be using https. If you cant use https (e.g running this locally) you have to delete line 14 in the docker-compose.yml file.
-
 Thats it. Docker will build the images you need and start them.
 When thats done open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+Note:
+On default the app will use http, which is fine for testing on a local machine.
+If you want to use https instead change line 5 to
+
+```
+command: npm run start
+```
+
+and add
+
+```
+- NODE_ENV=production
+```
+
+to the environments of the web service.
+
 ## Deploying on Azure
 
-...
+If you don't want to install and run this app locally, just visit our running instance on Azure:
+[https://azure.microsoft.com](https://azure.microsoft.com)
+Either register a new account with your email address (you will receive a verification email), or use
+our preconfigurated admin account (email: john@doe.com, password: super-secure-admin-pa\$\$)
 
 ## Installing manually
 
-There are two ways to run this app manually:
-In production- or in development mode.
-In booth ways you need an local MongoDB Service running at localhost:27017.
+To run this app manually (without docker) please make sure you have a local MongoDB instance running.
+If you work for example with MongoDB Atlas please change the url in your .env-file.
+The easiest way to setup MongoDB is with docker:
 
 ```bash
-npm install
+docker run -p 27017:27017 -d mongo:4.2.6-bionic
+```
+
+When you have a MongoDB instance up and running simply install
+
+```bash
+npm install --save-prod
+# no need for development dependencies
 ```
 
 Then, start the development server:
@@ -55,17 +79,14 @@ Then, start the development server:
 npm run dev
 ```
 
-If you want this application to run in production mode you have to run these command instead
-
-```bash
-npm ci --only=production
-npm run build
-# This ways the app will work with http.
-npm run start
-# If you want to use https instead please execute this command instead:
-NODE_ENV=production npm run start
-```
-
 When thats done open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 If you choose to run the app in development mode you have to refresh your browser after loggin in the first time.
 This behavior occurres because Nextjs only renders pages if necessary.
+
+If you want this application to run in production mode you have to run these command instead
+
+```bash
+npm run build
+npm run start
+# Note: this will start the app using https
+```

@@ -9,17 +9,23 @@ export default class Password extends React.Component {
         super(props);
         this.state = {
             message: '',
-            password: '',
+            oldPassword: '',
+            newPassword: '',
             showPassword: false,
         };
 
-        this.changePassword = this.changePassword.bind(this);
+        this.changeOldPassword = this.changeOldPassword.bind(this);
+        this.changeNewPassword = this.changeNewPassword.bind(this);
         this.changeShowPassword = this.changeShowPassword.bind(this);
         this.submitPasswordForm = this.submitPasswordForm.bind(this);
     }
 
-    changePassword(event) {
-        this.setState({ password: event.target.value });
+    changeOldPassword(event) {
+        this.setState({ oldPassword: event.target.value });
+    }
+
+    changeNewPassword(event) {
+        this.setState({ newPassword: event.target.value });
     }
 
     changeShowPassword() {
@@ -30,20 +36,13 @@ export default class Password extends React.Component {
         event.preventDefault();
 
         const { user, changeUser, apiUrl, token } = this.context;
-
-        if (this.state.password === user.password) {
-            this.setState({
-                message: 'Please choose a new password',
-                password: '',
-            });
-            return;
-        }
         this.setState({ message: '' });
         try {
             const res = await axios.patch(
                 `${apiUrl}/users/${user._id}`,
                 {
-                    password: this.state.password,
+                    newPassword: this.state.newPassword,
+                    oldPassword: this.state.oldPassword,
                 },
                 {
                     headers: {
@@ -63,30 +62,59 @@ export default class Password extends React.Component {
 
     render() {
         return (
-            <>
-                <form onSubmit={this.submitPasswordForm}>
-                    <label>
-                        New password:
-                        <input
-                            type={this.state.showPassword ? 'text' : 'password'}
-                            value={this.state.password}
-                            onChange={this.changePassword}
-                            required
-                        />
-                    </label>
-                    <br />
-                    <label>
-                        <input
-                            type='checkbox'
-                            defaultChecked={this.state.showPassword}
-                            onClick={this.changeShowPassword}
-                        />
-                        Show password
-                    </label>
-                    <button type='submit'>Change</button>
+            <div className={styles.item}>
+                <form
+                    onSubmit={this.submitPasswordForm}
+                    className={styles.editForm}>
+                    <div>
+                        <label>
+                            Old password:
+                            <input
+                                type={
+                                    this.state.showPassword
+                                        ? 'text'
+                                        : 'password'
+                                }
+                                value={this.state.oldPassword}
+                                onChange={this.changeOldPassword}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            New password:
+                            <input
+                                type={
+                                    this.state.showPassword
+                                        ? 'text'
+                                        : 'password'
+                                }
+                                value={this.state.newPassword}
+                                onChange={this.changeNewPassword}
+                                required
+                            />
+                        </label>
+                    </div>
+                    <div>
+                        <label>
+                            <input
+                                type='checkbox'
+                                defaultChecked={this.state.showPassword}
+                                onClick={this.changeShowPassword}
+                            />
+                            Show password
+                        </label>
+                    </div>
+                    <div>
+                        <button type='reset'>Cancel</button>
+                        <button type='submit' className={styles.saveButton}>
+                            Save
+                        </button>
+                    </div>
                 </form>
                 <Message value={this.state.message} />
-            </>
+            </div>
         );
     }
 }

@@ -65,12 +65,12 @@ export default class Name extends React.Component {
         return (
             <UserContext.Consumer>
                 {({ user }) => (
-                    <>
+                    <div className={styles.item}>
                         <Message value={this.state.message} />
                         {this.state.showEditing ? (
                             <form
                                 onSubmit={this.submitNameForm}
-                                className={styles.itemForm}>
+                                className={styles.editForm}>
                                 <div>
                                     <label>
                                         New name:
@@ -99,7 +99,7 @@ export default class Name extends React.Component {
                                 </div>
                             </form>
                         ) : (
-                            <div className={styles.item}>
+                            <>
                                 <span>
                                     {' '}
                                     <strong>{user.name}</strong>
@@ -109,9 +109,9 @@ export default class Name extends React.Component {
                                     onClick={this.changeShowEditing}>
                                     edit
                                 </span>
-                            </div>
+                            </>
                         )}
-                    </>
+                    </div>
                 )}
             </UserContext.Consumer>
         );
