@@ -24,7 +24,10 @@ export default class Verify extends React.Component {
         const code = req ? req.url.split('/')[2] : useRouter().query.code;
 
         try {
-            await axois.post(`${apiUrl}/${code}`);
+            await axois.post(`${apiUrl}/${code}`, {
+                'Content-Type': 'application/json; charset=utf-8',
+            });
+
             return {
                 error: '',
             };

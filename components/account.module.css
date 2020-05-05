@@ -16,20 +16,9 @@
     display: grid;
     grid-template-columns: repeat(2, auto);
     grid-template-rows: repeat(2, auto);
-    justify-content: stretch;
+    justify-content: space-between;
     column-gap: 5px;
     row-gap: 5px;
-    margin-bottom: 1rem;
-}
-
-.containerBody {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.containerBody > * {
-    width: 100%;
     margin-bottom: 1rem;
 }
 
@@ -40,11 +29,7 @@
     margin-bottom: 1rem;
 }
 
-.createForm div {
-    margin-bottom: 1rem;
-}
-
-.createButton {
+.saveButton {
     float: right;
 }
 
@@ -55,16 +40,27 @@
     background-color: var(--main-light-color);
 }
 
-.item .itemIcon {
-    float: right;
-}
-
-.item .itemForm div {
+.editForm div {
     margin-bottom: 1rem;
 }
 
-.item .itemForm .saveButton {
+.saveButton, .itemIcon, .deleteButton {
     float: right;
+}
+
+.saveButton {
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+}
+
+.deleteButton {
+    background-color: #b70c62;
+    border-color: #b70c62;
+}
+
+.saveButton:hover {
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
 }
 
 @media only screen and (max-width: 600px) {

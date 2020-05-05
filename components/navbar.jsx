@@ -44,7 +44,6 @@ export default class Navbar extends React.Component {
                                 <a onClick={() => changeView(<Account />)}>
                                     Account
                                 </a>
-                                <a href='#help'>Help</a>
                                 <a onClick={logout}>Logout</a>
                             </div>
                         </div>

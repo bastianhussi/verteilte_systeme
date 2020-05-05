@@ -2,7 +2,7 @@ version: '3'
 services:
     web:
         build: .
-        command: npm run start
+        command: npm run dev
         ports:
             - 3000:3000
         links:
@@ -11,7 +11,6 @@ services:
             - ./.env
         environment:
             - MONGO_HOST=mongodb://mongo:27017
-            - NODE_ENV=production
     mongo:
         image: mongo:4.2.6-bionic
         ports:

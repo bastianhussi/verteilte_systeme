@@ -75,7 +75,7 @@ export default class Email extends React.Component {
                         {this.state.showEditing ? (
                             <form
                                 onSubmit={this.submitEmailForm}
-                                className={styles.itemForm}>
+                                className={styles.editForm}>
                                 <div>
                                     <label>
                                         New email:
@@ -104,7 +104,7 @@ export default class Email extends React.Component {
                                 </div>
                             </form>
                         ) : (
-                            <div className={styles.item}>
+                            <>
                                 <span>
                                     <strong>{user.email}</strong>
                                 </span>
@@ -113,7 +113,7 @@ export default class Email extends React.Component {
                                     onClick={this.changeShowEditing}>
                                     edit
                                 </span>
-                            </div>
+                            </>
                         )}
                     </div>
                 )}
