@@ -80,9 +80,7 @@ async function handlePatch(req, res) {
         }
 
         // hash the password, if it gets changed.
-        modifiedUser.password = await bcrypt.hash(
-            modifiedUser.newPassword,
-            10);
+        modifiedUser.password = await bcrypt.hash(modifiedUser.newPassword, 10);
 
         delete modifiedUser.newPassword;
         delete modifiedUser.oldPassword;
@@ -137,7 +135,7 @@ async function handleDelete(req, res) {
         await deleteMany('lectures', { user: _id });
     } catch (err) {
         // NotFoundErros shouldn't make this request fail
-        if (!err instanceof NotFoundError) throw err;
+        if (!(err instanceof NotFoundError)) throw err;
     }
 
     res.status(200).json(deletedUser);

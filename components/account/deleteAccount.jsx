@@ -20,7 +20,7 @@ export default class DeleteAccount extends React.Component {
         event.preventDefault();
 
         if (!confirm('Are you sure?\nAll your data will be lost.')) {
-           return;
+            return;
         }
 
         const { user, apiUrl, token } = this.context;
@@ -42,15 +42,15 @@ export default class DeleteAccount extends React.Component {
     render() {
         return (
             <div className={styles.item}>
-                <form onSubmit={this.submitDeleteForm} className={styles.editForm}>
+                <form
+                    onSubmit={this.submitDeleteForm}
+                    className={styles.editForm}>
                     <div>
                         <h2>Permanently delete account?</h2>
                     </div>
-                    <button
-                            type='submit'
-                            className={styles.deleteButton}>
-                            Delete
-                        </button>
+                    <button type='submit' className={styles.deleteButton}>
+                        Delete
+                    </button>
                 </form>
                 <Message value={this.state.message} />
             </div>

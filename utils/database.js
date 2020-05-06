@@ -168,7 +168,7 @@ export async function deleteOne(collection, filter) {
  */
 export async function deleteMany(collection, filter) {
     const result = await client
-        .db(DB)
+        .db(dbName)
         .collection(collection)
         .deleteMany(filter);
     if (result.deletedCount === 0) {

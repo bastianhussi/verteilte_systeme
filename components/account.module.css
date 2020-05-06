@@ -44,7 +44,9 @@
     margin-bottom: 1rem;
 }
 
-.saveButton, .itemIcon, .deleteButton {
+.saveButton,
+.itemIcon,
+.deleteButton {
     float: right;
 }
 
@@ -53,14 +55,19 @@
     border-color: var(--dark-cyan);
 }
 
-.deleteButton {
-    background-color: #b70c62;
-    border-color: #b70c62;
-}
-
 .saveButton:hover {
     background-color: var(--dark-cyan);
     border-color: var(--dark-cyan);
+}
+
+.deleteButton {
+    background-color: red;
+    border-color: red;
+}
+
+.deleteButton:hover {
+    background-color: red;
+    border-color: red;
 }
 
 @media only screen and (max-width: 600px) {

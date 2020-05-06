@@ -7,7 +7,7 @@ import {
     createObjectId,
     authAdmin,
 } from '../../../utils/middleware';
-import { NotFoundError } from '../../../utils/errors';
+import { BadRequestError } from '../../../utils/errors';
 
 /**
  * Searches the database for a semester with the given id.
@@ -61,7 +61,7 @@ async function handleDelete(req, res) {
             lecture
         );
     } catch (err) {
-        if (!err instanceof NotFoundError) throw err;
+        if (err instanceof BadRequestError) throw err;
     }
 
     const deletedRoom = await findOne('rooms', { _id });

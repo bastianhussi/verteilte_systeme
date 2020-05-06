@@ -42,8 +42,10 @@ export default async function (req, res) {
         switch (req.method) {
             case 'GET':
                 await handleGet(req, res);
+                break;
             default:
                 res.status(405).end();
+                break;
         }
     } catch (err) {
         handleError(res, err);

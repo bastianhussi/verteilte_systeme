@@ -1,5 +1,5 @@
 import React from 'react';
-import MonthController from './calendar/month';
+import MonthController from './calendar/month/controller';
 import LectureDialog from './calendar/lectureDialog';
 import CalendarContext from './calendarContext';
 import UserContext from './userContext';

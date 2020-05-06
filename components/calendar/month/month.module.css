@@ -20,6 +20,16 @@
     row-gap: 5px;
 }
 
+.todayButton {
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+}
+
+.todayButton:hover {
+    background-color: var(--dark-cyan);
+    border-color: var(--dark-cyan);
+}
+
 .dayHeader {
     width: 150px;
     height: 50px;
@@ -31,7 +41,7 @@
 .day {
     width: 150px;
     height: 50px;
-    border-bottom: 1px solid var(--dark-purple);
+    border-bottom: 1px solid var(--font-color);
 }
 
 .lectureIcon {
@@ -48,6 +58,5 @@
 
     .day {
         width: 100%;
-        border-bottom: 1px solid var(--dark-purple);
     }
 }

@@ -60,8 +60,10 @@ export default async function (req, res) {
         switch (req.method) {
             case 'POST':
                 await handlePost(req, res);
+                break;
             default:
                 res.status(405).end();
+                break;
         }
     } catch (err) {
         handleError(res, err);
