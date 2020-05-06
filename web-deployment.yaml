@@ -85,7 +85,7 @@ spec:
                                 key: SMTP_USER
                                 name: env
                   image: web
-                  imagePullPolicy: ''
+                  imagePullPolicy: Never
                   name: web
                   ports:
                       - containerPort: 3000
