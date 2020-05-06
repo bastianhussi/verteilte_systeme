@@ -7,7 +7,7 @@ import {
     createObjectId,
     authAdmin,
 } from '../../../utils/middleware';
-import { BadRequestError, NotFoundError } from '../../../utils/errors';
+import { BadRequestError } from '../../../utils/errors';
 
 /**
  * Searches the database for a course with the given id.
@@ -71,7 +71,7 @@ async function handleDelete(req, res) {
         );
     } catch (err) {
         // NotFoundErros should make this fail
-        if (!err instanceof NotFoundError) throw err;
+        if (err instanceof BadRequestError) throw err;
     }
 
     const deletedCourse = await findOne('courses', { _id: createObjectId(id) });

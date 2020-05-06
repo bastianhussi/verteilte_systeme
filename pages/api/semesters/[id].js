@@ -1,5 +1,5 @@
 import Joi from '@hapi/joi';
-import { findOne, updateOne, deleteOne, find } from '../../../utils/database';
+import { findOne, updateOne, deleteOne } from '../../../utils/database';
 import {
     auth,
     handleError,
@@ -40,15 +40,14 @@ async function handlePatch(req, res) {
     const doc = await validateData(req.body, schema);
 
     // all get attributes from this semester, even the ones that have not changed.
-    const [name, start, end] = await (async function () {
+    const [name, start, end] = await (async function getAllAttributes() {
         if (doc.name && doc.start && doc.end) {
             return [doc.name, doc.start, doc.end];
-        } else {
-            const { name, start, end } = await findOne('semesters', {
-                _id,
-            });
-            return [doc.name || name, doc.start || start, doc.end || end];
         }
+        const { name, start, end } = await findOne('semesters', {
+            _id,
+        });
+        return [doc.name || name, doc.start || start, doc.end || end];
     })();
 
     // throw an error if the start date after the end date.

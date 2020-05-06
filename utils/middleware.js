@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { ObjectId, MongoError } from 'mongodb';
-import ApplicationError, {
+import {
     UserFacingError,
     BadRequestError,
     UnauthorizedError,
@@ -39,6 +39,20 @@ export function auth(req) {
 }
 
 /**
+ * Creates a new Object of the ObjectId class from the mongodb driver.
+ * Should be used instead of new ObjectId, because this function will
+ * produce a matching error, if no valid ObjectId is given.
+ * @param {string} id - Any string.
+ */
+export function createObjectId(id) {
+    try {
+        return new ObjectId(id);
+    } catch (err) {
+        throw new BadRequestError(err, { id });
+    }
+}
+
+/**
  * Just like the auth-function above but on top this function
  * checks if the user is also an admin.
  * This function is usefull for making sure only admins can make certain http requests.
@@ -51,7 +65,7 @@ export async function authAdmin(req) {
         throw new ForbiddenError(
             'this resource is only accessible for admins',
             {
-                reqBody,
+                reqBody: req.body,
                 reqQuery: req.query,
                 user,
             }
@@ -86,7 +100,7 @@ export function handleError(res, err) {
         res.status(500).end();
     }
 
-    if (process.env.NODE_ENV != 'production') {
+    if (process.env.NODE_ENV !== 'production') {
         console.log(err);
     }
 }
@@ -117,6 +131,8 @@ export async function validateData(data, schema) {
  * @param {object} token - The user's id stored in a jwt.
  */
 export function validateIdAgainstToken(id, { _id }) {
+    // != is required instead of !== because datatypes may differ.
+    // Non matching Datatypes should not make this fail.
     if (id != _id) {
         throw new ForbiddenError(
             `invalid token for the user with the id ${id}`,
@@ -125,19 +141,5 @@ export function validateIdAgainstToken(id, { _id }) {
                 token: _id,
             }
         );
-    }
-}
-
-/**
- * Creates a new Object of the ObjectId class from the mongodb driver.
- * Should be used instead of new ObjectId, because this function will
- * produce a matching error, if no valid ObjectId is given.
- * @param {string} id - Any string.
- */
-export function createObjectId(id) {
-    try {
-        return new ObjectId(id);
-    } catch (err) {
-        throw new BadRequestError(err, { id });
     }
 }

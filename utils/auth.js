@@ -26,9 +26,8 @@ function getCookieByName(cookieName, { req }) {
     );
     if (cookie) {
         return cookie.split('=')[1];
-    } else {
-        return null;
     }
+    return null;
 }
 
 /**
@@ -109,7 +108,7 @@ export async function auth(ctx, apiUrl) {
 export function noAuth(ctx) {
     const token = getCookieByName('token', ctx);
     if (token) {
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        jwt.verify(token, process.env.JWT_SECRET, (err) => {
             if (!err) redirect(ctx, '/');
         });
     }

@@ -52,6 +52,7 @@ export default class Password extends React.Component {
                 }
             );
             changeUser(res.data);
+            this.setState({ oldPassword: '', newPassword: '' });
         } catch (err) {
             this.setState({ message: err.response.data });
         }
@@ -103,7 +104,7 @@ export default class Password extends React.Component {
                                 defaultChecked={this.state.showPassword}
                                 onClick={this.changeShowPassword}
                             />
-                            Show password
+                            Show passwords
                         </label>
                     </div>
                     <div>
