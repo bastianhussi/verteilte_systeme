@@ -6,6 +6,12 @@ There are multiple ways to run this application:
 2. Azure
 3. Manually
 
+Note: when using Docker or installing manually please make sure your .env file is working.
+In this file all configurations linke Admin email and password are set. 
+The default values should be fine in most cases.
+If you want to register new accounts, besides the admin account, you have to add valid credentials
+to an smtp server at SMTP_HOST, SMTP_USER, SMTP_PASSWORD (SMTP_PORT, SMTP_SECURE are ok for most setups).
+
 ## Docker
 
 The easiest way to run this application is with docker. You only need to have the Docker desktop client installed and running.
@@ -19,19 +25,15 @@ docker-compose up
 Thats it. Docker will build the images you need and start them.
 When thats done open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Login with:         planer@dhbw-stuttgart.de 
+Login with:         planer@dhbw-stuttgart.de
+<br />
 and password:       1234
 
-
-Note:
-You may have to refresh your page after loggin in the first time.
-This behavior only occurres in development mode, because Nextjs only renders pages if necessary.
-
 On default the app will use http, which is fine for testing on a local machine.
-If you want to use https instead change line 5 of your docker-compose.yml file to
+If you want to use https instead, add this environment variable to your docker-compose.yml:
 
 ```
-command: npm run start
+- NODE_ENV=production 
 ```
 
 ## Azure
@@ -39,10 +41,11 @@ command: npm run start
 If you don't want to install and run this app locally, just visit our running instance on Azure:
 [https://dhbw-planer.westeurope.cloudapp.azure.com](https://dhbw-planer.westeurope.cloudapp.azure.com)
 
-Login with:         planer@dhbw-stuttgart.de 
+Login with:         planer@dhbw-stuttgart.de
+<br />
 and password:       1234
 
-Or register a new account (You may need to check your spam filter for the verfication email)
+Or register a new account (You may need to check your spam filter for the verfication email).
 
 ## Manually
 
@@ -50,11 +53,12 @@ To run this app without Docker please make sure you have nodejs and npm installe
 You also need a local MongoDB instance running.
 If the address of your MongoDB instance is not "mongodb://localhost:27017",
 please change the second line of your .env file to 
+
 ```
 MONGO_HOST=mongodb://your_url:port
 ```
-Normally the defaults in your .env file should work out of the box.
 
+The default values in your .env file should work out of the box normally.
 Now simply install all dependencies...
 
 ```bash
@@ -65,7 +69,7 @@ npm install --save-prod
 ... and start the development server:
 
 ```bash
-npm run dev
+npm run start
 ```
 
 When thats done open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -73,17 +77,9 @@ When thats done open [http://localhost:3000](http://localhost:3000) with your br
 Login with:         planer@dhbw-stuttgart.de 
 and password:       1234
 
-(you also find these credentials in the .env file at ADMIN_EMAIL=... and ADMIN_PASSWORD=...)
-
-
-Note:
-You may have to refresh your page after loggin in the first time.
-This behavior only occurres in development mode, because Nextjs only renders pages if necessary.
-
 On default the app will use http, which is fine for testing on a local machine.
 If you want to use https instead please execute:
 
 ```bash
-npm run build
-npm run start
+NODE_ENV=production npm run start
 ```
