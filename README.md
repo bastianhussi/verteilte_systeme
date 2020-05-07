@@ -34,17 +34,14 @@ Thats it. Docker will build the images you need and start them.
 When thats done open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 Note:
+You may have to refresh your page after loggin in the first time.
+This behavior only occurres in development mode, because Nextjs only renders pages if necessary.
+
 On default the app will use http, which is fine for testing on a local machine.
 If you want to use https instead change line 5 to
 
 ```
 command: npm run start
-```
-
-and add
-
-```
-- NODE_ENV=production
 ```
 
 to the environments of the web service.
@@ -69,8 +66,8 @@ docker run -p 27017:27017 -d mongo:4.2.6-bionic
 When you have a MongoDB instance up and running simply install
 
 ```bash
-npm install --save-prod
 # no need for development dependencies
+npm install --save-prod
 ```
 
 Then, start the development server:
@@ -80,10 +77,9 @@ npm run dev
 ```
 
 When thats done open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-If you choose to run the app in development mode you have to refresh your browser after loggin in the first time.
-This behavior occurres because Nextjs only renders pages if necessary.
 
 If you want this application to run in production mode you have to run these command instead
+(this will use https)
 
 ```bash
 npm run build
