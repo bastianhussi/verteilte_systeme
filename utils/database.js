@@ -47,17 +47,17 @@ export async function insertOne(collection, doc) {
  * Only returns one documents, even if multiple documents match the filter.
  * For finding multiple documents refer to the "findMany"-function below.
  * @param {string} collection - The collection for this data.
- * @param {object} filter
+ * @param {object} query - Query for find Operation.
  */
-export async function findOne(collection, filter) {
+export async function findOne(collection, query) {
     const result = await client
         .db(dbName)
         .collection(collection)
-        .findOne(filter);
+        .findOne(query);
     if (!result)
         throw new NotFoundError(
-            `no results searching for ${JSON.stringify(filter)}`,
-            { collection, query: filter }
+            `no results searching for ${JSON.stringify(query)}`,
+            { collection, query: query }
         );
     return result;
 }
@@ -68,8 +68,8 @@ export async function findOne(collection, filter) {
  * If no limit is given the maximum number of documents will be returned.
  * For finding only one document refer to the "findOne"-function above.
  * @param {string} collection - The collection for this data.
- * @param {object} query
- * @param {number} limit
+ * @param {object} query - Query for find Operation.
+ * @param {number} limit - Limit of results.
  */
 export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
     const cursor = client
@@ -97,8 +97,8 @@ export async function find(collection, query, limit = Number.MAX_SAFE_INTEGER) {
  * Filtering should only be done by a unique attribute of the document.
  * If no documents were found a NotFoundError will be thrown.
  * @param {*} collection - The collection for this data.
- * @param {*} filter
- * @param {*} update
+ * @param {*} filter - The Filter used to select the document to update.
+ * @param {*} update - The update operations to be applied to the document.
  */
 export async function updateOne(collection, filter, update) {
     const result = await client
@@ -121,8 +121,8 @@ export async function updateOne(collection, filter, update) {
  * Updates all documents matching the filter.
  * The update attribute specifies the update to be executed on the found documents.
  * @param {*} collection - The collection for this data.
- * @param {*} filter
- * @param {*} update
+ * @param {*} filter - The Filter used to select the documents to update.
+ * @param {*} update - The update operations to be applied to the documents.
  */
 export async function updateMany(collection, filter, update) {
     const result = await client
@@ -145,7 +145,7 @@ export async function updateMany(collection, filter, update) {
  * Deletes one document for the collection. This will be the first document matching the filter
  * If no document get deleted a NotFoundError will be thrown.
  * @param {*} collection - The collection for this data.
- * @param {*} filter
+ * @param {*} filter - The Filter used to select the document to remove.
  */
 export async function deleteOne(collection, filter) {
     const result = await client
@@ -164,7 +164,7 @@ export async function deleteOne(collection, filter) {
  * Deletes all documents from the collection matching the filter.
  * If no documents get deleted a NotFoundError will the thrown.
  * @param {*} collection - The collection for this data.
- * @param {*} filter
+ * @param {*} filter - The Filter used to select the documents to remove.
  */
 export async function deleteMany(collection, filter) {
     const result = await client

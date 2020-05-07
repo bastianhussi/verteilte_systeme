@@ -37,11 +37,12 @@ command: npm run start
 ## Azure
 
 If you don't want to install and run this app locally, just visit our running instance on Azure:
-[https://azure.microsoft.com](https://azure.microsoft.com)
+[https://dhbw-planer.westeurope.cloudapp.azure.com](https://dhbw-planer.westeurope.cloudapp.azure.com)
 
 Login with:         planer@dhbw-stuttgart.de 
 and password:       1234
 
+Or register a new account (You may need to check your spam filter for the verfication email)
 
 ## Manually
 
