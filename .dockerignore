@@ -10,6 +10,10 @@ docker-compose.yml
 .prettierrc.yml
 .prettierignore
 .env
-.env.template
+env-configmap.yaml
+mongo-deployment.yaml
+mongo-service.yaml
+web-deployment.yaml
+web-service-yaml
 TODO
 README.md

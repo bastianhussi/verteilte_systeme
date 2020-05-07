@@ -1,0 +1,19 @@
+apiVersion: v1
+data:
+    ADMIN_EMAIL: planer@dhbw-stuttgart.de
+    ADMIN_NAME: Admin
+    ADMIN_PASSWORD: '1234'
+    JWT_SECRET: super-secret
+    MONGO_DB: nextjs
+    MONGO_HOST: mongodb://mongo:27017
+    SMTP_HOST: lehre-mail.dhbw-stuttgart.de
+    SMTP_PASSWORD: 
+    SMTP_PORT: '465'
+    SMTP_SECURE: 'true'
+    SMTP_USER: 
+kind: ConfigMap
+metadata:
+    creationTimestamp: null
+    labels:
+        io.kompose.service: web-env
+    name: env
